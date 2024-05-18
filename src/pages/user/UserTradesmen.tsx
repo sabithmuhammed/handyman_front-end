@@ -1,14 +1,12 @@
 import React from "react";
-import Hero from "../../components/user/home/Hero";
-import Filter from "../../components/user/common/Filter";
+import PaginationButton from "../../components/user/common/PaginationButton";
 import Card from "../../components/user/common/Card";
+import Filter from "../../components/user/common/Filter";
 
-const UserHome = () => {
+const UserTradesmen = () => {
     return (
         <>
-            <Filter>
-                <Hero />
-            </Filter>
+            <Filter />
             <div className="py-16 px-9">
                 <h1 className="text-3xl font-bold text-indigo-950">
                     Our Best Tradesmen
@@ -39,4 +37,4 @@ const UserHome = () => {
     );
 };
 
-export default UserHome;
+export default UserTradesmen;

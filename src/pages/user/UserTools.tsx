@@ -1,14 +1,10 @@
 import React from "react";
-import Hero from "../../components/user/home/Hero";
 import Filter from "../../components/user/common/Filter";
-import Card from "../../components/user/common/Card";
 
-const UserHome = () => {
+const UserTools = () => {
     return (
         <>
-            <Filter>
-                <Hero />
-            </Filter>
+            <Filter></Filter>
             <div className="py-16 px-9">
                 <h1 className="text-3xl font-bold text-indigo-950">
                     Our Best Tradesmen
@@ -39,4 +35,4 @@ const UserHome = () => {
     );
 };
 
-export default UserHome;
+export default UserTools;

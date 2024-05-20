@@ -1,6 +1,7 @@
 import userEndpoints from "../services/endpoints/userEndpoints";
 import Api from "../services/api";
 import errorHandler from "../middleware/ErrorHandler";
+import { PAGE_LIMIT } from "../constants/pagesConstants";
 
 export const signup = async (user: object) => {
     try {
@@ -20,10 +21,6 @@ export const verifyOtp = async (user: object) => {
     }
 };
 
-
-
-
-
 export const signupGoogle = async (user: Object) => {
     try {
         const response = await Api.post(userEndpoints.googleSignUp, user);
@@ -36,6 +33,18 @@ export const signupGoogle = async (user: Object) => {
 export const resentOtp = async (user: Object) => {
     try {
         const response = await Api.post(userEndpoints.resentOtp, user);
+        return response;
+    } catch (error) {
+        errorHandler(error);
+    }
+};
+
+export const getTradesmen = async ({ page }) => {
+    try {
+        const response = await Api.get(
+            userEndpoints.getTradesmen +
+                `?pageSize=${PAGE_LIMIT}&page=${page || 1}`
+        );
         return response;
     } catch (error) {
         errorHandler(error);

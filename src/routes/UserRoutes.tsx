@@ -7,6 +7,8 @@ const UserHome = lazy(() => import("../pages/user/UserHome"));
 const UserLogin = lazy(() => import("../pages/user/UserLogin"));
 const UserSignUp = lazy(() => import("../pages/user/UserSignUp"));
 const UserTradesmen = lazy(() => import("../pages/user/UserTradesmen"));
+const UserTools = lazy(() => import("../pages/user/UserTools"));
+const AddTool = lazy(() => import("../pages/user/AddTool"));
 
 const UserRoutes = () => {
     return (
@@ -16,10 +18,12 @@ const UserRoutes = () => {
                 <Route path="signup" element={<UserSignUp />} />
                 <Route element={<UserLayout />}>
                     <Route path="/" index element={<UserHome />} />
-                        <Route path="tradesmen" element={<UserTradesmen />} />
-                   
+                    <Route path="tradesmen" element={<UserTradesmen />} />
+                    <Route path="tools" element={<UserTools />} />
+                    <Route element={<UserProtected />}>
+                        <Route path="add-tool" element={<AddTool />} />
+                    </Route>
                 </Route>
-                <Route element={<UserProtected />}>//protected routes</Route>
                 <Route path="*" element={<h1>404 NOT FOUND</h1>} />
             </Routes>
         </Suspense>

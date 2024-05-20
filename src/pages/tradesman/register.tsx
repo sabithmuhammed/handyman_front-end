@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-
 import MapComponent from "../../components/common/MapComponent";
 import {
     tradesmanRegister,
@@ -47,6 +46,7 @@ const register = () => {
                 }
             }
         })();
+        
     }, []);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

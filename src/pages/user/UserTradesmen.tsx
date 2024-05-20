@@ -1,38 +1,47 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PaginationButton from "../../components/user/common/PaginationButton";
 import Card from "../../components/user/common/Card";
 import Filter from "../../components/user/common/Filter";
+import { Tradesman } from "../../types/stateTypes";
+import { getTradesmen } from "../../api/userApi";
+import { PAGE_LIMIT } from "../../constants/pagesConstants";
+import { useSearchParams } from "react-router-dom";
 
 const UserTradesmen = () => {
+    const [searchParams] = useSearchParams();
+    const [tradesmen, setTradesmen] = useState<Tradesman[] | null>(null);
+    const [pageCount, setPageCount] = useState(0);
+    const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
+    useEffect(() => {
+        (async () => {
+            const res = await getTradesmen({ page });
+            if (res?.data) {
+                setTradesmen(res.data?.tradesmen);
+                setPageCount(Math.floor(res.data?.totalCount / PAGE_LIMIT));
+            }
+        })();
+    }, [page]);
     return (
         <>
             <Filter />
-            <div className="py-16 px-9">
+            <div className="pt-16 px-9">
                 <h1 className="text-3xl font-bold text-indigo-950">
                     Our Best Tradesmen
                 </h1>
-                <ul className="w-100 flex mt-6">
-                    <li className="me-2 text-indigo-950 bg-blue-100 px-5 rounded-full flex items-center py-1">
-                        Plumber
-                    </li>
-                    <li className="mx-2 bg-indigo-950 text-white px-5 rounded-full items-center py-1">
-                        Electrician
-                    </li>
-                    <li className="mx-2 text-indigo-950 bg-blue-100 px-5 rounded-full flex items-center py-1">
-                        Mason
-                    </li>
-                    <li className="mx-2 text-indigo-950 bg-blue-100 px-5 rounded-full flex items-center py-1">
-                        Welder
-                    </li>
-                </ul>
-                <div className="grid grid-cols-5 gap-x-5 my-6 text-gray-900">
-                    <Card />
-                    <Card />
-                    <Card />
-                    <Card />
-                    <Card />
+
+                <div className="grid grid-cols-5 gap-5 my-6 text-gray-900">
+                    {tradesmen &&
+                        tradesmen.map((tradesman) => (
+                            <Card key={tradesman._id} {...tradesman} />
+                        ))}
                 </div>
             </div>
+            <PaginationButton
+                pageCount={pageCount}
+                active={page}
+                setPage={setPage}
+                link="/tradesmen"
+            />
         </>
     );
 };

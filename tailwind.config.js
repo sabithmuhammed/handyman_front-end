@@ -6,6 +6,9 @@ export default {
             transitionProperty: {
                 height: "height",
             },
+            fontFamily: {
+                open: ["Open Sans", "sans-serif"],
+            },
         },
     },
     plugins: [],

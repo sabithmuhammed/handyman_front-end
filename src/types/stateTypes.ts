@@ -11,4 +11,27 @@ export type Tradesman = {
     location: [number, number];
     rating: number;
     _id: string;
+    isBlocked: boolean;
 };
+
+export type LocationType = {
+    latitude: number;
+    longitude: number;
+};
+
+export type ToolType = {
+    _id: string;
+    name: string;
+    rent: number;
+    street: string;
+    city: string;
+    state: string;
+    country: string;
+    pincode: string;
+    location: {
+        coordinates: [number, number];
+        type: "Point";
+    };
+    userId: string;
+    images: string[];
+}

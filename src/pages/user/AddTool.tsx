@@ -1,34 +1,102 @@
 import React, { useEffect, useState } from "react";
 import MapComponent from "../../components/common/MapComponent";
 import axios from "axios";
+import { LocationType } from "../../types/stateTypes";
+import { toast } from "react-toastify";
+import { addTool } from "../../api/userApi";
+import { useNavigate } from "react-router-dom";
 
 const AddTool = () => {
     const [name, setName] = useState("");
-    const [images, setImages] = useState([]);
+    const [images, setImages] = useState<File[]>([]);
     const [rent, setRent] = useState("");
     const [street, setStreet] = useState("");
     const [city, setCity] = useState("");
     const [state, setState] = useState("");
     const [country, setCountry] = useState("");
     const [pincode, setPincode] = useState("");
+    const [location, setLocation] = useState({} as LocationType);
+    const navigate = useNavigate();
+
     useEffect(() => {
-        (async () => {
-            const res = await axios.get(
-                `https://api.mapbox.com/geocoding/v5/mapbox.places/kakkancherry.json`,
-                {
-                    params: {
-                        access_token: import.meta.env.VITE_MAPBOX_TOKEN,
-                    },
-                }
-            );
-            console.log(res);
-            
-        })();
-    });
+        navigator.geolocation.getCurrentPosition((pos) => {
+            setLocation({
+                ...location,
+                latitude: pos.coords.latitude,
+                longitude: pos.coords.longitude,
+            });
+        });
+    }, []);
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length) {
+            let images: File[] = [];
+            for (
+                let i = 0;
+                i < (e.target.files.length < 4 ? e.target.files.length : 4);
+                i++
+            ) {
+                images.push(e.target.files[i]);
+            }
+            setImages(images);
+        }
+    };
+
+    const handleSubmit = async () => {
+        let error = false;
+
+        if (
+            !name.trim() ||
+            !rent ||
+            !street.trim() ||
+            !city.trim() ||
+            !state.trim() ||
+            !country.trim() ||
+            !pincode
+        ) {
+            toast.error("Please fill all the fields");
+            error = true;
+        }
+        if (images.length < 4) {
+            toast.error("Please select 4 images");
+            error = true;
+        }
+        if (pincode.length !== 6) {
+            toast.error("The pincode must be exactly 6 digits long");
+        }
+
+        if (error) {
+            return;
+        }
+        const formObject = {
+            name: name.trim(),
+            ...location,
+            rent: rent.trim(),
+            street: street.trim(),
+            city: city.trim(),
+            state: state.trim(),
+            country: country.trim(),
+            pincode: pincode.trim(),
+        };
+        const formData = Object.keys(formObject).reduce((formData, key) => {
+            formData.append(key, formObject[key]);
+            return formData;
+        }, new FormData());
+        for (let i = 0; i < images.length; i++) {
+            formData.append("images", images[i]);
+        }
+        const res = await addTool(formData);
+        if (res) {
+            toast.success("Tool successfully added ")
+            navigate("/manage-tools");
+        }
+    };
 
     return (
         <div className="w-ful min-h-dvh flex justify-center items-center bg-slate-50 pt-24 pb-9">
-            <form className="w-[500px]  rounded-md shadow-xl  p-7 flex flex-col items-center bg-white">
+            <div
+                className="w-[500px]  rounded-md shadow-xl  p-7 flex flex-col items-center bg-white"
+            >
                 <h1 className="text-2xl font-bold text-indigo-950">Add tool</h1>
                 <div className=" w-full my-5 relative">
                     <input
@@ -36,6 +104,8 @@ const AddTool = () => {
                         className=" border-gray-400 h-9 w-full border-b-2 focus:outline-none indent-2 peer"
                         placeholder=""
                         id="name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
                     />
                     <label
                         htmlFor="name"
@@ -54,20 +124,28 @@ const AddTool = () => {
                         placeholder=""
                         id="images"
                         multiple
+                        onChange={handleImageChange}
                     />
                     <div className=" mt-3 flex justify-between">
-                        <div className="w-[100px] h-[100px] bg-red-500 rounded-md"></div>
-                        <div className="w-[100px] h-[100px] bg-red-500 rounded-md"></div>
-                        <div className="w-[100px] h-[100px] bg-red-500 rounded-md"></div>
-                        <div className="w-[100px] h-[100px] bg-red-500 rounded-md"></div>
+                        {images.length > 0 &&
+                            images.map((image) => (
+                                <div className="w-[100px] h-[100px] rounded-md">
+                                    <img
+                                        src={URL.createObjectURL(image)}
+                                        alt=""
+                                    />
+                                </div>
+                            ))}
                     </div>
                 </div>
                 <div className="w-full my-5 relative">
                     <input
-                        type="password"
+                        type="number"
                         className=" border-gray-400 h-9 w-full border-b-2 focus:outline-none indent-2 peer"
                         placeholder=""
                         id="rent"
+                        value={rent}
+                        onChange={(e) => setRent(e.target.value)}
                     />
                     <label
                         htmlFor="rent"
@@ -78,10 +156,12 @@ const AddTool = () => {
                 </div>
                 <div className="w-full my-5 relative">
                     <input
-                        type="password"
+                        type="text"
                         className=" border-gray-400 h-9 w-full border-b-2 focus:outline-none indent-2 peer"
                         placeholder=""
                         id="street"
+                        value={street}
+                        onChange={(e) => setStreet(e.target.value)}
                     />
                     <label
                         htmlFor="street"
@@ -93,10 +173,12 @@ const AddTool = () => {
                 <div className="w-full my-5 grid grid-cols-2 gap-x-3">
                     <div className="col-span-1 relative">
                         <input
-                            type="password"
+                            type="text"
                             className=" border-gray-400 h-9 w-full border-b-2 focus:outline-none indent-2 peer"
                             placeholder=""
                             id="city"
+                            value={city}
+                            onChange={(e) => setCity(e.target.value)}
                         />
                         <label
                             htmlFor="city"
@@ -107,10 +189,12 @@ const AddTool = () => {
                     </div>
                     <div className="col-span-1 relative">
                         <input
-                            type="password"
+                            type="text"
                             className=" border-gray-400 h-9 w-full border-b-2 focus:outline-none indent-2 peer"
                             placeholder=""
                             id="state"
+                            value={state}
+                            onChange={(e) => setState(e.target.value)}
                         />
                         <label
                             htmlFor="state"
@@ -123,10 +207,12 @@ const AddTool = () => {
                 <div className="w-full my-5 grid grid-cols-2 gap-x-3">
                     <div className="col-span-1 relative">
                         <input
-                            type="password"
+                            type="text"
                             className=" border-gray-400 h-9 w-full border-b-2 focus:outline-none indent-2 peer"
                             placeholder=""
                             id="country"
+                            value={country}
+                            onChange={(e) => setCountry(e.target.value)}
                         />
                         <label
                             htmlFor="country"
@@ -137,10 +223,12 @@ const AddTool = () => {
                     </div>
                     <div className="col-span-1 relative">
                         <input
-                            type="password"
+                            type="number"
                             className=" border-gray-400 h-9 w-full border-b-2 focus:outline-none indent-2 peer"
                             placeholder=""
                             id="pin"
+                            value={pincode}
+                            onChange={(e) => setPincode(e.target.value)}
                         />
                         <label
                             htmlFor="pin"
@@ -150,12 +238,15 @@ const AddTool = () => {
                         </label>
                     </div>
                 </div>
-                {/* <MapComponent latitude={7.544} longitude={10.87} /> */}
+                {location.latitude && location.longitude && (
+                    <MapComponent {...location} setLocation={setLocation} />
+                )}
 
-                <button className="bg-gradient-to-r from-indigo-950 to-indigo-700 text-white w-full h-10 rounded-full my-5 hover:from-indigo-700 hover:to-indigo-700 transition-colors delay-1000 ease-in">
+                <button className="bg-gradient-to-r from-indigo-950 to-indigo-700 text-white w-full h-10 rounded-full my-5 hover:from-indigo-700 hover:to-indigo-700 transition-colors delay-1000 ease-in"
+                onClick={handleSubmit}>
                     Add tool
                 </button>
-            </form>
+            </div>
         </div>
     );
 };

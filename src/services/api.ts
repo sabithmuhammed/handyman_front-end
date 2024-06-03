@@ -30,6 +30,7 @@ Api.interceptors.response.use(
                 localStorage.setItem('accessToken',accessToken)
                 originalRequest.headers.Authorization = `Bearer ${accessToken}`
             } catch (error) {
+                
                 console.log(error);
                 
             }

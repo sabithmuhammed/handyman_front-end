@@ -1,20 +1,6 @@
 import React from "react";
-import workerImg from "../../../assets/workerImg.png";
-import Skills from "./Skills";
-import { FaStar } from "react-icons/fa";
-import { Tradesman } from "../../../types/stateTypes";
-type CardType = {
-    name: string;
-    experience: number;
-    skills: string[];
-    wage: {
-        amount: string;
-        type: string;
-    };
-    distance: number;
-};
 
-const Card = ({ name, profile, skills }: Tradesman) => {
+const Card = ({ name, profile, skills }) => {
     const bgColors = [
         "bg-blue-200",
         "bg-green-200",
@@ -38,18 +24,34 @@ const Card = ({ name, profile, skills }: Tradesman) => {
     return (
         <div className="h-[350px] bg-blue-100 rounded-2xl flex flex-col items-center">
             <div className="w-[calc(100%-40px)] h-[180px] mt-[15px]">
-                <img src={profile} alt="" className=" rounded-t-lg object-cover w-full h-full"/>
+                <img
+                    src={profile}
+                    alt=""
+                    className=" rounded-t-lg object-cover w-full h-full"
+                />
             </div>
             <div
                 className={`h-[140px] w-[calc(100%-20px)] ${bgColors[color]} rounded-xl flex flex-col items-center justify-between py-2`}
             >
                 <h2 className="text-xl font-bold">{name}</h2>
-                {skills.map((skill,index)=><p className="text-sm" key={index}>{skill}</p>)}
-                
+                {typeof skills == "number" ? (
+                    <p className="text-xl font-bold">₹{skills}/-</p>
+                ) : (
+                    skills.map((skill, index) => (
+                        <p className="text-sm" key={index}>
+                            {skill}
+                        </p>
+                    ))
+                )}
+
+                {}
+
                 <button
-                    className={`rounded-full px-3 w-[calc(100%-30px)] bg-gray-900 py-1 ${textColors[color]}`}
+                    className={`rounded-full px-3 w-[170px] bg-gray-900 py-1 ${textColors[color]}`}
                 >
-                    Go to profile
+                    {typeof skills == "number"
+                        ? "View details"
+                        : "Go to profile"}
                 </button>
             </div>
         </div>

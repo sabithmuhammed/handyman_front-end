@@ -6,10 +6,7 @@ import {
 } from "../../api/tradesmanApi";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
-export type locationType = {
-    latitude: number;
-    longitude: number;
-};
+import { LocationType } from "../../types/stateTypes";
 
 const register = () => {
     const [name, setName] = useState("");
@@ -19,7 +16,7 @@ const register = () => {
     const [experience, setExperience] = useState("");
     const [wageAmount, setWageAmount] = useState("");
     const [wageType, setWageType] = useState("Day");
-    const [location, setLocation] = useState({} as locationType);
+    const [location, setLocation] = useState({} as LocationType);
     const [showRegister, setShowRegister] = useState(true);
 
     const navigate = useNavigate();
@@ -46,12 +43,10 @@ const register = () => {
                 }
             }
         })();
-        
     }, []);
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async () => {
         let error = false;
-        e.preventDefault();
         if (!name.trim()) {
             toast.error("Name can't be empty");
             error = true;
@@ -105,10 +100,7 @@ const register = () => {
     return (
         <div className="w-full  py-7 bg-gray-200 flex justify-center items-center overflow-auto">
             {showRegister ? (
-                <form
-                    className="w-[500px] min-h-[400px] bg-white p-6 rounded-md shadow-lg flex flex-col"
-                    onSubmit={handleSubmit}
-                >
+                <div className="w-[500px] min-h-[400px] bg-white p-6 rounded-md shadow-lg flex flex-col">
                     <div className="flex  items-center">
                         <div className="w-[100px] h-[100px] bg-slate-400 flex-shrink-0 me-4 rounded-md overflow-hidden">
                             {profile && (
@@ -241,10 +233,13 @@ const register = () => {
                             )}
                         </div>
                     </div>
-                    <button className="mt-5 bg-gray-600 text-white hover:bg-gray-700 w-[200px] py-2 rounded-full self-center">
+                    <button
+                        className="mt-5 bg-gray-600 text-white hover:bg-gray-700 w-[200px] py-2 rounded-full self-center"
+                        onClick={handleSubmit}
+                    >
                         Register
                     </button>
-                </form>
+                </div>
             ) : (
                 <div className="w-[550px] min-h-[400px] bg-white p-6 rounded-md shadow-lg flex flex-col items-center justify-center">
                     <h1 className="text-xl font-bold mb-3">

@@ -66,6 +66,7 @@ const UserLogin = () => {
     }, []);
 
     return (
+        
         <div className="w-ful h-dvh flex justify-center items-center bg-slate-200 ">
             <form
                 className="w-[350px]  rounded-md shadow-xl  p-7 flex flex-col items-center bg-white"

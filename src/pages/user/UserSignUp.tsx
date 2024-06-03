@@ -13,14 +13,18 @@ import { RootState } from "../../redux/store";
 import { useSelector } from "react-redux";
 
 const UserSignUp = () => {
-    const { userInfo,adminInfo } = useSelector((state: RootState) => state.auth);
+    const { userInfo, adminInfo } = useSelector(
+        (state: RootState) => state.auth
+    );
 
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [confPassword, setConfPassword] = useState("");
     const [nameErr, setNameErr] = useState("");
     const [emailErr, setEmailErr] = useState("");
     const [passErr, setPassErr] = useState("");
+    const [cpassErr, setCpassErr] = useState("");
     const [otp, setOtp] = useState("");
     const [otpErr, setOtpErr] = useState("");
     const [showOtp, setShowOtp] = useState(false);
@@ -34,6 +38,7 @@ const UserSignUp = () => {
         setNameErr("");
         setEmailErr("");
         setPassErr("");
+        setCpassErr("");
         setName(name.trim());
         let hasError = false;
         if (!email) {
@@ -55,6 +60,10 @@ const UserSignUp = () => {
             hasError = true;
         } else if (password.length < 6) {
             setPassErr("Password is too short. Minimum 6 Charecters required");
+            hasError = true;
+        }
+        if (password !== confPassword) {
+            setCpassErr("Password doesn't match");
             hasError = true;
         }
         if (hasError) {
@@ -95,7 +104,7 @@ const UserSignUp = () => {
         if (userInfo) {
             navigate("/");
         }
-        if(adminInfo){
+        if (adminInfo) {
             navigate("/admin");
         }
     }, []);
@@ -167,6 +176,25 @@ const UserSignUp = () => {
                         </label>
                         {passErr && (
                             <p className="text-sm text-red-500">{passErr}</p>
+                        )}
+                    </div>
+                    <div className="w-full my-5 relative">
+                        <input
+                            type="password"
+                            className=" border-gray-400 h-9 w-full border-b-2 focus:outline-none indent-2 peer"
+                            placeholder=""
+                            id="cpassword"
+                            value={confPassword}
+                            onChange={(e) => setConfPassword(e.target.value)}
+                        />
+                        <label
+                            htmlFor="cpassword"
+                            className="absolute text-sm left-0 -top-3 px-2 rounded-md text-indigo-950 peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-[6px] peer-placeholder-shown:text-base peer-placeholder-shown:bg-transparent peer-focus:text-sm peer-focus:left-0 peer-focus:-top-3 peer-focus:rounded-md peer-focus:text-indigo-950  transition-all ease-in"
+                        >
+                            Confirm Password
+                        </label>
+                        {cpassErr && (
+                            <p className="text-sm text-red-500">{cpassErr}</p>
                         )}
                     </div>
                     <button className="bg-gradient-to-r from-indigo-950 to-indigo-700 text-white w-full h-10 rounded-full my-5 hover:from-indigo-700 hover:to-indigo-700 transition-all delay-[3s] ease-in">

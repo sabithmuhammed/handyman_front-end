@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import ReactMapGl, { GeolocateControl, Map, Marker } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { locationType } from "../../pages/tradesman/register";
+import { locationType } from "../../pages/tradesman/Register";
 type markerLocation = {
     latitude: number;
     longitude: number;

@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { LocationType } from "../../types/stateTypes";
 
-const register = () => {
+const Register = () => {
     const [name, setName] = useState("");
     const [profile, setProfile] = useState<File | null>(null);
     const [idImage, setIdImage] = useState<File | null>(null);
@@ -255,4 +255,4 @@ const register = () => {
     );
 };
 
-export default register;
+export default Register;

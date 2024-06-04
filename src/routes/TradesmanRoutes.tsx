@@ -1,7 +1,7 @@
 import React, { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 import UserProtected from "../components/user/common/UserProtected";
-const Register = lazy(() => import("../pages/tradesman/register"));
+const Register = lazy(() => import("../pages/tradesman/Register"));
 
 const TadesmanRoutes = () => {
     return (

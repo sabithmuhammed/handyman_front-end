@@ -13,18 +13,35 @@ import {
     Icon,
     Grid,
 } from "@chakra-ui/react";
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { RiVerifiedBadgeFill } from "react-icons/ri";
 import { ImUser } from "react-icons/im";
 import { FaHelmetSafety } from "react-icons/fa6";
 import { FaSignOutAlt, FaTools, FaUserCheck, FaUsers } from "react-icons/fa";
+import { logoutAdmin } from "../../redux/slice/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+import { logout } from "../../api/commonApi";
+import { toast } from "react-toastify";
 
 const AdminLayout = () => {
-    const navLinkStyle = ({ isActive }) => ({
-        color: isActive ? "teal.300" : "inherit",
-        fontWeight: isActive ? "bold" : "normal",
-        backgroundColor: isActive ? "gray.700" : "inherit",
-      });
+    const { userInfo } = useSelector((state: RootState) => state.auth);
+    const dispatch = useDispatch();
+
+    const navigate = useNavigate();
+
+    const logOut = async () => {
+        const response = await logout();
+        if (response) {
+            toast.success(response?.data?.data?.message);
+            dispatch(logoutAdmin());
+            navigate("/login");
+        }
+    };
+
+    const navLinkStyle = ({ isActive }) =>
+        `${isActive ? `bg-gray-700` : ``} hover:bg-gray-700 rounded-md`;
+
     return (
         <>
             <Box display="flex" h="100vh">
@@ -38,14 +55,12 @@ const AdminLayout = () => {
                         </Text>
                     </Box>
                     <Stack spacing={6}>
-                        <NavLink to="verify" style={navLinkStyle}>
+                        <NavLink to="verify" className={navLinkStyle}>
                             <Stack
                                 direction="row"
                                 align="center"
                                 spacing={4}
                                 p={2}
-                                borderRadius="md"
-                                _hover={{ bg: "gray.700" }}
                             >
                                 <Icon as={FaUserCheck} boxSize={5} />
                                 <Text fontWeight="semibold">
@@ -53,29 +68,26 @@ const AdminLayout = () => {
                                 </Text>
                             </Stack>
                         </NavLink>
-                        <NavLink to="users" style={navLinkStyle}>
+                        <NavLink to="users" className={navLinkStyle}>
                             <Stack
                                 direction="row"
                                 align="center"
                                 spacing={4}
                                 p={2}
-                                borderRadius="md"
-                                _hover={{ bg: "gray.700" }}
                             >
                                 <Icon as={FaUsers} boxSize={5} />
                                 <Text fontWeight="semibold">
-                                    User Management
+                                    User <br />
+                                    Management
                                 </Text>
                             </Stack>
                         </NavLink>
-                        <NavLink to="tradesmen" style={navLinkStyle}>
+                        <NavLink to="tradesmen" className={navLinkStyle}>
                             <Stack
                                 direction="row"
                                 align="center"
                                 spacing={4}
                                 p={2}
-                                borderRadius="md"
-                                _hover={{ bg: "gray.700" }}
                             >
                                 <Icon as={FaTools} boxSize={5} />
                                 <Text fontWeight="semibold">
@@ -91,6 +103,8 @@ const AdminLayout = () => {
                             borderRadius="md"
                             _hover={{ bg: "gray.700" }}
                             mt="auto"
+                            onClick={logOut}
+                            cursor={"pointer"}
                         >
                             <Icon as={FaSignOutAlt} boxSize={5} />
                             <Text fontWeight="semibold">Logout</Text>
@@ -104,6 +118,7 @@ const AdminLayout = () => {
                         mb={4}
                         borderRadius="md"
                         boxShadow="md"
+                        h={20}
                     >
                         <Flex align="center" justify="space-between">
                             <Heading size="md">Admin Panel</Heading>
@@ -119,85 +134,6 @@ const AdminLayout = () => {
                 </Grid>
             </Box>
         </>
-        // <Container maxW="100vw" bg="gray.100" minH={"100vh"} overflow={"auto"}>
-        //     <Container bg={""} maxW="container.lg" h="100vh" px="0" position={"relative"}>
-        //         <Flex
-        //             bg={"green.400"}
-        //             h="70px"
-        //             justify={"space-between"}
-        //             px="5"
-        //             borderBottomRadius={"10px"}
-        //             position={"fixed"}
-        //             zIndex={"100"}
-        //             w={"container.lg"}
-        //             top={"0"}
-        //         >
-        //             <HStack spacing="50px" textColor={"white"}>
-        //                 <NavLink to="/verify">
-        //                     <Flex direction={"column"} alignItems={"center"}>
-        //                         <RiVerifiedBadgeFill size={30} />
-        //                         <Text fontSize="xs">Verification</Text>
-        //                     </Flex>
-        //                 </NavLink>
-        //             </HStack>
-        //             <HStack spacing="50px" textColor={"white"}>
-        //                 <NavLink to="/verify">
-        //                     <Flex direction={"column"} alignItems={"center"}>
-        //                         <RiVerifiedBadgeFill size={30} />
-        //                         <Text fontSize="xs">Verification</Text>
-        //                     </Flex>
-        //                 </NavLink>
-        //                 <NavLink to="tradesmen">
-        //                     <Flex direction={"column"} alignItems={"center"}>
-        //                         <FaHelmetSafety size={30} />
-        //                         <Text fontSize="xs">Tradesmen</Text>
-        //                     </Flex>
-        //                 </NavLink>
-        //                 <NavLink to="users">
-        //                     <Flex direction={"column"} alignItems={"center"}>
-        //                         <ImUser size={30} />
-        //                         <Text fontSize="xs">Users</Text>
-        //                     </Flex>
-        //                 </NavLink>
-        //             </HStack>
-        //             <HStack spacing="50px" textColor={"white"}>
-        //                 <NavLink to="/verify">
-        //                     <Flex direction={"column"} alignItems={"center"}>
-        //                         <RiVerifiedBadgeFill size={30} />
-        //                         <Text fontSize="xs">Verification</Text>
-        //                     </Flex>
-        //                 </NavLink>
-        //                 <NavLink to="/verify">
-        //                     <Flex direction={"column"} alignItems={"center"}>
-        //                         <FaHelmetSafety size={30} />
-        //                         <Text fontSize="xs">Tradesmen</Text>
-        //                     </Flex>
-        //                 </NavLink>
-        //             </HStack>
-        //         </Flex>
-        //     <Container mt="80px"  maxW={"full"} position={"relative"}>
-        //         <Outlet></Outlet>
-        //     </Container>
-        //     </Container>
-        //     {/* //{" "}
-        //     <Flex direction="column" minHeight="100vh">
-        //         //{" "}
-        //         <Box bg="teal.600" p={4}>
-        //             //{" "}
-        //             <Text fontSize="xl" fontWeight="bold" color="white">
-        //                 // Admin Panel //{" "}
-        //             </Text>
-        //             //{" "}
-        //         </Box>
-        //         //{" "}
-        //         <Flex>
-        //             // <SidePanel />
-        //             // <Outlet />
-        //             //{" "}
-        //         </Flex>
-        //         //{" "}
-        //     </Flex> */}
-        // </Container>
     );
 };
 

@@ -11,9 +11,20 @@ import React, { useState } from "react";
 import { BiComment, BiLike, BiLink } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import CommentSection from "./CommentSection";
+import { PostType } from "../../../types/stateTypes";
 
-const PostCard = () => {
+const PostCard = ({ text, image, date,name,profile }: PostType & {name:string |undefined,profile:string |undefined}) => {
     const [commentOpen, setCommentOpen] = useState(false);
+    const dateObj = new Date(date);
+    const formattedDate = dateObj.toLocaleString("en-US", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+    });
+   
     return (
         <Box
             w={"full"}
@@ -27,17 +38,17 @@ const PostCard = () => {
                 <Wrap>
                     <WrapItem>
                         <Avatar
-                            name="Jan Sbrahmov"
-                            // src="https://bit.ly/dan-abramov"
+                            name={name}
+                            src={profile}
                         />
                     </WrapItem>
                     <WrapItem>
                         <Flex direction={"column"}>
                             <Text fontSize={"md"} fontWeight={"bold"}>
-                                Sabith Muhammed
+                                {name}
                             </Text>
                             <Text fontSize={"sm"} color={"gray.600"}>
-                                date-date-date
+                                {formattedDate}
                             </Text>
                         </Flex>
                     </WrapItem>
@@ -47,14 +58,11 @@ const PostCard = () => {
                 </Link>
             </Flex>
             <Text noOfLines={[1, 2, 3]} py={3}>
-                fhsdjhf fkjsdhfkj fjdshafk hfdssjfhkjs fdsjhf
-                <br />
-                jfafhdsjahfjdsafadsfsadkfdskalfdsklafhlksdalaskljd
-                <br />
+                {text}
             </Text>
-            <Box w={"full"} bg={"gray.200"} h={"400px"}>
+            <Box w={"full"} bg={"gray.200"} h={{base:"200px",sm:"400px"}} >
                 <img
-                    src="https://cdn.shopify.com/s/files/1/0565/4039/7655/files/wall_painting_ideas_77.png"
+                    src={image}
                     alt=""
                     className="object-contain w-full h-full"
                 />

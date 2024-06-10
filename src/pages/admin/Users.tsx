@@ -90,7 +90,7 @@ const Users = () => {
             <Text fontSize={"2xl"} fontWeight={"800"} top={"0"}>
                 All users
             </Text>
-            <Grid gap="6" overflow={"auto"}>
+            {/* <Grid gap="6" overflow={"auto"}>
                 {users.length ? (
                     users.map((item, index) => (
                         <GridItem w={"full"} bg="white">
@@ -139,18 +139,18 @@ const Users = () => {
                 </GridItem>
                 <GridItem>dfjkdshjkfd</GridItem>
                 <GridItem>dfjkdshjkfd</GridItem>
-            </Grid>
+            </Grid> */}
             <Flex direction={"column"} align={"center"} pt={"7"} w="full">
                 <Card minW="full" bg="gray.100">
-                    <CardHeader>
+                    {/* <CardHeader>
                         <Heading size="md">All Users</Heading>
-                    </CardHeader>
+                    </CardHeader> */}
 
                     <CardBody>
                         <Stack spacing="20">
                             {users.length ? (
                                 users.map((item, index) => (
-                                    <Box key={item._id} bg="white">
+                                    <Box key={item._id} bg="white" p={4}>
                                         <Flex justify={"space-between"}>
                                             <Flex direction={"column"}>
                                                 <Heading

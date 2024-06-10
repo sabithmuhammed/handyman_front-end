@@ -7,6 +7,8 @@ import {
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { LocationType } from "../../types/stateTypes";
+import { useDispatch } from "react-redux";
+import { setTradesman } from "../../redux/slice/authSlice";
 
 const Register = () => {
     const [name, setName] = useState("");
@@ -20,6 +22,7 @@ const Register = () => {
     const [showRegister, setShowRegister] = useState(true);
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     useEffect(() => {
         navigator.geolocation.getCurrentPosition((pos) => {
@@ -39,7 +42,8 @@ const Register = () => {
                     setShowRegister(false);
                 }
                 if (response.data.status == "Verified") {
-                    navigate("./dashboard");
+                    dispatch(setTradesman({ ...response.data.data }));
+                    navigate("../dashboard");
                 }
             }
         })();

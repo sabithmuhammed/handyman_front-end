@@ -1,6 +1,7 @@
 import { Box, Flex, GridItem, Image, Text } from "@chakra-ui/react";
 import React from "react";
 import { IoMdChatbubbles } from "react-icons/io";
+import { Link } from "react-router-dom";
 
 const ProfileTile = () => {
     return (
@@ -70,12 +71,12 @@ const ProfileTile = () => {
                     <Text fontSize={"2xl"} fontWeight={"bold"}>
                         ₹ 5000/<span className="text-base">Day*</span>
                     </Text>
-                    <button className="bg-indigo-950 px-3  py-2 flex items-center rounded text-white hover:bg-indigo-900">
+                    <Link to="/chat" className="bg-indigo-950 px-3  py-2 flex items-center rounded text-white hover:bg-indigo-900">
                         <Text paddingRight={3} fontSize={"md"}>
                             Chat
                         </Text>
                         <IoMdChatbubbles size={20} />
-                    </button>
+                    </Link>
                 </Flex>
                 <Text marginTop={3} color={"gray.400"}>
                     *Approximate wage

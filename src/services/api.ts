@@ -1,11 +1,13 @@
 import axios from "axios";
 import commonEndpoints from "./endpoints/commonEndpoints";
+import { toast } from "react-toastify";
 const Api = axios.create({
     baseURL: `${import.meta.env.VITE_BASE_URL}`,
     withCredentials: true,
 });
 
 export default Api;
+
 
 Api.interceptors.request.use(
     (config) => {
@@ -30,8 +32,8 @@ Api.interceptors.response.use(
                 localStorage.setItem('accessToken',accessToken)
                 originalRequest.headers.Authorization = `Bearer ${accessToken}`
             } catch (error) {
-                
-                console.log(error);
+                toast.error("Session timeout! Please login");
+                window.location.href = "/login"; 
                 
             }
         }

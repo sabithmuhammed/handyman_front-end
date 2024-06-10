@@ -1,10 +1,12 @@
 import { Box, Grid, GridItem } from "@chakra-ui/react";
-import React from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import PostCard from "../../components/user/common/PostCard";
 import ProfileTile from "../../components/user/Tradesman/ProfileTile";
+import { Tradesman } from "../../types/stateTypes";
 
 const TradesmanProfile = () => {
+    const [tradesman,setTradesman] = useState<Tradesman>()
     return (
         <div className="pt-20 pb-7 min-h-screen">
             <Grid templateColumns="repeat(3, 1fr)" gap={6}>

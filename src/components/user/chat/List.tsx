@@ -15,7 +15,15 @@ import {
 import React from "react";
 import { FiSearch } from "react-icons/fi";
 
-const List = () => {
+type PropType = {
+    chat: string;
+    setChat: React.Dispatch<React.SetStateAction<string>>;
+};
+
+const List = ({ chat, setChat }: PropType) => {
+    const handleChatChange = (id: string) => {
+        setChat(id);
+    };
     return (
         <GridItem w="100%" colSpan={1}>
             <Flex
@@ -27,17 +35,28 @@ const List = () => {
                 overflow={"auto"}
                 boxShadow={"md"}
                 direction={"column"}
-            ><Box px={6}>
-
-                <InputGroup >
-                    <InputLeftElement pointerEvents="none">
-                        <FiSearch color="gray.300" />
-                    </InputLeftElement>
-                    <Input type="search" placeholder="search..." bg={"white"} />
-                </InputGroup>
-            </Box>
+            >
+                <Box px={6}>
+                    <InputGroup boxShadow={"md"}>
+                        <InputLeftElement pointerEvents="none">
+                            <FiSearch color="gray.300" />
+                        </InputLeftElement>
+                        <Input
+                            type="search"
+                            placeholder="search..."
+                            bg={"white"}
+                        />
+                    </InputGroup>
+                </Box>
                 <Stack spacing={4} mt={3} overflow={"auto"} px={6}>
-                    <Wrap bg={"white"} p={2} rounded={"md"} cursor={"pointer"}>
+                    <Wrap
+                        bg={chat == `abc` ? `gray.500` : `white`}
+                        p={2}
+                        rounded={"md"}
+                        cursor={"pointer"}
+                        onClick={() => handleChatChange("abc")}
+                        boxShadow={"md"}
+                    >
                         <WrapItem>
                             <Avatar
                                 name="Dan Abrahmov"
@@ -58,7 +77,13 @@ const List = () => {
                             </Flex>
                         </WrapItem>
                     </Wrap>
-                    <Wrap bg={"white"} p={2} rounded={"md"}>
+                    <Wrap
+                        bg={"white"}
+                        p={2}
+                        rounded={"md"}
+                        onClick={() => handleChatChange("abd")}
+                        boxShadow={"md"}
+                    >
                         <WrapItem>
                             <Avatar
                                 name="Dan Abrahmov"
@@ -79,12 +104,6 @@ const List = () => {
                             </Flex>
                         </WrapItem>
                     </Wrap>
-
-                   
-
-
-
-
                 </Stack>
             </Flex>
         </GridItem>

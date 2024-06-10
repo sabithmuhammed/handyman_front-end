@@ -19,4 +19,22 @@ export const tradesmanStatusCheck = async () => {
     }
 };
 
+export const getPosts = async () => {
+    try {
+        const response = await Api.get(tradesmanEndpoints.getPosts);
+        return response;
+    } catch (error) {
+        errorHandler(error);
+    }
+};
+
+export const addNewPost = async (data:FormData) => {
+    try {
+        const response = await Api.post(tradesmanEndpoints.addPost,data);
+        return response;
+    } catch (error) {
+        errorHandler(error);
+    }
+};
+
 

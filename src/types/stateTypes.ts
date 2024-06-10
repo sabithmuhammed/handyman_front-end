@@ -35,3 +35,12 @@ export type ToolType = {
     userId: string;
     images: string[];
 }
+
+export type PostType = {
+    _id:string,
+    text?:string,
+    image?:string,
+    date:Date
+    likes?:object[]
+    comments?:object[]
+}

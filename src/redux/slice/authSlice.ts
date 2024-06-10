@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 interface user {
     name: string;
     email: string;
-    userId:string,
+    userId: string;
     isTradesman: boolean;
 }
 
@@ -36,17 +36,25 @@ const authSlice = createSlice({
     reducers: {
         loginUser: (state, action) => {
             state.userInfo = action.payload.userData;
-            localStorage.setItem("user", JSON.stringify(action.payload.userData));
-            localStorage.setItem("accessToken",action.payload.accessToken);
+            localStorage.setItem(
+                "user",
+                JSON.stringify(action.payload.userData)
+            );
+            localStorage.setItem("accessToken", action.payload.accessToken);
         },
-        logoutUser: (state) => {      
+        logoutUser: (state) => {
             state.userInfo = null;
             localStorage.removeItem("user");
             localStorage.removeItem("accessToken");
         },
         setTradesman: (state, action) => {
-            state.tradesmanInfo = action.payload;
-            localStorage.setItem("accessToken",action.payload.accessToken);
+            const { name, profile, accessToken } = action.payload;
+            state.tradesmanInfo = { name, profile };
+            localStorage.setItem(
+                "tradesman",
+                JSON.stringify({ name, profile })
+            );
+            localStorage.setItem("accessToken", accessToken);
         },
         removeTradesman: (state) => {
             state.tradesmanInfo = null;
@@ -54,14 +62,16 @@ const authSlice = createSlice({
         },
         loginAdmin: (state, action) => {
             state.adminInfo = action.payload.userData;
-            localStorage.setItem("admin", JSON.stringify(action.payload.userData));
-            localStorage.setItem("accessToken",action.payload.accessToken);
+            localStorage.setItem(
+                "admin",
+                JSON.stringify(action.payload.userData)
+            );
+            localStorage.setItem("accessToken", action.payload.accessToken);
         },
         logoutAdmin: (state) => {
             state.adminInfo = null;
             localStorage.removeItem("admin");
             localStorage.removeItem("accessToken");
-
         },
     },
 });

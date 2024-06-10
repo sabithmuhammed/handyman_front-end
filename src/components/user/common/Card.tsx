@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Card = ({ name, profile, skills }) => {
     const bgColors = [
@@ -44,15 +45,21 @@ const Card = ({ name, profile, skills }) => {
                     ))
                 )}
 
-                {}
+                {typeof skills == "number" ? (
+                    <button
+                        className={`rounded-full px-3 w-[170px] bg-gray-900 py-1 ${textColors[color]}`}
+                    >
+                        {" "}
+                        "View details"
+                    </button>
+                ) : (
+                    <Link to="/tradesman-profile"
+                        className={`rounded-full px-3 w-[170px] bg-gray-900 py-1 ${textColors[color]} text-center`}
+                    >
+                        Go to profile
+                    </Link>
+                )}
 
-                <button
-                    className={`rounded-full px-3 w-[170px] bg-gray-900 py-1 ${textColors[color]}`}
-                >
-                    {typeof skills == "number"
-                        ? "View details"
-                        : "Go to profile"}
-                </button>
             </div>
         </div>
     );

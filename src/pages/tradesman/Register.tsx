@@ -9,6 +9,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { LocationType } from "../../types/stateTypes";
 import { useDispatch } from "react-redux";
 import { setTradesman } from "../../redux/slice/authSlice";
+import { Box, Button } from "@chakra-ui/react";
+import Lottie from "lottie-react";
+import beatLoader from "../../assets/animation/beatLoader.json";
 
 const Register = () => {
     const [name, setName] = useState("");
@@ -20,6 +23,7 @@ const Register = () => {
     const [wageType, setWageType] = useState("Day");
     const [location, setLocation] = useState({} as LocationType);
     const [showRegister, setShowRegister] = useState(true);
+    const [btnLoading,setBtnLoading] = useState(false)
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -95,14 +99,16 @@ const Register = () => {
         }, new FormData());
         formData.append("images", profile as File);
         formData.append("images", idImage as File);
+        setBtnLoading(true);
         const response = await tradesmanRegister(formData);
         if (response?.data) {
             setShowRegister(false);
         }
+        setBtnLoading(true);
     };
 
     return (
-        <div className="w-full  py-7 bg-gray-200 flex justify-center items-center overflow-auto">
+        <div className="w-full   py-7 bg-gray-200 flex justify-center items-center">
             {showRegister ? (
                 <div className="w-[500px] min-h-[400px] bg-white p-6 rounded-md shadow-lg flex flex-col">
                     <div className="flex  items-center">
@@ -237,22 +243,29 @@ const Register = () => {
                             )}
                         </div>
                     </div>
-                    <button
-                        className="mt-5 bg-gray-600 text-white hover:bg-gray-700 w-[200px] py-2 rounded-full self-center"
+                    <Button
+                        isLoading = {btnLoading}
+                        spinner={
+                            <Lottie animationData={beatLoader} loop={true} className=""/>
+                        }
+                        colorScheme="blue"
+                        className="mt-5 w-[200px] py-2 rounded-full self-center"
                         onClick={handleSubmit}
                     >
                         Register
-                    </button>
+                    </Button>
                 </div>
             ) : (
-                <div className="w-[550px] min-h-[400px] bg-white p-6 rounded-md shadow-lg flex flex-col items-center justify-center">
-                    <h1 className="text-xl font-bold mb-3">
-                        We are verifying your account. Please be patient.
-                    </h1>
-                    <p className="mb-4">It will usually takes 24 hrs.</p>
-                    <Link to="/" className="text-gray-500 underline">
-                        Back to home
-                    </Link>
+                <div className="h-dvh flex items-center">
+                    <div className="w-[550px] min-h-[400px] bg-white p-6 rounded-md shadow-lg flex flex-col items-center justify-center">
+                        <h1 className="text-xl font-bold mb-3">
+                            We are verifying your account. Please be patient.
+                        </h1>
+                        <p className="mb-4">It will usually takes 24 hrs.</p>
+                        <Link to="/" className="text-gray-500 underline">
+                            Back to home
+                        </Link>
+                    </div>
                 </div>
             )}
         </div>

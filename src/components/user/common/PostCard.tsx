@@ -13,7 +13,7 @@ import { Link } from "react-router-dom";
 import CommentSection from "./CommentSection";
 import { PostType } from "../../../types/stateTypes";
 
-const PostCard = ({ text, image, date,name,profile }: PostType & {name:string |undefined,profile:string |undefined}) => {
+const PostCard = ({ text, image, date,name,profile, }: PostType & {name:string |undefined,profile:string |undefined}) => {
     const [commentOpen, setCommentOpen] = useState(false);
     const dateObj = new Date(date);
     const formattedDate = dateObj.toLocaleString("en-US", {
@@ -53,9 +53,6 @@ const PostCard = ({ text, image, date,name,profile }: PostType & {name:string |u
                         </Flex>
                     </WrapItem>
                 </Wrap>
-                <Link to="/" className="underline text-blue-900">
-                    Go to profile
-                </Link>
             </Flex>
             <Text noOfLines={[1, 2, 3]} py={3}>
                 {text}

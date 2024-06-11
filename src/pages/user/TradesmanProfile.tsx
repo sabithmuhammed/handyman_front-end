@@ -1,16 +1,49 @@
 import { Box, Grid, GridItem } from "@chakra-ui/react";
-import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import PostCard from "../../components/user/common/PostCard";
 import ProfileTile from "../../components/user/Tradesman/ProfileTile";
-import { Tradesman } from "../../types/stateTypes";
+import { PostType, Tradesman } from "../../types/stateTypes";
+import { getPostsById, getProfileMinimum } from "../../api/tradesmanApi";
 
 const TradesmanProfile = () => {
-    const [tradesman,setTradesman] = useState<Tradesman>()
+    const [tradesman, setTradesman] = useState<Tradesman>();
+    const [posts, setPosts] = useState<PostType[]>([]);
+    const { tradesmanId } = useParams();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        (async () => {
+            if (tradesmanId) {
+                const res = await getProfileMinimum(tradesmanId);
+                if (res?.data) {
+                    setTradesman(res.data);
+                    return;
+                }
+            }
+            navigate(-1);
+        })();
+    }, []);
+
+    useEffect(() => {
+        (async () => {
+            if (tradesmanId) {
+                const res = await getPostsById(tradesmanId);
+                if (res?.data) {
+                    setPosts(res.data);
+                    console.log(res);
+                    
+                    return;
+                }
+            }
+            navigate(-1);
+        })();
+    }, []);
+
     return (
         <div className="pt-20 pb-7 min-h-screen">
             <Grid templateColumns="repeat(3, 1fr)" gap={6}>
-                <ProfileTile />
+                {tradesman && <ProfileTile {...tradesman} />}
                 <GridItem w="100%" bg="" colSpan={2}>
                     <Grid gap={4}>
                         <Box
@@ -30,9 +63,10 @@ const TradesmanProfile = () => {
                             <NavLink to="./abc">Posts</NavLink>
                             <NavLink to="./abc">Reviews</NavLink>
                         </Box>
-                        <PostCard />
-                        <PostCard />
-                        <PostCard />
+                        {posts.length !== 0 && tradesman &&
+                            posts.map((post) => (
+                                <PostCard key={post._id} {...post} {...tradesman}/>
+                            ))}
                     </Grid>
                 </GridItem>
             </Grid>

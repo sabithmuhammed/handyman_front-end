@@ -28,7 +28,7 @@ const UserRoutes = () => {
                         <Route path="add-tool" element={<AddTool />} />
                         <Route path="manage-tools" element={<ManageTools />} />
                     </Route>
-                    <Route path="tradesman-profile" element={<TradesmanProfile />} />
+                    <Route path="tradesman-profile/:tradesmanId" element={<TradesmanProfile />} />
                     <Route element={<UserProtected />}>
                         <Route path="chat" element={<Chat />} />
                     </Route>

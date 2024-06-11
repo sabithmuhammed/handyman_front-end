@@ -21,20 +21,42 @@ export const tradesmanStatusCheck = async () => {
 
 export const getPosts = async () => {
     try {
-        const response = await Api.get(tradesmanEndpoints.getPosts);
+        const response = await Api.get(
+            tradesmanEndpoints.getPosts + `?tradesmanId=`
+        );
         return response;
     } catch (error) {
         errorHandler(error);
     }
 };
 
-export const addNewPost = async (data:FormData) => {
+export const addNewPost = async (data: FormData) => {
     try {
-        const response = await Api.post(tradesmanEndpoints.addPost,data);
+        const response = await Api.post(tradesmanEndpoints.addPost, data);
         return response;
     } catch (error) {
         errorHandler(error);
     }
 };
 
+export const getProfileMinimum = async (id: string) => {
+    try {
+        const response = await Api.get(
+            tradesmanEndpoints.getProfile + `/${id}`
+        );
+        return response;
+    } catch (error) {
+        errorHandler(error);
+    }
+};
 
+export const getPostsById = async (tradesmanId: string) => {
+    try {
+        const response = await Api.get(
+            tradesmanEndpoints.getPostsById + `/${tradesmanId}`
+        );
+        return response;
+    } catch (error) {
+        errorHandler(error);
+    }
+};

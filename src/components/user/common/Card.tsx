@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Card = ({ name, profile, skills }) => {
+const Card = ({ name, profile, skills,_id }) => {
     const bgColors = [
         "bg-blue-200",
         "bg-green-200",
@@ -50,10 +50,10 @@ const Card = ({ name, profile, skills }) => {
                         className={`rounded-full px-3 w-[170px] bg-gray-900 py-1 ${textColors[color]}`}
                     >
                         {" "}
-                        "View details"
+                        View details
                     </button>
                 ) : (
-                    <Link to="/tradesman-profile"
+                    <Link to={`/tradesman-profile/${_id}`}
                         className={`rounded-full px-3 w-[170px] bg-gray-900 py-1 ${textColors[color]} text-center`}
                     >
                         Go to profile

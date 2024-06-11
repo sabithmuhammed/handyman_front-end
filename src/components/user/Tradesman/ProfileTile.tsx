@@ -2,8 +2,17 @@ import { Box, Flex, GridItem, Image, Text } from "@chakra-ui/react";
 import React from "react";
 import { IoMdChatbubbles } from "react-icons/io";
 import { Link } from "react-router-dom";
+import { Tradesman } from "../../../types/stateTypes";
 
-const ProfileTile = () => {
+const ProfileTile = ({
+    _id,
+    name,
+    profile,
+    wage,
+    experience,
+    rating,
+    skills,
+}: Tradesman) => {
     return (
         <GridItem w="100%" colSpan={1}>
             <Flex
@@ -40,18 +49,18 @@ const ProfileTile = () => {
                     <Image
                         boxSize="135px"
                         objectFit="cover"
-                        src="https://bit.ly/dan-abramov"
-                        alt="Dan Abramov"
+                        src={profile}
+                        alt={name}
                         rounded={6}
                     />
                 </Flex>
                 <Text fontSize={"xl"} fontWeight={"bold"}>
-                    Aisawa Hajime
+                    {name}
                 </Text>
                 <Box className="bg-indigo-400 w-full h-24 flex justify-around text-white mt-3 rounded  items-center">
                     <Box className="flex flex-col items-center">
                         <Text fontSize={"2xl"} fontWeight={"bold"}>
-                            6yrs+
+                            {experience}+Yrs
                         </Text>
                         <Text fontSize={"sm"}>Experience</Text>
                     </Box>
@@ -69,9 +78,13 @@ const ProfileTile = () => {
                     alignItems={"center"}
                 >
                     <Text fontSize={"2xl"} fontWeight={"bold"}>
-                        ₹ 5000/<span className="text-base">Day*</span>
+                        ₹ {wage.amount}/
+                        <span className="text-base">{wage.type}*</span>
                     </Text>
-                    <Link to="/chat" className="bg-indigo-950 px-3  py-2 flex items-center rounded text-white hover:bg-indigo-900">
+                    <Link
+                        to={`/chat/${_id}`}
+                        className="bg-indigo-950 px-3  py-2 flex items-center rounded text-white hover:bg-indigo-900"
+                    >
                         <Text paddingRight={3} fontSize={"md"}>
                             Chat
                         </Text>

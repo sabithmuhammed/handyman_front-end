@@ -77,3 +77,12 @@ export const getSkills = async () => {
         errorHandler(error);
     }
 };
+
+export const getUserDetails = async (userId:string) => {
+    try {
+        const response = await Api.get(userEndpoints.getUserInfo+`/${userId}`);
+        return response;
+    } catch (error) {
+        errorHandler(error);
+    }
+};

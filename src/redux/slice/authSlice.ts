@@ -14,6 +14,7 @@ interface admin {
 interface tradesman {
     name: string;
     profile: string;
+    tradesmanId: string;
 }
 
 const isUserStored = localStorage.getItem("user");
@@ -48,11 +49,11 @@ const authSlice = createSlice({
             localStorage.removeItem("accessToken");
         },
         setTradesman: (state, action) => {
-            const { name, profile, accessToken } = action.payload;
-            state.tradesmanInfo = { name, profile };
+            const { name, profile, tradesmanId, accessToken } = action.payload;
+            state.tradesmanInfo = { name, profile, tradesmanId };
             localStorage.setItem(
                 "tradesman",
-                JSON.stringify({ name, profile })
+                JSON.stringify({ name, profile,tradesmanId })
             );
             localStorage.setItem("accessToken", accessToken);
         },

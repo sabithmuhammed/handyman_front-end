@@ -14,7 +14,7 @@ import {
 } from "react-icons/ri";
 import { logout } from "../../../api/commonApi";
 import { toast } from "react-toastify";
-import { logoutUser } from "../../../redux/slice/authSlice";
+import { logoutUser, removeTradesman } from "../../../redux/slice/authSlice";
 
 const Navbar = () => {
     const [nav, setNav] = useState(false);
@@ -36,6 +36,7 @@ const Navbar = () => {
 
             toast.success(response?.data?.data?.message);
             dispatch(logoutUser());
+            dispatch(removeTradesman());
         }
     };
     return (

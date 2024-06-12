@@ -8,7 +8,6 @@ export const login = async (
     try {
         const response = await Api.post(commonEndpoints.login, user);
         return response;
-        console.log(response);
         
     } catch (error) {
         console.log(error);

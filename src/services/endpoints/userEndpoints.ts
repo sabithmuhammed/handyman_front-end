@@ -6,7 +6,8 @@ const userEndpoints = {
     getTradesmen: "/users/get-tradesmen",
     addTool:"/users/add-tool",
     getTools:"/users/get-tools",
-    getSkills:"/users/get-skills"
+    getSkills:"/users/get-skills",
+    getUserInfo:"/users/get-user-info"
 };
 
 export default userEndpoints;

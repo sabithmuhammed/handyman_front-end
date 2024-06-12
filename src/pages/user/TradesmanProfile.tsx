@@ -31,7 +31,6 @@ const TradesmanProfile = () => {
                 const res = await getPostsById(tradesmanId);
                 if (res?.data) {
                     setPosts(res.data);
-                    console.log(res);
                     
                     return;
                 }

@@ -34,13 +34,38 @@ export type ToolType = {
     };
     userId: string;
     images: string[];
-}
+};
 
 export type PostType = {
-    _id:string,
-    text?:string,
-    image?:string,
-    date:Date
-    likes?:object[]
-    comments?:object[]
-}
+    _id: string;
+    text?: string;
+    image?: string;
+    date: Date;
+    likes?: object[];
+    comments?: object[];
+};
+
+export type ConversationType = {
+    _id?: string;
+    members: [string, string];
+    lastMessage: string;
+    tradesmanId: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+};
+
+export type ReceiverType = { receiverId: string; image: string; name: string };
+
+export type MessageType = {
+    _id: string;
+    conversationId: string;
+    senderId: string;
+    receiverId: string;
+    message: {
+        type: "audio" | "image" | "text";
+        content: string;
+    };
+    status: "sent" | "recieved" | "seen";
+    createdAt?: Date;
+    updatedAt: Date;
+};

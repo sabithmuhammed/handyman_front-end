@@ -82,7 +82,7 @@ const ProfileTile = ({
                         <span className="text-base">{wage.type}*</span>
                     </Text>
                     <Link
-                        to={`/chat/${_id}`}
+                        to={`/chat?user=${_id}&t=true`}
                         className="bg-indigo-950 px-3  py-2 flex items-center rounded text-white hover:bg-indigo-900"
                     >
                         <Text paddingRight={3} fontSize={"md"}>

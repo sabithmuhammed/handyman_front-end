@@ -3,7 +3,7 @@ import { IoCloseOutline } from "react-icons/io5";
 import ButtonAdmin from "./ButtonAdmin";
 import { Box, Flex, Heading, Image, Text } from "@chakra-ui/react";
 import { Tradesman } from "../../types/stateTypes";
-const ViewDetails = ({ name, skills, idProof, profile, wage, experience }:Tradesman) => {
+const ViewDetails = ({ name, category, idProof, profile, experience }:Tradesman) => {
     
     return (
         <Flex direction={"column"}>
@@ -20,10 +20,7 @@ const ViewDetails = ({ name, skills, idProof, profile, wage, experience }:Trades
                         {name}
                     </Heading>
                     <Text py="1" fontSize="md">
-                        {skills.reduce((acc, cur) => acc + ", " + cur)}
-                    </Text>
-                    <Text py="1" fontSize="md">
-                        Wage:{wage.amount +"/"+ wage.type}
+                        {category}
                     </Text>
                     <Text py="1" fontSize="md">
                         Experience: {experience}yrs

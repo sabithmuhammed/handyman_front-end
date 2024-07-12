@@ -3,21 +3,19 @@ import PostCard from "../../components/user/common/PostCard";
 import {
     Box,
     Button,
-    Flex,
     Grid,
     Image,
-    Text,
     Textarea,
     useDisclosure,
 } from "@chakra-ui/react";
 import { GrFormUpload } from "react-icons/gr";
-import { FaCamera } from "react-icons/fa";
 import ModalComponent from "../../components/common/ModalComponent";
-import { addNewPost, getPosts } from "../../api/tradesmanApi";
 import { PostType } from "../../types/stateTypes";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import NoPosts from "../../components/common/NoPosts";
+import { addNewPost, deletePost, editPost, getPosts } from "../../api/postApi";
 
 const Posts = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -25,6 +23,7 @@ const Posts = () => {
     const [image, setImage] = useState<File | null>(null);
     const [posts, setPosts] = useState<PostType[]>([]);
     const { tradesmanInfo } = useSelector((state: RootState) => state.auth);
+    const [postUploadLoading, setPostUploadLoading] = useState(false);
 
     useEffect(() => {
         (async () => {
@@ -50,35 +49,57 @@ const Posts = () => {
         }
         const formData = new FormData();
         formData.append("text", text);
-        console.log(text);
 
-        formData.append("images", image as File);
+        formData.append("image", image as File);
+        setPostUploadLoading(true);
         const response = await addNewPost(formData);
         if (response?.data) {
             toast.success("Successfully added new Post");
             setPosts([response.data as PostType, ...posts]);
             onClose();
             setText("");
-            setImage(null)
+            setImage(null);
+        }
+        setPostUploadLoading(false);
+    };
+
+    const removePost = async (postId: string) => {
+        const res = await deletePost(postId);
+        if (res?.data) {
+            const newPosts = posts.filter((post) => post._id !== postId);
+            setPosts(newPosts);
         }
     };
+
+    const editText = async (postId: string, text: string) => {
+        const res = await editPost(postId, text);
+        if (res?.data) {
+            const newPosts = posts.map((post) => {
+                if (post._id == postId) {
+                    post.text = text;
+                }
+                return post;
+            });
+            setPosts(newPosts);
+        }
+    };
+
     return (
         <Grid gap={3} position={"relative"} minH={"full"}>
             {posts.length == 0 ? (
-                <Flex
-                    w={"full"}
-                    h={"full"}
-                    flexDirection={"column"}
-                    justify={"center"}
-                    alignItems={"center"}
-                >
-                    <FaCamera size={70} color="gray" />
-                    <Text fontSize={"2xl"} color={"gray"}>
-                        No Posts Yet
-                    </Text>
-                </Flex>
+                <NoPosts />
             ) : (
-                posts.map(({ _id, ...post }) => <PostCard key={_id} {...post} _id={_id} {...tradesmanInfo}/>)
+                posts.map(({ _id, ...post }) => (
+                    <PostCard
+                        key={_id}
+                        {...post}
+                        {...tradesmanInfo}
+                        _id={_id}
+                        isTradesman
+                        removePost={removePost}
+                        editText={editText}
+                    />
+                ))
             )}
 
             <ModalComponent
@@ -89,6 +110,7 @@ const Posts = () => {
                     text: "Post",
                     color: "blue",
                     onClick: addPost,
+                    loading: postUploadLoading,
                 }}
             >
                 <div className="flex items-center justify-center flex-col max-w-[400px]  w-svw">

@@ -34,16 +34,19 @@ const MapComponent = ({
             zoom: 16,
         }));
     }, [latitude, longitude]);
+ 
+    
 
     const handleMarkerDrag = (event) => {
         const latitude = event.lngLat.lat;
         const longitude = event.lngLat.lng;
         setMarker({ latitude, longitude });
-        setLocation((l)=>({...latitude,latitude,longitude}))
+        setLocation((l)=>({latitude,longitude}))
+        
     };
 
     return (
-        <div className="map bg-red-800 h-[400px] w-full">
+        <div className="map bg-gray-300 h-[400px] w-full">
             <Map
                 mapboxAccessToken={import.meta.env.VITE_MAPBOX_TOKEN}
                 initialViewState={viewport}

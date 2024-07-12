@@ -114,9 +114,9 @@ const UserLogin = () => {
                         <p className="text-sm text-red-500">{passErr}</p>
                     )}
 
-                    <p className="mt-3 text-indigo-400 hover:text-indigo-500 cursor-pointer">
+                    <Link to={"/forgot-password"} className="mt-3 text-indigo-400 hover:text-indigo-500 cursor-pointer">
                         Forgot password?
-                    </p>
+                    </Link>
                 </div>
                 <button className="bg-gradient-to-r from-indigo-950 to-indigo-700 text-white w-full h-10 rounded-full my-5 hover:from-indigo-700 hover:to-indigo-700 transition-colors delay-1000 ease-in">
                     Log in

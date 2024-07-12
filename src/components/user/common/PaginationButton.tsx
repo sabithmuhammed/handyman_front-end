@@ -4,13 +4,11 @@ type PaginationType = {
     pageCount: number;
     active: number;
     setPage: React.Dispatch<React.SetStateAction<number>>;
-    link: string;
 };
 const PaginationButton = ({
     pageCount,
     active,
     setPage,
-    link,
 }: PaginationType) => {
     const pageBtn: { className: string; count: number }[] = [];
     for (let i = 1; i <= pageCount; i++) {
@@ -24,21 +22,16 @@ const PaginationButton = ({
 
     return (
         <div className="flex h-7 justify-center w-full">
-            {pageBtn.length ? (
+            {pageBtn.length!==0 && (
                 pageBtn.map((btn, index) => (
-                    <Link
-                        to={`${link}?page=${btn.count}`}
+                    <button
                         className={btn.className}
                         key={index}
                         onClick={() => setPage(btn.count)}
                     >
                         {btn.count}
-                    </Link>
+                    </button>
                 ))
-            ) : (
-                <button className="rounded-full bg-indigo-950 w-7 h-7 mx-1 flex items-center justify-center text-white">
-                    1
-                </button>
             )}
         </div>
     );

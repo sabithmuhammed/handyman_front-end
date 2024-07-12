@@ -1,6 +1,7 @@
 import tradesmanEndpoints from "../services/endpoints/tradesmanEndpoints";
 import Api from "../services/api";
 import errorHandler from "../middleware/ErrorHandler";
+import { ConfigurationType } from "../types/stateTypes";
 
 export const tradesmanRegister = async (user: object) => {
     try {
@@ -19,26 +20,6 @@ export const tradesmanStatusCheck = async () => {
     }
 };
 
-export const getPosts = async () => {
-    try {
-        const response = await Api.get(
-            tradesmanEndpoints.getPosts + `?tradesmanId=`
-        );
-        return response;
-    } catch (error) {
-        errorHandler(error);
-    }
-};
-
-export const addNewPost = async (data: FormData) => {
-    try {
-        const response = await Api.post(tradesmanEndpoints.addPost, data);
-        return response;
-    } catch (error) {
-        errorHandler(error);
-    }
-};
-
 export const getProfileMinimum = async (id: string) => {
     try {
         const response = await Api.get(
@@ -50,11 +31,18 @@ export const getProfileMinimum = async (id: string) => {
     }
 };
 
-export const getPostsById = async (tradesmanId: string) => {
+export const getProfileFull = async () => {
     try {
-        const response = await Api.get(
-            tradesmanEndpoints.getPostsById + `/${tradesmanId}`
-        );
+        const response = await Api.get(tradesmanEndpoints.getProfileFull);
+        return response;
+    } catch (error) {
+        errorHandler(error);
+    }
+};
+
+export const updateConfiguration = async (data:ConfigurationType) => {
+    try {
+        const response = await Api.patch(tradesmanEndpoints.updateConfiguration,data);
         return response;
     } catch (error) {
         errorHandler(error);

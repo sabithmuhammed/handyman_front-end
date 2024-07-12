@@ -1,5 +1,6 @@
 import {
     Avatar,
+    Badge,
     Box,
     Flex,
     GridItem,
@@ -76,7 +77,7 @@ const List = ({
                     const res = await getUserDetails(user);
                     if (res?.data) {
                         setUserInfo({
-                            image: res.data?.profile || "" ,
+                            image: res.data?.profile || "",
                             name: res.data.name,
                         });
                         if (chat == conversation._id) {
@@ -92,41 +93,113 @@ const List = ({
         })();
     }, [user]);
 
-    return (
+    return conversation.lastMessage ? (
         <Flex
-            bg={chat == conversation._id ? `gray.500` : `white`}
+            bg={chat == conversation._id ? `gray.200` : `white`}
             p={2}
-            rounded={"md"}
+            // rounded={"md"}
             cursor={"pointer"}
             onClick={() => handleChatChange(conversation._id as string)}
             boxShadow={"md"}
             alignItems={"center"}
+            w={"full"}
         >
             {" "}
             {userInfo && (
-                <>
-                    <WrapItem>
-                        <Avatar
-                            name={userInfo.name}
-                            src={userInfo.image}
-                            size={"md"}
-                        />
-                    </WrapItem>
-                    <WrapItem ms={2}>
-                        <Flex direction={"column"}>
-                            <Flex direction={"column"}>
-                                <Text fontSize={"sm"} fontWeight={"bold"}>
-                                    {userInfo.name}
-                                </Text>
-                                <Text fontSize={"sm"} color={"gray.600"} noOfLines={1}>
-                                    {conversation.lastMessage}
-                                </Text>
-                            </Flex>
+                <Flex w={"full"} h={"16"}  alignItems={"center"}>
+                    <Avatar
+                        name={userInfo.name}
+                        src={userInfo.image}
+                        size={"md"}
+                    />
+                    <Flex
+                        direction={"column"}
+                        h={"full"}
+                        flexGrow={1}
+                        ms={2}
+                        py={2}
+                    >
+                        <Flex justifyContent={"space-between"}>
+                            <Text fontSize={"sm"} fontWeight={"bold"}>
+                                {userInfo.name}
+                            </Text>
+                            <Text
+                                fontSize={"xs"}
+                                color={"gray.600"}
+                                noOfLines={1}
+                                as={"b"}
+                                
+                                
+                            >
+                                {new Date(
+                                    conversation.updatedAt
+                                ).toLocaleString("en-AU", {
+                                    day: "2-digit",
+                                    month: "2-digit",
+                                    year: "numeric",
+                                })}
+                            </Text>
                         </Flex>
-                    </WrapItem>
-                </>
+                        <Flex justifyContent={"space-between"}>
+                            <Text
+                                fontSize={"sm"}
+                                color={"gray.600"}
+                                noOfLines={1}
+                                me={6}
+                            >
+                                {conversation.lastMessage}
+                            </Text>
+                            <div className="w-3 h-3 p-2 bg-green-600 text-white flex justify-center items-center rounded-full text-xs font-bold">
+                                3
+                            </div>
+                        </Flex>
+                    </Flex>
+                </Flex>
+                // <>
+                //     <WrapItem>
+                //         <Avatar
+                //             name={userInfo.name}
+                //             src={userInfo.image}
+                //             size={"md"}
+                //         />
+                //     </WrapItem>
+                //     <WrapItem ms={2}>
+                //         <Flex direction={"column"}>
+                //             <Flex direction={"column"}>
+                //                 <Text fontSize={"sm"} fontWeight={"bold"}>
+                //                     {userInfo.name}
+                //                 </Text>
+                //                 <Flex justifyContent={"space-between"} >
+                //                     <Text
+                //                         fontSize={"sm"}
+                //                         color={"gray.600"}
+                //                         noOfLines={1}
+                //                         me={6}
+                //                     >
+                //                         {conversation.lastMessage}
+                //                     </Text>
+                //                     <Text
+                //                         fontSize={"sm"}
+                //                         color={"gray.600"}
+                //                         noOfLines={1}
+                //                     >
+                //                         {new Date(
+                //                             conversation.updatedAt
+                //                         ).toLocaleString("en-AU", {
+                //                             day: "2-digit",
+                //                             month: "2-digit",
+                //                             year: "numeric",
+                //                         })}
+                //                     </Text>
+                //                 </Flex>
+                //             </Flex>
+                //         </Flex>
+                //     </WrapItem>
+                // </>
             )}
         </Flex>
+    ) : (
+        <></>
     );
 };
 

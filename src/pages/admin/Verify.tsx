@@ -102,9 +102,7 @@ const Verify = () => {
                                         {item.name}
                                     </Heading>
                                     <Text py="3" fontSize="sm">
-                                        {item.skills.reduce(
-                                            (acc, cur) => acc + ", " + cur
-                                        )}
+                                        {item.category}
                                     </Text>
                                     <HStack spacing={"4"}>
                                         <Button

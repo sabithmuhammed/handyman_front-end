@@ -1,15 +1,31 @@
-import { Box, Grid, GridItem } from "@chakra-ui/react";
+import { Box, Grid, GridItem, Text } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import PostCard from "../../components/user/common/PostCard";
 import ProfileTile from "../../components/user/Tradesman/ProfileTile";
 import { PostType, Tradesman } from "../../types/stateTypes";
-import { getPostsById, getProfileMinimum } from "../../api/tradesmanApi";
+import { getProfileMinimum } from "../../api/tradesmanApi";
+import NoPosts from "../../components/common/NoPosts";
+import Calendar from "../../components/user/common/Calendar";
+import BookingForm from "../../components/user/Tradesman/BookingForm";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+import { getScheduledDates } from "../../api/bookingApi";
+import { getPostsById } from "../../api/postApi";
+import Slots from "../../components/user/Tradesman/Slots";
 
 const TradesmanProfile = () => {
     const [tradesman, setTradesman] = useState<Tradesman>();
     const [posts, setPosts] = useState<PostType[]>([]);
     const { tradesmanId } = useParams();
+    const { userInfo } = useSelector((state: RootState) => state.auth);
+    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const [selectedSlots, setSelectedSlots] = useState<string[]>([]);
+    const [service, setService] = useState<{
+        description: string;
+        slots: string;
+        amount: string;
+    }>();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -25,13 +41,15 @@ const TradesmanProfile = () => {
         })();
     }, []);
 
+    //change this
+
     useEffect(() => {
         (async () => {
             if (tradesmanId) {
                 const res = await getPostsById(tradesmanId);
                 if (res?.data) {
                     setPosts(res.data);
-                    
+
                     return;
                 }
             }
@@ -39,19 +57,48 @@ const TradesmanProfile = () => {
         })();
     }, []);
 
+    
+
     return (
-        <div className="pt-20 pb-7 min-h-screen">
-            <Grid templateColumns="repeat(3, 1fr)" gap={6}>
+        <div className="pt-12 lg:pt-20 pb-7 min-h-screen">
+            <Grid
+                templateColumns={{ lg: "repeat(3, 1fr)" }}
+                gap={{ base: 3, lg: 6 }}
+                px={2}
+            >
                 {tradesman && <ProfileTile {...tradesman} />}
-                <GridItem w="100%" bg="" colSpan={2}>
+                <GridItem w="100%" bg="" colSpan={{ base: 1, lg: 2 }}>
                     <Grid gap={4}>
                         <Box
-                            h={"400px"}
                             w={"full"}
                             bg={"white"}
                             boxShadow={"xl"}
                             rounded={6}
-                        ></Box>
+                            className="grid grid-cols-1 lg:grid-cols-2 "
+                        >
+                            {/* <Calendar specialDates={scheduledDates} /> */}
+                            {tradesman?.configuration && (
+                                <Slots
+                                    {...tradesman.configuration}
+                                    selectedDate={selectedDate}
+                                    setSelectedDate={setSelectedDate}
+                                    selectedSlots={selectedSlots}
+                                    setSelectedSlots={setSelectedSlots}
+
+                                    setService={setService}
+                                    tradesmanId={tradesmanId as string}
+                                />
+                            )}
+                            {userInfo ? (
+                                <BookingForm selectedDate={selectedDate} selectedSlots={selectedSlots} service={service}/>
+                            ) : (
+                                <div className="bg-gray-100 rounded-md flex justify-center items-center">
+                                    <Text fontSize={"lg"}>
+                                        Login to book this tradesman
+                                    </Text>
+                                </div>
+                            )}
+                        </Box>
                         <Box
                             h={"50px"}
                             w={"full"}
@@ -59,13 +106,24 @@ const TradesmanProfile = () => {
                             boxShadow={"xl"}
                             rounded={6}
                         >
-                            <NavLink to="./abc">Posts</NavLink>
-                            <NavLink to="./abc">Reviews</NavLink>
+                            <NavLink
+                                to="./abc"
+                                className={"flex items-center h-full mx-3"}
+                            >
+                                <Text fontSize={"lg"}>Posts</Text>
+                            </NavLink>
                         </Box>
-                        {posts.length !== 0 && tradesman &&
+                        {posts.length !== 0 && tradesman ? (
                             posts.map((post) => (
-                                <PostCard key={post._id} {...post} {...tradesman}/>
-                            ))}
+                                <PostCard
+                                    key={post._id}
+                                    {...tradesman}
+                                    {...post}
+                                />
+                            ))
+                        ) : (
+                            <NoPosts />
+                        )}
                     </Grid>
                 </GridItem>
             </Grid>

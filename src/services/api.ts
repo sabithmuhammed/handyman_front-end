@@ -27,7 +27,7 @@ Api.interceptors.response.use(
         if (error.response.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
             try {
-                const response = await axios.post(import.meta.env.VITE_BASE_URL+commonEndpoints.refresh);
+                const response = await axios.get(import.meta.env.VITE_BASE_URL+commonEndpoints.refresh,{withCredentials:true});
                 const {accessToken} = response.data
                 localStorage.setItem('accessToken',accessToken)
                 originalRequest.headers.Authorization = `Bearer ${accessToken}`

@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Card = ({ name, profile, skills,_id }) => {
+const Card = ({ name, profile, category,_id }) => {
     const bgColors = [
         "bg-blue-200",
         "bg-green-200",
@@ -23,29 +23,25 @@ const Card = ({ name, profile, skills,_id }) => {
     const color = Math.floor(Math.random() * bgColors.length);
 
     return (
-        <div className="h-[350px] bg-blue-100 rounded-2xl flex flex-col items-center">
-            <div className="w-[calc(100%-40px)] h-[180px] mt-[15px]">
+        <div className="h-[400px] md:h-[350px] max-md:w-[300px] bg-blue-100 rounded-2xl flex flex-col items-center">
+            <div className="w-[calc(100%-40px)] h-[230px] md:h-[180px] mt-[15px]">
                 <img
                     src={profile}
                     alt=""
-                    className=" rounded-t-lg object-cover w-full h-full"
+                    className=" rounded-t-lg object-cover object-top w-full h-full"
                 />
             </div>
             <div
                 className={`h-[140px] w-[calc(100%-20px)] ${bgColors[color]} rounded-xl flex flex-col items-center justify-between py-2`}
             >
                 <h2 className="text-xl font-bold">{name}</h2>
-                {typeof skills == "number" ? (
-                    <p className="text-xl font-bold">₹{skills}/-</p>
+                {typeof category == "number" ? (
+                    <p className="text-xl font-bold">₹{category}/-</p>
                 ) : (
-                    skills.map((skill, index) => (
-                        <p className="text-sm" key={index}>
-                            {skill}
-                        </p>
-                    ))
+                    category
                 )}
 
-                {typeof skills == "number" ? (
+                {typeof category == "number" ? (
                     <button
                         className={`rounded-full px-3 w-[170px] bg-gray-900 py-1 ${textColors[color]}`}
                     >

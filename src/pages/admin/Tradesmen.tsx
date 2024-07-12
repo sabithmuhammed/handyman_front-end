@@ -19,6 +19,7 @@ import { blockTradesmen, getTradesmen, unblockTradesmen } from "../../api/adminA
 import { PAGE_LIMIT } from "../../constants/pagesConstants";
 import ModalComponent from "../../components/common/ModalComponent";
 import ViewDetails from "../../components/admin/ViewDetails";
+import { getAllTradesmen } from "../../api/userApi";
 
 const Tradesmen = () => {
     const [searchParams] = useSearchParams();
@@ -41,7 +42,7 @@ const Tradesmen = () => {
 
     useEffect(() => {
         (async () => {
-            const res = await getTradesmen({ page });
+            const res = await getAllTradesmen({ category:"" });
             if (res?.data) {
                 setTradesmen(res.data?.tradesmen);
                 setPageCount(Math.floor(res.data?.totalCount / PAGE_LIMIT));

@@ -6,21 +6,8 @@ export const navItems = [
     { title: "Home", link: "/" },
     { title: "Explore", link: "/explore" },
     { title: "Tradesmen", link: "/tradesmen" },
-    { title: "Tools", link: "/tools" },
 ];
 
-export const homeStats = [
-    { title: "Members", Icon: RiUserHeartLine, number: "1K" },
-    {
-        title: "Tradesmen",
-        Icon: FaHardHat,
-        number: "500",
-    },
-    {
-        title: "Tools",
-        Icon: GiDrill,
-        number: "200",
-    },
-];
 
-export const PAGE_LIMIT = 10;
+
+export const PAGE_LIMIT = 5;

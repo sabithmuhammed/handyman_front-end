@@ -1,17 +1,35 @@
 export type Tradesman = {
+    _id: string;
     name: string;
     profile: string;
-    idProof?: string;
-    wage: {
-        amount: number;
-        type: string;
-    };
-    skills: string[];
+    idProof: string;
+    userId: string;
     experience: number;
-    location: [number, number];
-    rating: number;
-    _id: string;
-    isBlocked: boolean;
+    category: string;
+    location: {
+        coordinates: [number, number];
+        type: "Point";
+    };
+    rating?: {
+        ratiing: number;
+        userId: string;
+    };
+    configuration?: ConfigurationType;
+    verificationStatus?: "pending" | "rejected" | "verified";
+    isBlocked?: boolean;
+};
+
+export type ConfigurationType = {
+    startingTime: string;
+    endingTime: string;
+    slotSize: number;
+    bufferTime: number;
+    workingDays: boolean[];
+    services: {
+        description: string;
+        amount: string;
+        slots: string;
+    }[];
 };
 
 export type LocationType = {
@@ -41,8 +59,8 @@ export type PostType = {
     text?: string;
     image?: string;
     date: Date;
-    likes?: object[];
-    comments?: object[];
+    tradesmanId: string | { name: string; profile: string };
+    likes?: string[];
 };
 
 export type ConversationType = {
@@ -69,3 +87,79 @@ export type MessageType = {
     createdAt?: Date;
     updatedAt: Date;
 };
+
+export type BookingType = {
+    _id: string;
+    id?: string;
+    userId: string | { _id: string; name: string; profile: string };
+    tradesmanId:
+        | string
+        | {
+              name: string;
+              profile: string;
+              _id: string;
+          };
+    bookingNumber: string;
+    description: string;
+    bookingDate: string;
+    service: string;
+    slots: string[];
+    status: "booked" | "canceled" | "completed";
+    address: {
+        house: string;
+        street: string;
+        city: string;
+        state: string;
+        country: string;
+        pincode: string;
+        location: {
+            coordinates: [number, number];
+            type: string;
+        };
+    };
+    amount: number;
+    paymentDetails: {
+        status: "pending" | "success";
+        date: string | null;
+    };
+    createdAt?: Date;
+    updatedAt?: Date;
+};
+
+export type CommentType = {
+    _id: string;
+    postId: string;
+    userId: {
+        _id: string;
+        name: string;
+        profile: string;
+    };
+    comment: string;
+    softDelete: boolean;
+    replies: {
+        userId: {
+            _id: string;
+            name: string;
+            profile: string;
+        };
+        comment: string;
+        createdAt: string;
+    }[];
+    createdAt: string;
+};
+
+export default interface Invoice {
+    _id?: string;
+    id?: string;
+    particulars: {
+        description: "string";
+        amount: number;
+        quantity: number;
+    }[];
+    total: number;
+    status: "pending" | "paid";
+    bookingId: string | string;
+    invoiceNumber: string;
+    createdAt: Date;
+    updatedAt?: Date;
+}

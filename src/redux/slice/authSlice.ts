@@ -5,6 +5,7 @@ interface user {
     email: string;
     userId: string;
     isTradesman: boolean;
+    profile: string;
 }
 
 interface admin {
@@ -43,6 +44,12 @@ const authSlice = createSlice({
             );
             localStorage.setItem("accessToken", action.payload.accessToken);
         },
+        updateUserInfo: (state, action) => {
+            if (state.userInfo) {
+                state.userInfo = action.payload.userData;
+                localStorage.setItem("user", JSON.stringify(action.payload.userData));
+            }
+        },
         logoutUser: (state) => {
             state.userInfo = null;
             localStorage.removeItem("user");
@@ -53,7 +60,7 @@ const authSlice = createSlice({
             state.tradesmanInfo = { name, profile, tradesmanId };
             localStorage.setItem(
                 "tradesman",
-                JSON.stringify({ name, profile,tradesmanId })
+                JSON.stringify({ name, profile, tradesmanId })
             );
             localStorage.setItem("accessToken", accessToken);
         },
@@ -84,6 +91,7 @@ export const {
     removeTradesman,
     loginAdmin,
     logoutAdmin,
+    updateUserInfo,
 } = authSlice.actions;
 
 export default authSlice.reducer;

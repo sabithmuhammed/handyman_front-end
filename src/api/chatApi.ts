@@ -12,9 +12,9 @@ export const addConversation = async (data: object) => {
     }
 };
 
-export const getConversations = async () => {
+export const getConversations = async (senderId:string) => {
     try {
-        const response = await Api.get(chatEndpoints.getConversations);
+        const response = await Api.get(chatEndpoints.getConversations+`/${senderId}`);
         return response;
     } catch (error) {
         errorHandler(error);

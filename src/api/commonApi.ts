@@ -23,3 +23,12 @@ export const logout = async () => {
         errorHandler(error);
     }
 };
+
+export const createOrder = async (amount:number) => {
+    try {
+        const response = await Api.post(commonEndpoints.createOrder,{amount});
+        return response;
+    } catch (error) {
+        errorHandler(error);
+    }
+};

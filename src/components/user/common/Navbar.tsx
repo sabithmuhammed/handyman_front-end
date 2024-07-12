@@ -1,12 +1,11 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import logo from "../../../assets/logo.png";
-import { GiHamburgerMenu } from "react-icons/gi";
+import logoSmall from "../../../assets/logo_small.png";
 import { navItems } from "../../../constants/pagesConstants";
 import { Link, NavLink } from "react-router-dom";
 import { MdClose } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
-import avatar from "../../../assets/avatar2.png";
 import {
     RiArrowUpSLine,
     RiArrowDownSLine,
@@ -15,40 +14,120 @@ import {
 import { logout } from "../../../api/commonApi";
 import { toast } from "react-toastify";
 import { logoutUser, removeTradesman } from "../../../redux/slice/authSlice";
+import { IoMdChatbubbles } from "react-icons/io";
+import {
+    Avatar,
+    Drawer,
+    DrawerBody,
+    DrawerContent,
+    DrawerHeader,
+    DrawerOverlay,
+    Grid,
+    StackDivider,
+    Text,
+    VStack,
+    useBoolean,
+    useDisclosure,
+} from "@chakra-ui/react";
+import { IoPersonCircleOutline } from "react-icons/io5";
+import { LuMenu } from "react-icons/lu";
+import { AiOutlineClose } from "react-icons/ai";
 
 const Navbar = () => {
-    const [nav, setNav] = useState(false);
-    const [profileToggle, setProfileToggle] = useState(false);
-
+    const [profileToggle, setProfileToggle] = useBoolean();
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const { userInfo } = useSelector((state: RootState) => state.auth);
+    const [currentNav, setCurrentNav] = useState("/home");
 
     const dispatch = useDispatch();
 
-    const showNav = () => {
-        setNav(true);
-    };
-    const hideNav = () => {
-        setNav(false);
-    };
+    useEffect(() => {
+        onClose();
+    },[currentNav]);
+
     const logOut = async () => {
         const response = await logout();
         if (response) {
-
             toast.success(response?.data?.data?.message);
             dispatch(logoutUser());
             dispatch(removeTradesman());
         }
     };
     return (
-        <header className="w-[1280px] h-20 mx-auto bg-white fixed top-0 rounded-b-3xl z-50">
-            <nav className="w-full h-full flex items-center px-4 justify-between rounded-3xl bg-white shadow-xl">
-                <Link to="/" className="logo">
-                    <img src={logo} width="150" alt="" />
+        <header className=" w-full lg:w-[1280px] h-14 lg:h-20 mx-auto bg-white fixed top-0 lg:rounded-b-3xl z-50">
+            <nav className="w-full h-full flex items-center px-4 justify-between lg:rounded-3xl bg-white shadow-xl">
+                <div className="flex items-center ">
+                    <LuMenu size={24} className="lg:hidden" onClick={onOpen} />
+                    <Link to="/" className="logo">
+                        <img
+                            src={logo}
+                            width="150"
+                            className="max-md:hidden"
+                            alt=""
+                        />
+                        <img
+                            src={logoSmall}
+                            width="40"
+                            className="md:hidden ms-2"
+                            alt=""
+                        />
+                    </Link>
+                </div>
+                <Link
+                    to={userInfo?.isTradesman?"/tradesman/dashboard":"/tradesman/register"}
+                    className="max-lg:text-sm rounded-full bg-yellow-200 px-3"
+                >
+                   {userInfo?.isTradesman?"Go to your dashboard":"Register as a tradesman"}
                 </Link>
-                <Link to={"/tradesman/register"} className="rounded-full bg-yellow-200 px-3">Register as a tradesman</Link>
+                <Drawer placement={"left"} onClose={onClose} isOpen={isOpen}>
+                    <DrawerOverlay />
+                    <DrawerContent>
+                        <DrawerHeader
+                            borderBottomWidth="1px"
+                            className="flex justify-between items-center"
+                        >
+                            <Link to="/" className="logo">
+                                <img
+                                    src={logo}
+                                    width="100"
+                                    className=""
+                                    alt=""
+                                />
+                            </Link>
+                            <AiOutlineClose onClick={onClose} />
+                        </DrawerHeader>
+                        <DrawerBody>
+                            <ul className="flex flex-col text-indigo-950 select-none">
+                                {navItems.map((item) => (
+                                    <li key={item.title} className="my-3">
+                                        <NavLink
+                                            to={item.link}
+                                            onClick={()=>setCurrentNav(item.link)}
+                                            className={({
+                                                isActive,
+                                                isPending,
+                                            }) =>
+                                                `cursor-pointer ${
+                                                    isPending
+                                                        ? "underline"
+                                                        : isActive
+                                                        ? "underline"
+                                                        : "no-underline"
+                                                }`
+                                            }
+                                        >
+                                            {item.title}
+                                        </NavLink>
+                                    </li>
+                                ))}
+                            </ul>
+                        </DrawerBody>
+                    </DrawerContent>
+                </Drawer>
+
                 <ul className="flex text-indigo-950 select-none">
                     {navItems.map((item) => (
-                        <li key={item.title} className="mx-4">
+                        <li key={item.title} className="mx-4 max-lg:hidden">
                             <NavLink
                                 to={item.link}
                                 className={({ isActive, isPending }) =>
@@ -71,36 +150,69 @@ const Navbar = () => {
                             <Link to="/login">Login</Link>
                         </li>
                     ) : (
-                        <div className=" flex mx-4 items-center">
-                            <div className="w-7 h-7 bg-red-500 rounded-full overflow-hidden border-2 flex-shrink-0">
-                                <img src={avatar} className="" alt="" />
-                            </div>
-                            <div
-                                className="mx-2    flex items-center cursor-pointer relative "
-                                onClick={() => setProfileToggle((p) => !p)}
-                            >
-                                {userInfo.name}{" "}
+                        <div
+                            className=" flex lg:mx-4 items-center"
+                            onMouseEnter={setProfileToggle.on}
+                            onClick={setProfileToggle.toggle}
+                        >
+                            <Avatar
+                                size={"xs"}
+                                src={userInfo.profile}
+                                name={userInfo.name}
+                            />
+
+                            <div className="flex items-center cursor-pointer relative ">
+                                <div className="max-md:hidden ms-2">
+                                    {userInfo.name}
+                                </div>
                                 {profileToggle ? (
                                     <RiArrowUpSLine />
                                 ) : (
                                     <RiArrowDownSLine />
                                 )}
                                 {profileToggle && (
-                                    <div className="absolute top-full mt-2 right-0 w-40 h-20 bg-white rounded-md shadow-md flex flex-col items-center justify-around">
+                                    <VStack
+                                        divider={<StackDivider />}
+                                        className="absolute top-full mt-2 right-0 w-32 bg-white rounded-md shadow-md flex flex-col items-center justify-between py-2"
+                                        onMouseLeave={setProfileToggle.off}
+                                    >
                                         <Link
                                             to="/profile"
-                                            className=" text-indigo-950 font-normal"
+                                            className=" text-indigo-950 font-normal flex items-center"
                                         >
-                                            Profile
+                                            <div className="grid grid-cols-3 gap-3">
+                                                <IoPersonCircleOutline
+                                                    className="col-span-1"
+                                                    size={20}
+                                                />
+                                                <Text className="col-span-2">
+                                                    Profile
+                                                </Text>
+                                            </div>
                                         </Link>
-                                        <button
-                                            className=" text-white font-normal flex items-center bg-red-500 px-2 py-1 rounded-md"
+                                        <Link
+                                            to="/chat"
+                                            className=" text-indigo-950 font-normal flex items-center"
+                                        >
+                                            <div className="grid grid-cols-3 gap-3">
+                                                <IoMdChatbubbles size={20} />
+                                                <Text className="col-span-2">
+                                                    Chat
+                                                </Text>
+                                            </div>
+                                        </Link>
+                                        <div
+                                            className="text-red-500 font-normal flex items-center"
                                             onClick={logOut}
                                         >
-                                            {" "}
-                                            <RiLogoutCircleLine /> Logout
-                                        </button>
-                                    </div>
+                                            <div className="grid grid-cols-3 gap-3">
+                                                <RiLogoutCircleLine size={20} />
+                                                <Text className="col-span-2">
+                                                    Logout
+                                                </Text>
+                                            </div>
+                                        </div>
+                                    </VStack>
                                 )}
                             </div>
                         </div>
@@ -108,7 +220,6 @@ const Navbar = () => {
                 </ul>
             </nav>
         </header>
-        
     );
 };
 

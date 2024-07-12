@@ -9,7 +9,9 @@ import {
     InputGroup,
     InputLeftElement,
     Stack,
+    StackDivider,
     Text,
+    VStack,
     Wrap,
     WrapItem,
 } from "@chakra-ui/react";
@@ -36,7 +38,7 @@ import {
     MessageType,
     ReceiverType,
 } from "../../types/stateTypes";
-import { io, Socket } from "socket.io-client";
+import { useSocket } from "../../context/SocketProvider";
 
 const Chat = () => {
     const [chat, setChat] = useState<string>("");
@@ -51,13 +53,14 @@ const Chat = () => {
     );
     const [messages, setMessages] = useState<MessageType[]>([]);
     const [newMessage, setNewMessage] = useState<MessageType>();
-    const socket = useRef<Socket | undefined>();
+    const socket = useSocket()
 
     useEffect(() => {
         (async () => {
-            if (user) {
+            if (user && senderId) {
                 const res = await addConversation({
-                    user,
+                    user1: user,
+                    user2: senderId,
                     tradesman: isTradesman ? user : null,
                 });
                 if (res?.data) {
@@ -69,9 +72,11 @@ const Chat = () => {
 
     useEffect(() => {
         (async () => {
-            const res = await getConversations();
-            if (res?.data) {
-                setConversations(res.data);
+            if (senderId) {
+                const res = await getConversations(senderId);
+                if (res?.data) {
+                    setConversations(res.data);
+                }
             }
         })();
     }, [messages]);
@@ -88,18 +93,9 @@ const Chat = () => {
     }, [chat]);
 
     useEffect(() => {
-        socket.current = io(import.meta.env.VITE_CHAT_URL);
-        socket.current.emit("addUser", { userId: senderId });
-
-        socket.current.on("newMessage", (message) => {
-            console.log(message,"hhhhhh");
-            
+        socket?.on("newMessage", (message) => {
             setNewMessage(message);
         });
-
-        return () => {
-            socket.current?.close();
-        };
     }, []);
 
     useEffect(() => {
@@ -109,13 +105,13 @@ const Chat = () => {
     }, [newMessage]);
 
     return (
-        <div className="pt-20 pb-7 min-h-screen">
+        <div className="max-md:pt-8 pt-20 max-md:pb-0 pb-7 min-h-screen">
             <Grid templateColumns="repeat(3, 1fr)" gap={6}>
-                <GridItem w="100%" colSpan={1}>
+                <GridItem w="100%" colSpan={{ base: 3, md: 1 }}>
                     <Flex
-                        h={"85vh"}
+                        h={{ base: "100vh", md: "85vh" }}
                         w={"full"}
-                        className="bg-indigo-200"
+                        className="max-md:bg-white bg-gray-200"
                         rounded={10}
                         py={6}
                         overflow={"auto"}
@@ -134,7 +130,13 @@ const Chat = () => {
                                 />
                             </InputGroup>
                         </Box>
-                        <Stack spacing={4} mt={3} overflow={"auto"} px={6}>
+                        <VStack
+                            spacing={0}
+                            mt={3}
+                            overflow={"auto"}
+                            px={6}
+                            divider={<StackDivider color={"gray.300"} />}
+                        >
                             {conversations.length !== 0 &&
                                 conversations.map((conversation) => (
                                     <List
@@ -146,7 +148,7 @@ const Chat = () => {
                                         setReceiverInfo={setReceiverInfo}
                                     />
                                 ))}
-                        </Stack>
+                        </VStack>
                     </Flex>
                 </GridItem>
 
@@ -156,7 +158,7 @@ const Chat = () => {
                         messages={messages}
                         setMessages={setMessages}
                         chat={chat}
-                        socket={socket.current}
+                        senderId={senderId as string}
                     />
                 ) : (
                     <Box
@@ -164,7 +166,7 @@ const Chat = () => {
                         bg="gray.200"
                         h={"85vh"}
                         rounded={10}
-                        className="flex flex-col col-span-2 justify-center items-center"
+                        className="flex flex-col col-span-2 justify-center items-center max-md:hidden"
                         boxShadow={"md"}
                     >
                         <img

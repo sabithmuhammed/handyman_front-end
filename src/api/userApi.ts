@@ -39,12 +39,32 @@ export const resentOtp = async (user: Object) => {
     }
 };
 
-export const getTradesmen = async ({ page }) => {
+export const getTradesmen = async (filters: Object) => {
     try {
-        const response = await Api.get(
-            userEndpoints.getTradesmen +
-                `?pageSize=${PAGE_LIMIT}&page=${page || 1}`
-        );
+        console.log(filters);
+        
+        const response = await Api.get(userEndpoints.getTradesmen, {
+            params: {
+                ...filters,
+                pageSize: PAGE_LIMIT,
+            },
+        });
+        return response;
+    } catch (error) {
+        errorHandler(error);
+    }
+};
+
+export const getAllTradesmen = async (filters: Object,limit?:number) => {
+    try {
+        console.log(filters);
+        
+        const response = await Api.get(userEndpoints.getAllTradesmen, {
+            params: {
+                ...filters,
+                pageSize:limit || PAGE_LIMIT,
+            },
+        });
         return response;
     } catch (error) {
         errorHandler(error);
@@ -69,6 +89,15 @@ export const getTools = async () => {
     }
 };
 
+export const getMyTools = async () => {
+    try {
+        const response = await Api.get(userEndpoints.getMyTools);
+        return response;
+    } catch (error) {
+        errorHandler(error);
+    }
+};
+
 export const getSkills = async () => {
     try {
         const response = await Api.get(userEndpoints.getSkills);
@@ -78,11 +107,58 @@ export const getSkills = async () => {
     }
 };
 
-export const getUserDetails = async (userId:string) => {
+export const getUserDetails = async (userId: string) => {
     try {
-        const response = await Api.get(userEndpoints.getUserInfo+`/${userId}`);
+        const response = await Api.get(
+            userEndpoints.getUserInfo + `/${userId}`
+        );
         return response;
     } catch (error) {
         errorHandler(error);
     }
 };
+
+export const forgotVerifyMail = async (email: string) => {
+    try {
+        const response = await Api.post(userEndpoints.verifyMail, { email });
+        return response;
+    } catch (error) {
+        errorHandler(error);
+    }
+};
+
+export const forgotVerifyOtp = async (data: { email: string; otp: string }) => {
+    try {
+        const response = await Api.post(userEndpoints.forgotOtpVerify, data);
+        return response;
+    } catch (error) {
+        errorHandler(error);
+    }
+};
+
+export const forgotChangePassword = async (data: {
+    email: string;
+    otp: string;
+    password: string;
+}) => {
+    try {
+        const response = await Api.post(
+            userEndpoints.forgotPasswordChange,
+            data
+        );
+        return response;
+    } catch (error) {
+        errorHandler(error);
+    }
+};
+
+export const updateUser = async (data: FormData) => {
+    try {
+        const response = await Api.patch(userEndpoints.userUpdate, data);
+        return response;
+    } catch (error) {
+        errorHandler(error);
+    }
+};
+
+

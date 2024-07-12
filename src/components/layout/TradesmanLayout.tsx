@@ -20,17 +20,14 @@ import {
 import React from "react";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { LuLayoutDashboard } from "react-icons/lu";
-import { GrDocumentVerified } from "react-icons/gr";
 import { GrSchedules } from "react-icons/gr";
 import { PiChatsBold } from "react-icons/pi";
-import { MdOutlinePermMedia } from "react-icons/md";
+import { MdOutlinePermMedia,MdOutlineSettings } from "react-icons/md";
 import { IoIosHome } from "react-icons/io";
 import { GoSidebarCollapse, GoSidebarExpand } from "react-icons/go";
 import logo from "../../assets/logo.png";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
-
-
 
 const TradesmanLayout = () => {
     const { tradesmanInfo } = useSelector((state: RootState) => state.auth);
@@ -71,17 +68,6 @@ const TradesmanLayout = () => {
                                 <Text>Dashboard</Text>
                             </Stack>
                         </NavLink>
-                        <NavLink to="bookings" className={navLinkStyle}>
-                            <Stack
-                                direction="row"
-                                align="center"
-                                spacing={3}
-                                p={3}
-                            >
-                                <Icon as={GrDocumentVerified} boxSize={5} />
-                                <Text>Bookings</Text>
-                            </Stack>
-                        </NavLink>
 
                         <NavLink to="schedules" className={navLinkStyle}>
                             <Stack
@@ -114,6 +100,18 @@ const TradesmanLayout = () => {
                             >
                                 <Icon as={MdOutlinePermMedia} boxSize={5} />
                                 <Text>Posts</Text>
+                            </Stack>
+                        </NavLink>
+
+                        <NavLink to="settings" className={navLinkStyle}>
+                            <Stack
+                                direction="row"
+                                align="center"
+                                spacing={3}
+                                p={3}
+                            >
+                                <Icon as={MdOutlineSettings} boxSize={5} />
+                                <Text>Settings</Text>
                             </Stack>
                         </NavLink>
 
@@ -179,23 +177,6 @@ const TradesmanLayout = () => {
                                             <Text>Dashboard</Text>
                                         </Stack>
                                     </NavLink>
-                                    <NavLink
-                                        to="bookings"
-                                        className={navLinkStyle}
-                                    >
-                                        <Stack
-                                            direction="row"
-                                            align="center"
-                                            spacing={3}
-                                            p={3}
-                                        >
-                                            <Icon
-                                                as={GrDocumentVerified}
-                                                boxSize={5}
-                                            />
-                                            <Text>Bookings</Text>
-                                        </Stack>
-                                    </NavLink>
 
                                     <NavLink
                                         to="schedules"
@@ -248,6 +229,24 @@ const TradesmanLayout = () => {
                                             <Text>Posts</Text>
                                         </Stack>
                                     </NavLink>
+
+                                    <NavLink
+                                        to="settings"
+                                        className={navLinkStyle}
+                                    >
+                                        <Stack
+                                            direction="row"
+                                            align="center"
+                                            spacing={3}
+                                            p={3}
+                                        >
+                                            <Icon
+                                                as={MdOutlineSettings}
+                                                boxSize={5}
+                                            />
+                                            <Text>Settings</Text>
+                                        </Stack>
+                                    </NavLink>
                                     <Link to="/">
                                         <Stack
                                             direction="row"
@@ -261,10 +260,7 @@ const TradesmanLayout = () => {
                                             mt="auto"
                                             cursor={"pointer"}
                                         >
-                                            <Icon
-                                                as={IoIosHome}
-                                                boxSize={5}
-                                            />
+                                            <Icon as={IoIosHome} boxSize={5} />
                                             <Text>Go back</Text>
                                         </Stack>
                                     </Link>
@@ -285,7 +281,9 @@ const TradesmanLayout = () => {
                             <button onClick={onOpen} className="md:hidden">
                                 <GoSidebarCollapse size={20} />
                             </button>
-                            <Heading size="md">Hi, {tradesmanInfo?.name}</Heading>
+                            <Heading size="md">
+                                Hi, {tradesmanInfo?.name}
+                            </Heading>
                             <Avatar
                                 name={tradesmanInfo?.name}
                                 src={tradesmanInfo?.profile}

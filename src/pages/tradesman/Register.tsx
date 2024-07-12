@@ -7,36 +7,32 @@ import {
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { LocationType } from "../../types/stateTypes";
-import { useDispatch } from "react-redux";
-import { setTradesman } from "../../redux/slice/authSlice";
-import { Box, Button } from "@chakra-ui/react";
+import { useDispatch, useSelector } from "react-redux";
+import { setTradesman, updateUserInfo } from "../../redux/slice/authSlice";
+import { Box, Button, useDisclosure } from "@chakra-ui/react";
 import Lottie from "lottie-react";
 import beatLoader from "../../assets/animation/beatLoader.json";
+import { MdMyLocation } from "react-icons/md";
+import getCurrentLocation from "../../utils/getCurrentLocation";
+import ModalComponent from "../../components/common/ModalComponent";
+import { IoIosCheckmarkCircle } from "react-icons/io";
+import { RootState } from "../../redux/store";
 
 const Register = () => {
     const [name, setName] = useState("");
     const [profile, setProfile] = useState<File | null>(null);
     const [idImage, setIdImage] = useState<File | null>(null);
-    const [skills, setSkills] = useState("");
+    const [category, setCategory] = useState("");
     const [experience, setExperience] = useState("");
-    const [wageAmount, setWageAmount] = useState("");
-    const [wageType, setWageType] = useState("Day");
     const [location, setLocation] = useState({} as LocationType);
     const [showRegister, setShowRegister] = useState(true);
-    const [btnLoading,setBtnLoading] = useState(false)
+    const [btnLoading, setBtnLoading] = useState(false);
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [locationSelected, setLocationSelected] = useState(false);
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
-
-    useEffect(() => {
-        navigator.geolocation.getCurrentPosition((pos) => {
-            setLocation({
-                ...location,
-                latitude: pos.coords.latitude,
-                longitude: pos.coords.longitude,
-            });
-        });
-    }, []);
+    const { userInfo } = useSelector((state: RootState) => state.auth);
 
     useEffect(() => {
         (async () => {
@@ -46,6 +42,13 @@ const Register = () => {
                     setShowRegister(false);
                 }
                 if (response.data.status == "Verified") {
+                    console.log(userInfo, "userInfo");
+
+                    dispatch(
+                        updateUserInfo({
+                            userData: { ...userInfo, isTradesman: true },
+                        })
+                    );
                     dispatch(setTradesman({ ...response.data.data }));
                     navigate("../dashboard");
                 }
@@ -62,16 +65,12 @@ const Register = () => {
             toast.error("Invalid name");
             error = true;
         }
-        if (!skills.trim()) {
+        if (!category.trim()) {
             toast.error("Skill can't be empty");
             error = true;
         }
         if (!experience) {
             toast.error("Experience can't be empty");
-            error = true;
-        }
-        if (!wageAmount) {
-            toast.error("Wage amount can't be empty");
             error = true;
         }
         if (!profile) {
@@ -87,10 +86,8 @@ const Register = () => {
         }
         const formObject = {
             name,
-            skills,
+            category,
             experience,
-            wageAmount,
-            wageType,
             ...location,
         };
         const formData = Object.keys(formObject).reduce((formData, key) => {
@@ -106,6 +103,7 @@ const Register = () => {
         }
         setBtnLoading(true);
     };
+    console.log(import.meta.env.VITE_MAPBOX_TOKEN);
 
     return (
         <div className="w-full   py-7 bg-gray-200 flex justify-center items-center">
@@ -162,14 +160,14 @@ const Register = () => {
                             className=" border-gray-400 h-9 w-full border-b-2 focus:outline-none indent-2 peer"
                             placeholder=""
                             id="skills"
-                            onChange={(e) => setSkills(e.target.value)}
-                            value={skills}
+                            onChange={(e) => setCategory(e.target.value)}
+                            value={category}
                         />
                         <label
                             htmlFor="skills"
                             className="absolute text-sm left-0 -top-3 px-2 rounded-md text-indigo-950 peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-[6px] peer-placeholder-shown:text-base peer-placeholder-shown:bg-transparent peer-focus:text-sm peer-focus:left-0 peer-focus:-top-3 peer-focus:rounded-md peer-focus:text-indigo-950  transition-all ease-in"
                         >
-                            Skills (Eg:plumber, electrician)
+                            Category (Eg:plumber, electrician)
                         </label>
                     </div>
                     <div className="flex my-5">
@@ -188,33 +186,6 @@ const Register = () => {
                             >
                                 Experience
                             </label>
-                        </div>
-                        <div className=" relative">
-                            <input
-                                type="text"
-                                className=" border-gray-400 h-9 w-full border-b-2 focus:outline-none indent-2 peer"
-                                placeholder=""
-                                id="wage"
-                                value={wageAmount}
-                                onChange={(e) => setWageAmount(e.target.value)}
-                            />
-                            <label
-                                htmlFor="wage"
-                                className="absolute text-sm left-0 -top-3 px-2 rounded-md text-indigo-950 peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-[6px] peer-placeholder-shown:text-base peer-placeholder-shown:bg-transparent peer-focus:text-sm peer-focus:left-0 peer-focus:-top-3 peer-focus:rounded-md peer-focus:text-indigo-950  transition-all ease-in"
-                            >
-                                Wage
-                            </label>
-                        </div>
-                        <div className="flex-grow relative">
-                            <select
-                                className=" border-gray-400 h-9 w-[100px] border-b-2 focus:outline-none indent-2 peer"
-                                id="wage"
-                                onChange={(e) => setWageType(e.target.value)}
-                                value={wageType}
-                            >
-                                <option value="Day">Day</option>
-                                <option value="Hour">Hour</option>
-                            </select>
                         </div>
                     </div>
                     <div className="flex-grow my-5">
@@ -235,18 +206,56 @@ const Register = () => {
                             Select location
                         </p>
                         <div className="">
-                            {location.latitude && location.longitude && (
-                                <MapComponent
-                                    {...location}
-                                    setLocation={setLocation}
-                                />
-                            )}
+                            <Button
+                                border="2px"
+                                borderColor="rgb(30, 27, 75)"
+                                w={"full"}
+                                leftIcon={
+                                    !locationSelected ? (
+                                        <MdMyLocation size={20} />
+                                    ) : (
+                                        <IoIosCheckmarkCircle size={20} />
+                                    )
+                                }
+                                fontSize={"sm"}
+                                onClick={() =>
+                                    getCurrentLocation(setLocation, onOpen)
+                                }
+                            >
+                                {!locationSelected
+                                    ? "Select location"
+                                    : "Location selected"}
+                            </Button>
+                            <ModalComponent
+                                isOpen={isOpen}
+                                onClose={onClose}
+                                title={"Select location"}
+                                action={{
+                                    text: "Select",
+                                    color: "blue",
+                                    onClick: () => {
+                                        setLocationSelected(true);
+                                        onClose();
+                                    },
+                                }}
+                            >
+                                <div className="w-[400px]">
+                                    <MapComponent
+                                        {...location}
+                                        setLocation={setLocation}
+                                    />
+                                </div>
+                            </ModalComponent>
                         </div>
                     </div>
                     <Button
-                        isLoading = {btnLoading}
+                        isLoading={btnLoading}
                         spinner={
-                            <Lottie animationData={beatLoader} loop={true} className=""/>
+                            <Lottie
+                                animationData={beatLoader}
+                                loop={true}
+                                className=""
+                            />
                         }
                         colorScheme="blue"
                         className="mt-5 w-[200px] py-2 rounded-full self-center"

@@ -8,15 +8,16 @@ const ProfileTile = ({
     _id,
     name,
     profile,
-    wage,
     experience,
     rating,
-    skills,
+    category,
+    configuration,
 }: Tradesman) => {
+    
     return (
-        <GridItem w="100%" colSpan={1}>
+        <GridItem w="full" colSpan={1}>
             <Flex
-                h={"400px"}
+                minH={"400px"}
                 w={"full"}
                 bg={"white"}
                 rounded={10}
@@ -78,8 +79,7 @@ const ProfileTile = ({
                     alignItems={"center"}
                 >
                     <Text fontSize={"2xl"} fontWeight={"bold"}>
-                        ₹ {wage.amount}/
-                        <span className="text-base">{wage.type}*</span>
+                        {category}
                     </Text>
                     <Link
                         to={`/chat?user=${_id}&t=true`}
@@ -91,9 +91,24 @@ const ProfileTile = ({
                         <IoMdChatbubbles size={20} />
                     </Link>
                 </Flex>
-                <Text marginTop={3} color={"gray.400"}>
-                    *Approximate wage
+                <Text marginTop={3} color={"gray.700"}>
+                    Services
                 </Text>
+                {configuration?.services.length !== 0 ? (
+                    <ul className="w-full">
+                        {configuration?.services.map((service) => (
+                            <li className="flex justify-between">
+                                <div className="">{service.description}</div>
+                                <div className="">&#8377;{service.amount}</div>
+                                <div className="">
+                                    {service.slots} slot(s) needed
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <Text>No service available</Text>
+                )}
             </Flex>
         </GridItem>
     );

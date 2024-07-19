@@ -93,7 +93,9 @@ const Chat = () => {
     }, [chat]);
 
     useEffect(() => {
-        socket?.on("newMessage", (message) => {
+        socket?.on("newMessageUser", (message) => {
+            console.log(message,"new Message");
+            
             setNewMessage(message);
         });
     }, []);

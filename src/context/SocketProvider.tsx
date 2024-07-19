@@ -7,22 +7,20 @@ const SocketContext = createContext<Socket | null>(null);
 
 export const SocketProvider = ({ children }) => {
     const { userInfo } = useSelector((state: RootState) => state.auth);
+    const { tradesmanInfo } = useSelector((state: RootState) => state.auth);
     const socket = useMemo(() => {
         if (userInfo) {
             return io(import.meta.env.VITE_CHAT_URL, {
-                query: { userId: userInfo.userId }, // Send user ID as a query parameter or any other auth token
+                query: {
+                    userId: userInfo.userId,
+                    tradesmanId: tradesmanInfo?.tradesmanId ?? null,
+                }, // Send user ID as a query parameter or any other auth token
             });
         }
         return null;
-    }, [userInfo?.userId]);
+    }, [userInfo?.userId,tradesmanInfo]);
 
-    useEffect(() => {
-        return () => {
-            if (socket) {
-                socket.disconnect(); // Clean up the socket connection on unmount
-            }
-        };
-    }, [socket]);
+    
 
     return (
         <SocketContext.Provider value={socket}>

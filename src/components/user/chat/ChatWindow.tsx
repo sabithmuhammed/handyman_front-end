@@ -27,6 +27,7 @@ type PropType = {
     messages: MessageType[];
     setMessages: React.Dispatch<React.SetStateAction<MessageType[]>>;
     chat: string;
+    tradesman?:boolean
 };
 
 const ChatWindow = ({
@@ -35,8 +36,10 @@ const ChatWindow = ({
     messages,
     chat,
     setMessages,
+    tradesman = false
 }: PropType) => {
     const socket = useSocket()
+    
     const [text, setText] = useState("");
     const handleMessageSend = async () => {
         if (!text.trim()) return;
@@ -49,13 +52,20 @@ const ChatWindow = ({
         if (res?.data) {
             setText("");
             setMessages([...messages, res.data]);
-            socket?.emit("sendMessage", res.data);
+            
+            socket?.emit("sendMessage", {message:res.data,toTradesman:!tradesman});
         }
     };
     const [emojiOpen, setEmojiOpen] = useState(false);
-    const messageDivRef = useRef<HTMLDivElement>(null);
+    const divRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
-        // messageDivRef.current?.scrollIntoView({ behavior: "smooth" });
+        if (divRef.current) {
+            divRef.current.scrollTo({
+                top: divRef.current.scrollHeight + 5,
+                behavior: 'smooth',
+              });
+          }
+        
     }, [messages]);
     return (
         <GridItem 
@@ -104,10 +114,11 @@ const ChatWindow = ({
                 bg={"white"}
                 overflow={"auto"}
                 px={3}
+                ref={divRef}
             >
                 {messages.length !== 0 &&
                     messages.map((message) => (
-                        <Flex
+                        <Flex key={message._id}
                             my={1}
                             {...(message.receiverId !== receiverInfo.receiverId
                                 ? {
@@ -154,7 +165,6 @@ const ChatWindow = ({
                             </Flex>
                         </Flex>
                     ))}
-                <div className="" ref={messageDivRef}></div>
             </Box>
             <Box
                 className="border-t-2 border-gray-500"

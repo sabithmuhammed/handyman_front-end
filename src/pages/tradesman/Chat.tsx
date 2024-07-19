@@ -39,6 +39,7 @@ import {
     ReceiverType,
 } from "../../types/stateTypes";
 import { io, Socket } from "socket.io-client";
+import { useSocket } from "../../context/SocketProvider";
 
 const Chat = () => {
     const [chat, setChat] = useState<string>("");
@@ -53,7 +54,7 @@ const Chat = () => {
     );
     const [messages, setMessages] = useState<MessageType[]>([]);
     const [newMessage, setNewMessage] = useState<MessageType>();
-    const socket = useRef<Socket | undefined>();
+    const socket = useSocket();
 
     useEffect(() => {
         console.log(user, senderId, "hiiii");
@@ -96,18 +97,11 @@ const Chat = () => {
     }, [chat]);
 
     useEffect(() => {
-        socket.current = io(import.meta.env.VITE_CHAT_URL);
-        socket.current.emit("addUser", { userId: senderId });
-
-        socket.current.on("newMessage", (message) => {
-            console.log(message, "hhhhhh");
+        socket?.on("newMessageTradesman", (message) => {
+            console.log(message, "new Message");
 
             setNewMessage(message);
         });
-
-        return () => {
-            socket.current?.close();
-        };
     }, []);
 
     useEffect(() => {
@@ -130,10 +124,9 @@ const Chat = () => {
                         // boxShadow={"md"}
                         // direction={"column"}
 
-                        h={{base:"100vh",md:"85vh"}}
+                        h={{ base: "100vh", md: "85vh" }}
                         w={"full"}
                         className="max-md:bg-white bg-gray-200"
-                        
                         rounded={10}
                         py={6}
                         overflow={"auto"}
@@ -152,7 +145,13 @@ const Chat = () => {
                                 />
                             </InputGroup>
                         </Box>
-                        <VStack spacing={0} mt={3} overflow={"auto"} px={6} divider={<StackDivider color={"gray.300"}/>} >
+                        <VStack
+                            spacing={0}
+                            mt={3}
+                            overflow={"auto"}
+                            px={6}
+                            divider={<StackDivider color={"gray.300"} />}
+                        >
                             {conversations.length !== 0 &&
                                 conversations.map((conversation) => (
                                     <List
@@ -175,6 +174,7 @@ const Chat = () => {
                         messages={messages}
                         setMessages={setMessages}
                         chat={chat}
+                        tradesman={true}
                     />
                 ) : (
                     <Box

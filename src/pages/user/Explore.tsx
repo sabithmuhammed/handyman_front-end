@@ -15,7 +15,7 @@ const Explore = () => {
         })();
     }, []);
     return (
-        <div className="pt-20 w-full  h-dvh flex justify-center">
+        <div className="pt-20 w-full  min-h-dvh flex justify-center">
             <div className="max-w-[550px] h-full w-full">
                 {posts.length !== 0 ? (
                     posts.map((post) => <PostCard key={post._id} {...post} />)

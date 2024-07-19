@@ -12,15 +12,23 @@ import EmojiPicker from "emoji-picker-react";
 import React, { useEffect, useState } from "react";
 import { AiOutlineSend } from "react-icons/ai";
 import { BsEmojiGrin } from "react-icons/bs";
-import { addComment, addReply, getComments } from "../../../api/postApi";
+import {
+    addComment,
+    addReply,
+    deleteComment,
+    getComments,
+} from "../../../api/postApi";
 import { CommentType } from "../../../types/stateTypes";
-import { IoCloseCircleOutline } from "react-icons/io5"
+import { IoCloseCircleOutline } from "react-icons/io5";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
 
 type PropType = {
     postId: string;
+    handeleCommentCount?: () => void;
 };
 
-const CommentSection = ({ postId }: PropType) => {
+const CommentSection = ({ postId, handeleCommentCount }: PropType) => {
     const [comments, setComments] = useState<CommentType[]>([]);
     const [comment, setComment] = useState("");
     const [emojiOpen, setEmojiOpen] = useState(false);
@@ -28,7 +36,7 @@ const CommentSection = ({ postId }: PropType) => {
         name: string;
         commentId: string;
     } | null>(null);
-
+    const { userInfo } = useSelector((state: RootState) => state.auth);
 
     const [showReply, setShowReply] = useState("");
     console.log(showReply, "reply");
@@ -63,10 +71,38 @@ const CommentSection = ({ postId }: PropType) => {
         } else {
             const res = await addComment(postId, comment.trim());
             if (res?.data) {
-                setComments([...comments, res.data]);
+                const newComment = {
+                    ...res.data,
+                    userId: {
+                        _id: res.data.userId,
+                        name: userInfo?.name,
+                        profile: userInfo?.profile,
+                    },
+                };
+                setComments([...comments, newComment]);
                 setComment("");
-                
-                
+            }
+        }
+        if (handeleCommentCount) {
+            handeleCommentCount();
+        }
+    };
+
+    const removeComment = async (commentId: string) => {
+        const res = await deleteComment(commentId);
+        console.log("deleted comment",res);
+        
+        if (res?.data) {
+            if (res.data.softDelete) {
+                setComments((c) =>
+                    c.map((comment) =>
+                        comment._id === commentId ? res.data : comment
+                    )
+                );
+            } else {
+                setComments((c) =>
+                    c.filter((comment) => comment._id !== commentId)
+                );
             }
         }
     };
@@ -116,8 +152,11 @@ const CommentSection = ({ postId }: PropType) => {
                                                     hour12: true,
                                                 })}
                                             </Text>
-                                        </Flex>
-                                        <Flex>{comment.comment}</Flex>
+                                        </Flex>{
+                                            comment.softDelete?
+                                            <Flex as={"i"} fontSize={"sm"} opacity={.8}>{comment.comment}</Flex>:
+                                            <Flex >{comment.comment}</Flex>
+                                        }
                                         <Flex userSelect={"none"}>
                                             <Text
                                                 fontSize={"xs"}
@@ -137,6 +176,7 @@ const CommentSection = ({ postId }: PropType) => {
                                                 <Text
                                                     fontSize={"xs"}
                                                     cursor={"pointer"}
+                                                    me={5}
                                                     onClick={() =>
                                                         setShowReply(
                                                             comment._id
@@ -144,6 +184,22 @@ const CommentSection = ({ postId }: PropType) => {
                                                     }
                                                 >
                                                     View replies
+                                                </Text>
+                                            )}
+                                            {(comment.userId._id ===
+                                                userInfo?.userId) && !comment.softDelete && (
+                                                <Text
+                                                    fontSize={"xs"}
+                                                    me={5}
+                                                    cursor={"pointer"}
+                                                    color={"red.400"}
+                                                    onClick={() =>
+                                                        removeComment(
+                                                            comment._id
+                                                        )
+                                                    }
+                                                >
+                                                    Remove
                                                 </Text>
                                             )}
                                         </Flex>
@@ -194,7 +250,11 @@ const CommentSection = ({ postId }: PropType) => {
                                                                                 2
                                                                             }
                                                                         >
-                                                                            {reply.userId.name}
+                                                                            {
+                                                                                reply
+                                                                                    .userId
+                                                                                    .name
+                                                                            }
                                                                         </Text>
                                                                         <Text
                                                                             fontSize={

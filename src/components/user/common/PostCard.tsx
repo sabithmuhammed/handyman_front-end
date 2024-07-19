@@ -49,6 +49,7 @@ const PostCard = ({
     const [liked, setLiked] = useState(
         likes?.includes(userInfo?.userId as string)
     );
+    const [commentCountChange, setCommentCountChange] = useState(true);
     const [likeCount, setLikeCount] = useState(likes?.length ?? 0);
     const [commentsCount, setCommentsCount] = useState(0);
     const dateObj = new Date(date);
@@ -72,7 +73,7 @@ const PostCard = ({
     } = useDisclosure();
 
     const [textEdit, setTextEdit] = useState(text);
-    if (typeof tradesmanId !== "string") {
+    if ( tradesmanId && typeof tradesmanId !== "string") {
         name = tradesmanId.name;
         profile = tradesmanId.profile;
     }
@@ -84,7 +85,7 @@ const PostCard = ({
                 setCommentsCount(res.data);
             }
         })();
-    }, []);
+    }, [commentCountChange]);
     const toggleLike = async () => {
         if (!userInfo) {
             toast.error("Please login to continue");
@@ -204,7 +205,12 @@ const PostCard = ({
                     </button>
                 </Flex> */}
             </Stack>
-            {commentOpen && <CommentSection postId={_id} />}
+            {commentOpen && (
+                <CommentSection
+                    postId={_id}
+                    handeleCommentCount={() => setCommentCountChange((c) => !c)}
+                />
+            )}
             <ModalComponent
                 isOpen={isOpenD}
                 onClose={onCloseD}

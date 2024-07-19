@@ -74,12 +74,9 @@ export const addComment = async (postId: string, comment: string) => {
     }
 };
 
-export const deleteComment = async (postId: string, comment: string) => {
+export const deleteComment = async (commentId: string) => {
     try {
-        const response = await Api.post(postEndpoints.addComment, {
-            postId,
-            comment,
-        });
+        const response = await Api.delete(postEndpoints.deleteComment+`/${commentId}`);
         return response;
     } catch (error) {
         errorHandler(error);

@@ -16,6 +16,7 @@ import mbxGeocoding from "@mapbox/mapbox-sdk/services/geocoding";
 import { MdOutlineMyLocation } from "react-icons/md";
 import getCurrentLocation from "../../../utils/getCurrentLocation";
 import { Link } from "react-router-dom";
+import { addDays, addMonths } from "date-fns";
 
 const mapboxClient = mbxGeocoding({
     accessToken: import.meta.env.VITE_MAPBOX_TOKEN,
@@ -29,6 +30,7 @@ const Filter = ({ children }: PropType) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [location, setLocation] = useState<LocationType>({} as LocationType);
     const [category, setCategory] = useState("");
+    const [date, setDate] = useState<string>();
 
     const [showSuggestion, setShowSuggestion] = useState(false);
     const [place, setPlace] = useState("");
@@ -54,11 +56,18 @@ const Filter = ({ children }: PropType) => {
             setPlace(addressString);
             onClose();
             setShowSuggestion(false);
-            
         } catch (error) {
             console.log(error);
         }
     };
+
+    const formatDate = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based, so we add 1
+        const day = String(date.getDate()).padStart(2, '0');
+        
+        return `${year}-${month}-${day}`;
+      };
 
     return (
         <div className="w-full pb-5 bg-indigo-950 rounded-3xl">
@@ -76,8 +85,8 @@ const Filter = ({ children }: PropType) => {
                         type="text"
                         value={place}
                         size={{
-                            base:"xs",
-                            md:"sm"
+                            base: "xs",
+                            md: "sm",
                         }}
                         onChange={(e) => setPlace(e.target.value)}
                         onFocus={() => setShowSuggestion(true)}
@@ -93,8 +102,7 @@ const Filter = ({ children }: PropType) => {
                     </div>
                     {showSuggestion && (
                         <AddressSuggestion
-                            suggestionOnClick={({placeName,coordinates}) => {
-
+                            suggestionOnClick={({ placeName, coordinates }) => {
                                 setPlace(placeName);
                                 setLocation({
                                     longitude: coordinates[0],
@@ -115,8 +123,8 @@ const Filter = ({ children }: PropType) => {
                         value={category}
                         onChange={(e) => setCategory(e.target.value)}
                         size={{
-                            base:"xs",
-                            md:"sm"
+                            base: "xs",
+                            md: "sm",
                         }}
                     >
                         {categories?.length !== 0 &&
@@ -130,21 +138,27 @@ const Filter = ({ children }: PropType) => {
                 <div className="px-5 h-10 md:h-14 bg-white flex items-center rounded-md text-gray-900 mx-3 max-md:w-full max-md:my-1">
                     <p className="me-3 text-sm md:text-base">Select date</p>
                     <div className="flex-grow">
-                        <Input size={{
-                            base:"xs",
-                            md:"sm"
-                        }} type="date" />
+                        <Input
+                            size={{
+                                base: "xs",
+                                md: "sm",
+                            }}
+                            type="date"
+                            value={date}
+                            onChange={(e) => setDate(e.target.value)}
+                            min={formatDate(addDays(new Date(), 1))}
+                            max={formatDate(addMonths(new Date(), 2))}
+                        />
                     </div>
                 </div>
                 <Link
-                    to='/tradesmen'
-                    state={
-                        {
-                            longitude:location?.longitude,
-                            latitude:location?.latitude,
-                            category,
-                        }
-                    }
+                    to="/tradesmen"
+                    state={{
+                        longitude: location?.longitude,
+                        latitude: location?.latitude,
+                        category,
+                        date
+                    }}
                     className="px-5 h-10 md:h-14 bg-yellow-300 flex items-center justify-center rounded-md text-black mx-3 max-md:w-full max-md:my-1"
                 >
                     <p className="mx-3 text-sm md:text-base">Find tradesman</p>

@@ -39,9 +39,12 @@ import {
     ReceiverType,
 } from "../../types/stateTypes";
 import { useSocket } from "../../context/SocketProvider";
+import { toast } from "react-toastify";
 
 const Chat = () => {
     const [chat, setChat] = useState<string>("");
+    const chatRef = useRef(chat);
+    const [convo, setConvo] = useState("");
     const [conversations, setConversations] = useState<ConversationType[]>([]);
     const [searchParams] = useSearchParams();
     const user = searchParams.get("user") || null;
@@ -53,7 +56,7 @@ const Chat = () => {
     );
     const [messages, setMessages] = useState<MessageType[]>([]);
     const [newMessage, setNewMessage] = useState<MessageType>();
-    const socket = useSocket()
+    const socket = useSocket();
 
     useEffect(() => {
         (async () => {
@@ -73,13 +76,15 @@ const Chat = () => {
     useEffect(() => {
         (async () => {
             if (senderId) {
+                console.log("hiiii");
+
                 const res = await getConversations(senderId);
                 if (res?.data) {
                     setConversations(res.data);
                 }
             }
         })();
-    }, [messages]);
+    }, [messages, convo]);
 
     useEffect(() => {
         (async () => {
@@ -91,12 +96,21 @@ const Chat = () => {
             }
         })();
     }, [chat]);
+    const updateMessage = (message) => {
+        if (chatRef.current === message.conversationId) {
+            setNewMessage(message);
+        } else {
+            setConvo(message._id);
+        }
+    };
 
     useEffect(() => {
         socket?.on("newMessageUser", (message) => {
-            console.log(message,"new Message");
-            
-            setNewMessage(message);
+            {
+                if (message) {
+                    updateMessage(message);
+                }
+            }
         });
     }, []);
 
@@ -144,6 +158,7 @@ const Chat = () => {
                                     <List
                                         key={conversation._id}
                                         setChat={setChat}
+                                        chatRef={chatRef}
                                         chat={chat}
                                         conversation={conversation}
                                         senderId={senderId as string}

@@ -15,38 +15,40 @@ const UserTradesmen = () => {
     const { state } = useLocation();
     const [page, setPage] = useState(1);
     const [location, setLocation] = useState<LocationType>({} as LocationType);
-    const [loading, setloading] = useState(true);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        setLocation({
-            longitude: state?.longitude,
-            latitude: state?.latitude,
-        });
-    }, []);
+        if (state?.longitude && state?.latitude) {
+            setLocation({
+                longitude: state.longitude,
+                latitude: state.latitude,
+            });
+        } else {
+            getCurrentLocation(setLocation);
+        }
+    }, [state]);
 
     useEffect(() => {
         (async () => {
-            console.log(location,state);
-
             if (!location.latitude || !location.longitude) {
                 console.log("im causing trouble");
-
                 getCurrentLocation(setLocation);
             } else {
                 const res = await getTradesmen({
-                    category: "",
-                    ...state,
+                    category: state?.category || "",
+                    date: state?.date || "",
                     page,
-                    ...location,
+                    ...location
                 });
                 if (res?.data) {
-                    setTradesmen(res.data?.tradesmen);
-                    setPageCount(Math.floor(res.data?.totalCount / PAGE_LIMIT));
-                    setloading(false);
+                    setTradesmen(res.data.tradesmen);
+                    setPageCount(Math.ceil(res.data.totalCount / PAGE_LIMIT));
+                    setLoading(false);
                 }
             }
         })();
     }, [page, state, location]);
+
 
     return (
         <>

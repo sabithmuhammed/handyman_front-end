@@ -24,6 +24,7 @@ type PropType = {
     setChat: React.Dispatch<React.SetStateAction<string>>;
     conversation: ConversationType;
     senderId: string;
+    chatRef: React.MutableRefObject<string>;
     setReceiverInfo: React.Dispatch<React.SetStateAction<ReceiverType>>;
 };
 
@@ -32,21 +33,35 @@ const List = ({
     setChat,
     conversation,
     senderId,
+    chatRef,
     setReceiverInfo,
 }: PropType) => {
-    const handleChatChange = (id: string) => {
-        setChat(id);
-        setReceiverInfo({
-            receiverId: user as string,
-            image: userInfo?.image as string,
-            name: userInfo?.name as string,
-        });
-    };
     const [userInfo, setUserInfo] = useState<{
         image: string;
         name: string;
     } | null>(null);
     const [user, setUser] = useState<string>();
+    const [unreadCount, setUnreadCount] = useState<number>(() => {
+        if (
+            conversation._id !== chat &&
+            conversation.unreadMessage.user == senderId
+        ) {
+            return conversation.unreadMessage.count;
+        }
+        return 0;
+    });
+    useEffect(() => {
+        setUnreadCount(() => {
+            if (
+                conversation._id !== chat &&
+                conversation.unreadMessage.user == senderId
+            ) {
+                return conversation.unreadMessage.count;
+            }
+            return 0;
+        });
+    });
+
     useEffect(() => {
         conversation.members.forEach((user) => {
             if (user !== senderId) {
@@ -54,6 +69,7 @@ const List = ({
             }
         });
     }, []);
+
     useEffect(() => {
         (async () => {
             if (user) {
@@ -93,6 +109,18 @@ const List = ({
         })();
     }, [user]);
 
+    const handleChatChange = (id: string) => {
+        setChat(id);
+        chatRef.current = id;
+
+        setReceiverInfo({
+            receiverId: user as string,
+            image: userInfo?.image as string,
+            name: userInfo?.name as string,
+        });
+        setUnreadCount(0);
+    };
+
     return conversation.lastMessage ? (
         <Flex
             bg={chat == conversation._id ? `gray.200` : `white`}
@@ -106,7 +134,7 @@ const List = ({
         >
             {" "}
             {userInfo && (
-                <Flex w={"full"} h={"16"}  alignItems={"center"}>
+                <Flex w={"full"} h={"16"} alignItems={"center"}>
                     <Avatar
                         name={userInfo.name}
                         src={userInfo.image}
@@ -128,8 +156,6 @@ const List = ({
                                 color={"gray.600"}
                                 noOfLines={1}
                                 as={"b"}
-                                
-                                
                             >
                                 {new Date(
                                     conversation.updatedAt
@@ -149,53 +175,14 @@ const List = ({
                             >
                                 {conversation.lastMessage}
                             </Text>
-                            <div className="w-3 h-3 p-2 bg-green-600 text-white flex justify-center items-center rounded-full text-xs font-bold">
-                                3
-                            </div>
+                            {unreadCount !== 0 && (
+                                <div className="w-3 h-3 p-2 bg-green-600 text-white flex justify-center items-center rounded-full text-xs font-bold">
+                                    {unreadCount}
+                                </div>
+                            )}
                         </Flex>
                     </Flex>
                 </Flex>
-                // <>
-                //     <WrapItem>
-                //         <Avatar
-                //             name={userInfo.name}
-                //             src={userInfo.image}
-                //             size={"md"}
-                //         />
-                //     </WrapItem>
-                //     <WrapItem ms={2}>
-                //         <Flex direction={"column"}>
-                //             <Flex direction={"column"}>
-                //                 <Text fontSize={"sm"} fontWeight={"bold"}>
-                //                     {userInfo.name}
-                //                 </Text>
-                //                 <Flex justifyContent={"space-between"} >
-                //                     <Text
-                //                         fontSize={"sm"}
-                //                         color={"gray.600"}
-                //                         noOfLines={1}
-                //                         me={6}
-                //                     >
-                //                         {conversation.lastMessage}
-                //                     </Text>
-                //                     <Text
-                //                         fontSize={"sm"}
-                //                         color={"gray.600"}
-                //                         noOfLines={1}
-                //                     >
-                //                         {new Date(
-                //                             conversation.updatedAt
-                //                         ).toLocaleString("en-AU", {
-                //                             day: "2-digit",
-                //                             month: "2-digit",
-                //                             year: "numeric",
-                //                         })}
-                //                     </Text>
-                //                 </Flex>
-                //             </Flex>
-                //         </Flex>
-                //     </WrapItem>
-                // </>
             )}
         </Flex>
     ) : (

@@ -38,11 +38,12 @@ import {
     MessageType,
     ReceiverType,
 } from "../../types/stateTypes";
-import { io, Socket } from "socket.io-client";
 import { useSocket } from "../../context/SocketProvider";
 
 const Chat = () => {
     const [chat, setChat] = useState<string>("");
+    const chatRef = useRef(chat);
+    const [convo, setConvo] = useState("");
     const [conversations, setConversations] = useState<ConversationType[]>([]);
     const [searchParams] = useSearchParams();
     const user = searchParams.get("user") || null;
@@ -83,7 +84,7 @@ const Chat = () => {
                 }
             }
         })();
-    }, [messages]);
+    }, [messages,convo]);
 
     useEffect(() => {
         (async () => {
@@ -96,11 +97,19 @@ const Chat = () => {
         })();
     }, [chat]);
 
+    const updateMessage = (message) => {
+        if (chatRef.current === message.conversationId) {
+            setNewMessage(message);
+        } else {
+            setConvo(message._id);
+        }
+    };
+
     useEffect(() => {
         socket?.on("newMessageTradesman", (message) => {
-            console.log(message, "new Message");
-
-            setNewMessage(message);
+            if (message) {
+                updateMessage(message);
+            }
         });
     }, []);
 
@@ -160,6 +169,7 @@ const Chat = () => {
                                         chat={chat}
                                         conversation={conversation}
                                         senderId={senderId as string}
+                                        chatRef={chatRef}
                                         setReceiverInfo={setReceiverInfo}
                                     />
                                 ))}

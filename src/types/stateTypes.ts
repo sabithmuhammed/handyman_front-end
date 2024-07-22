@@ -67,6 +67,10 @@ export type ConversationType = {
     _id?: string;
     members: [string, string];
     lastMessage: string;
+    unreadMessage: {
+        user: string | null;
+        count: number;
+    };
     tradesmanId: string | null;
     createdAt: Date;
     updatedAt: Date;

@@ -12,6 +12,9 @@ const bookingEndpoints = {
     changeToPaid: "/booking//invoice-to-paid",
     getUnavailable: "/booking/get-unavailable-slots",
     paymentSuccess: "/booking/payment-successful",
+    bookingsCount: "/booking/dashboard-bookings",
+    serviceCount:"/booking/get-service-count",
+    amountAggregation:"/booking/get-amount-aggregation"
 };
 
 export default bookingEndpoints;

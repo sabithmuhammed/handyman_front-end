@@ -15,7 +15,7 @@ import { BsEmojiGrin } from "react-icons/bs";
 import { GoPaperclip } from "react-icons/go";
 import { IoCheckmarkOutline } from "react-icons/io5";
 import { MessageType, ReceiverType } from "../../../types/stateTypes";
-import { sendMessage } from "../../../api/chatApi";
+import { removeUnreadMessage, sendMessage } from "../../../api/chatApi";
 import { Socket } from "socket.io-client";
 import { format } from "timeago.js";
 import EmojiPicker from "emoji-picker-react";
@@ -27,7 +27,7 @@ type PropType = {
     messages: MessageType[];
     setMessages: React.Dispatch<React.SetStateAction<MessageType[]>>;
     chat: string;
-    tradesman?:boolean
+    tradesman?: boolean;
 };
 
 const ChatWindow = ({
@@ -36,10 +36,10 @@ const ChatWindow = ({
     messages,
     chat,
     setMessages,
-    tradesman = false
+    tradesman = false,
 }: PropType) => {
-    const socket = useSocket()
-    
+    const socket = useSocket();
+
     const [text, setText] = useState("");
     const handleMessageSend = async () => {
         if (!text.trim()) return;
@@ -52,8 +52,11 @@ const ChatWindow = ({
         if (res?.data) {
             setText("");
             setMessages([...messages, res.data]);
-            
-            socket?.emit("sendMessage", {message:res.data,toTradesman:!tradesman});
+
+            socket?.emit("sendMessage", {
+                message: res.data,
+                toTradesman: !tradesman,
+            });
         }
     };
     const [emojiOpen, setEmojiOpen] = useState(false);
@@ -62,13 +65,19 @@ const ChatWindow = ({
         if (divRef.current) {
             divRef.current.scrollTo({
                 top: divRef.current.scrollHeight + 5,
-                behavior: 'smooth',
-              });
-          }
-        
+                behavior: "smooth",
+            });
+        }
     }, [messages]);
+
+    useEffect(() => {
+        (async () => {
+            const res = await removeUnreadMessage(chat, senderId);
+        })();
+    }, [messages]);
+    
     return (
-        <GridItem 
+        <GridItem
             w="100%"
             bg="white"
             colSpan={2}
@@ -118,7 +127,8 @@ const ChatWindow = ({
             >
                 {messages.length !== 0 &&
                     messages.map((message) => (
-                        <Flex key={message._id}
+                        <Flex
+                            key={message._id}
                             my={1}
                             {...(message.receiverId !== receiverInfo.receiverId
                                 ? {
@@ -144,9 +154,10 @@ const ChatWindow = ({
                                           bg: "blue.200",
                                           borderTopLeftRadius: 0,
                                       }
-                                    : { bg: "gray.300",
-                                        borderTopRightRadius:0
-                                     })}
+                                    : {
+                                          bg: "gray.300",
+                                          borderTopRightRadius: 0,
+                                      })}
                             >
                                 <Text my={2} color={"gray.700"}>
                                     {message.message.content}

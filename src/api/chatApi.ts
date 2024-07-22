@@ -12,27 +12,46 @@ export const addConversation = async (data: object) => {
     }
 };
 
-export const getConversations = async (senderId:string) => {
+export const getConversations = async (senderId: string) => {
     try {
-        const response = await Api.get(chatEndpoints.getConversations+`/${senderId}`);
+        const response = await Api.get(
+            chatEndpoints.getConversations + `/${senderId}`
+        );
         return response;
     } catch (error) {
         errorHandler(error);
     }
 };
 
-export const getMessages = async (conversationId:string) => {
+export const getMessages = async (conversationId: string) => {
     try {
-        const response = await Api.get(chatEndpoints.getMessages+`/${conversationId}`);
+        const response = await Api.get(
+            chatEndpoints.getMessages + `/${conversationId}`
+        );
         return response;
     } catch (error) {
         errorHandler(error);
     }
 };
 
-export const sendMessage = async (data:object) => {
+export const sendMessage = async (data: object) => {
     try {
-        const response = await Api.post(chatEndpoints.saveMessage,data);
+        const response = await Api.post(chatEndpoints.saveMessage, data);
+        return response;
+    } catch (error) {
+        errorHandler(error);
+    }
+};
+
+export const removeUnreadMessage = async (
+    conversationId: string,
+    receiverId: string
+) => {
+    try {
+        const response = await Api.patch(
+            chatEndpoints.removeUnread + `/${conversationId}`,
+            { receiverId }
+        );
         return response;
     } catch (error) {
         errorHandler(error);

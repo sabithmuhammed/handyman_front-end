@@ -132,10 +132,48 @@ export const getUnavailable = async (tradesmanId: string, date: string) => {
 export const paymentSuccess = async (bookingId: string) => {
     try {
         console.log();
-        
+
         const response = await Api.patch(
             bookingEndpoints.paymentSuccess + `/${bookingId}`
         );
+        return response;
+    } catch (error) {
+        errorHandler(error);
+    }
+};
+
+export const getBookingsCount = async () => {
+    try {
+
+        const response = await Api.get(bookingEndpoints.bookingsCount);
+        return response;
+    } catch (error) {
+        errorHandler(error);
+    }
+};
+
+export const getServiceCount = async (filter:string) => {
+    try {
+
+        const response = await Api.get(bookingEndpoints.serviceCount,{
+            params:{
+                filter
+            }
+        });
+        return response;
+    } catch (error) {
+        errorHandler(error);
+    }
+};
+
+export const getAmountAggregation = async (filter:string) => {
+    try {
+
+        const response = await Api.get(bookingEndpoints.amountAggregation,{
+            params:{
+                filter
+            }
+        });
         return response;
     } catch (error) {
         errorHandler(error);

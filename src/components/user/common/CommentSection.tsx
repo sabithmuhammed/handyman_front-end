@@ -90,8 +90,8 @@ const CommentSection = ({ postId, handeleCommentCount }: PropType) => {
 
     const removeComment = async (commentId: string) => {
         const res = await deleteComment(commentId);
-        console.log("deleted comment",res);
-        
+        console.log("deleted comment", res);
+
         if (res?.data) {
             if (res.data.softDelete) {
                 setComments((c) =>
@@ -104,6 +104,9 @@ const CommentSection = ({ postId, handeleCommentCount }: PropType) => {
                     c.filter((comment) => comment._id !== commentId)
                 );
             }
+        }
+        if (handeleCommentCount) {
+            handeleCommentCount();
         }
     };
 
@@ -152,11 +155,18 @@ const CommentSection = ({ postId, handeleCommentCount }: PropType) => {
                                                     hour12: true,
                                                 })}
                                             </Text>
-                                        </Flex>{
-                                            comment.softDelete?
-                                            <Flex as={"i"} fontSize={"sm"} opacity={.8}>{comment.comment}</Flex>:
-                                            <Flex >{comment.comment}</Flex>
-                                        }
+                                        </Flex>
+                                        {comment.softDelete ? (
+                                            <Flex
+                                                as={"i"}
+                                                fontSize={"sm"}
+                                                opacity={0.8}
+                                            >
+                                                {comment.comment}
+                                            </Flex>
+                                        ) : (
+                                            <Flex>{comment.comment}</Flex>
+                                        )}
                                         <Flex userSelect={"none"}>
                                             <Text
                                                 fontSize={"xs"}
@@ -186,22 +196,23 @@ const CommentSection = ({ postId, handeleCommentCount }: PropType) => {
                                                     View replies
                                                 </Text>
                                             )}
-                                            {(comment.userId._id ===
-                                                userInfo?.userId) && !comment.softDelete && (
-                                                <Text
-                                                    fontSize={"xs"}
-                                                    me={5}
-                                                    cursor={"pointer"}
-                                                    color={"red.400"}
-                                                    onClick={() =>
-                                                        removeComment(
-                                                            comment._id
-                                                        )
-                                                    }
-                                                >
-                                                    Remove
-                                                </Text>
-                                            )}
+                                            {comment.userId._id ===
+                                                userInfo?.userId &&
+                                                !comment.softDelete && (
+                                                    <Text
+                                                        fontSize={"xs"}
+                                                        me={5}
+                                                        cursor={"pointer"}
+                                                        color={"red.400"}
+                                                        onClick={() =>
+                                                            removeComment(
+                                                                comment._id
+                                                            )
+                                                        }
+                                                    >
+                                                        Remove
+                                                    </Text>
+                                                )}
                                         </Flex>
                                         {comment._id == showReply && (
                                             <Flex

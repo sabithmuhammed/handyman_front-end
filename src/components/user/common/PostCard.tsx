@@ -73,7 +73,7 @@ const PostCard = ({
     } = useDisclosure();
 
     const [textEdit, setTextEdit] = useState(text);
-    if ( tradesmanId && typeof tradesmanId !== "string") {
+    if (tradesmanId && typeof tradesmanId !== "string") {
         name = tradesmanId.name;
         profile = tradesmanId.profile;
     }
@@ -84,6 +84,7 @@ const PostCard = ({
             if (res?.data) {
                 setCommentsCount(res.data);
             }
+            console.log("comment change", res?.data);
         })();
     }, [commentCountChange]);
     const toggleLike = async () => {
@@ -197,7 +198,7 @@ const PostCard = ({
                     >
                         <BiComment size={20} />
                     </button>
-                    <Text fontSize={"sm"}>{commentsCount}</Text>
+                    <Text fontSize={"sm"}>{commentsCount || 0}</Text>
                 </Flex>
                 {/* <Flex>
                     <button className="mx-2">

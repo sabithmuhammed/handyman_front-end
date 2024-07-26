@@ -36,6 +36,7 @@ import { AiOutlineClose } from "react-icons/ai";
 const Navbar = () => {
     const [profileToggle, setProfileToggle] = useBoolean();
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const profileRef = useRef<HTMLDivElement | null>(null);
     const { userInfo } = useSelector((state: RootState) => state.auth);
     const [currentNav, setCurrentNav] = useState("/home");
 
@@ -43,7 +44,22 @@ const Navbar = () => {
 
     useEffect(() => {
         onClose();
-    },[currentNav]);
+    }, [currentNav]);
+
+    useEffect(() => {
+        const profileHandler = (e: MouseEvent) => {
+            if (profileToggle) {
+
+                if (!profileRef.current?.contains(e.target as Node)) {
+                    setProfileToggle.off();
+                }
+            }
+        };
+        document.addEventListener("click", profileHandler);
+        return () => {
+            document.removeEventListener("click", profileHandler);
+        };
+    });
 
     const logOut = async () => {
         const response = await logout();
@@ -54,7 +70,7 @@ const Navbar = () => {
         }
     };
     return (
-        <header className=" w-full lg:w-[1280px] h-14 lg:h-20 mx-auto bg-white fixed top-0 lg:rounded-b-3xl z-50">
+        <header className=" w-full lg:w-[1280px] h-14 lg:h-20 mx-auto bg-white fixed top-0 lg:rounded-b-3xl z-40">
             <nav className="w-full h-full flex items-center px-4 justify-between lg:rounded-3xl bg-white shadow-xl">
                 <div className="flex items-center ">
                     <LuMenu size={24} className="lg:hidden" onClick={onOpen} />
@@ -74,10 +90,16 @@ const Navbar = () => {
                     </Link>
                 </div>
                 <Link
-                    to={userInfo?.isTradesman?"/tradesman/dashboard":"/tradesman/register"}
+                    to={
+                        userInfo?.isTradesman
+                            ? "/tradesman/dashboard"
+                            : "/tradesman/register"
+                    }
                     className="max-lg:text-sm rounded-full bg-yellow-200 px-3"
                 >
-                   {userInfo?.isTradesman?"Go to your dashboard":"Register as a tradesman"}
+                    {userInfo?.isTradesman
+                        ? "Go to your dashboard"
+                        : "Register as a tradesman"}
                 </Link>
                 <Drawer placement={"left"} onClose={onClose} isOpen={isOpen}>
                     <DrawerOverlay />
@@ -102,7 +124,9 @@ const Navbar = () => {
                                     <li key={item.title} className="my-3">
                                         <NavLink
                                             to={item.link}
-                                            onClick={()=>setCurrentNav(item.link)}
+                                            onClick={() =>
+                                                setCurrentNav(item.link)
+                                            }
                                             className={({
                                                 isActive,
                                                 isPending,
@@ -152,8 +176,10 @@ const Navbar = () => {
                     ) : (
                         <div
                             className=" flex lg:mx-4 items-center"
-                            onMouseEnter={setProfileToggle.on}
-                            onClick={setProfileToggle.toggle}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setProfileToggle.toggle();
+                            }}
                         >
                             <Avatar
                                 size={"xs"}
@@ -172,9 +198,9 @@ const Navbar = () => {
                                 )}
                                 {profileToggle && (
                                     <VStack
+                                        ref={profileRef}
                                         divider={<StackDivider />}
-                                        className="absolute top-full mt-2 right-0 w-32 bg-white rounded-md shadow-md flex flex-col items-center justify-between py-2"
-                                        onMouseLeave={setProfileToggle.off}
+                                        className="absolute top-full mt-2 right-0 w-32 bg-white rounded-md shadow-md flex flex-col items-center justify-between py-2 border-2 border-gray-200"
                                     >
                                         <Link
                                             to="/profile"

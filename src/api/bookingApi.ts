@@ -57,9 +57,13 @@ export const cancelBooking = async (bookingId: string) => {
     }
 };
 
-export const getSchedules = async () => {
+export const getSchedules = async (date: string) => {
     try {
-        const response = await Api.get(bookingEndpoints.getScheduledBooking);
+        const response = await Api.get(bookingEndpoints.getScheduledBooking, {
+            params: {
+                date,
+            },
+        });
         return response;
     } catch (error) {
         errorHandler(error);
@@ -77,9 +81,13 @@ export const jobCompleted = async (bookingId: string) => {
     }
 };
 
-export const getCompleted = async () => {
+export const getCompleted = async (date: string) => {
     try {
-        const response = await Api.get(bookingEndpoints.getCompleted);
+        const response = await Api.get(bookingEndpoints.getCompleted, {
+            params: {
+                date,
+            },
+        });
         return response;
     } catch (error) {
         errorHandler(error);
@@ -144,7 +152,6 @@ export const paymentSuccess = async (bookingId: string) => {
 
 export const getBookingsCount = async () => {
     try {
-
         const response = await Api.get(bookingEndpoints.bookingsCount);
         return response;
     } catch (error) {
@@ -152,13 +159,12 @@ export const getBookingsCount = async () => {
     }
 };
 
-export const getServiceCount = async (filter:string) => {
+export const getServiceCount = async (filter: string) => {
     try {
-
-        const response = await Api.get(bookingEndpoints.serviceCount,{
-            params:{
-                filter
-            }
+        const response = await Api.get(bookingEndpoints.serviceCount, {
+            params: {
+                filter,
+            },
         });
         return response;
     } catch (error) {
@@ -166,13 +172,12 @@ export const getServiceCount = async (filter:string) => {
     }
 };
 
-export const getAmountAggregation = async (filter:string) => {
+export const getAmountAggregation = async (filter: string) => {
     try {
-
-        const response = await Api.get(bookingEndpoints.amountAggregation,{
-            params:{
-                filter
-            }
+        const response = await Api.get(bookingEndpoints.amountAggregation, {
+            params: {
+                filter,
+            },
         });
         return response;
     } catch (error) {

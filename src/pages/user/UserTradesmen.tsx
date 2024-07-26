@@ -8,14 +8,21 @@ import { PAGE_LIMIT } from "../../constants/pagesConstants";
 import { useLocation, useSearchParams } from "react-router-dom";
 import getCurrentLocation from "../../utils/getCurrentLocation";
 import CardSkeleton from "../../components/skeletons/CardSkeleton";
+import SearchNotFound from "../../components/common/SearchNotFound";
+import { Text } from "@chakra-ui/react";
 
 const UserTradesmen = () => {
-    const [tradesmen, setTradesmen] = useState<Tradesman[]>([]);
     const [pageCount, setPageCount] = useState(0);
     const { state } = useLocation();
     const [page, setPage] = useState(1);
     const [location, setLocation] = useState<LocationType>({} as LocationType);
-    const [loading, setLoading] = useState(true);
+    const [data, setData] = useState<{
+        loading: boolean;
+        tradesmen: Tradesman[];
+    }>({
+        loading: true,
+        tradesmen: [],
+    });
 
     useEffect(() => {
         if (state?.longitude && state?.latitude) {
@@ -31,24 +38,21 @@ const UserTradesmen = () => {
     useEffect(() => {
         (async () => {
             if (!location.latitude || !location.longitude) {
-                console.log("im causing trouble");
                 getCurrentLocation(setLocation);
             } else {
                 const res = await getTradesmen({
                     category: state?.category || "",
                     date: state?.date || "",
                     page,
-                    ...location
+                    ...location,
                 });
                 if (res?.data) {
-                    setTradesmen(res.data.tradesmen);
+                    setData({loading:false,tradesmen:res.data.tradesmen});
                     setPageCount(Math.ceil(res.data.totalCount / PAGE_LIMIT));
-                    setLoading(false);
                 }
             }
         })();
     }, [page, state, location]);
-
 
     return (
         <>
@@ -59,7 +63,7 @@ const UserTradesmen = () => {
                 </h1>
 
                 <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 my-6 text-gray-900 max-md:place-items-center">
-                    {loading ? (
+                    {data.loading ? (
                         <>
                             <CardSkeleton />
                             <CardSkeleton />
@@ -67,12 +71,15 @@ const UserTradesmen = () => {
                             <CardSkeleton />
                             <CardSkeleton />
                         </>
-                    ) : tradesmen?.length != 0 ? (
-                        tradesmen.map((tradesman) => (
+                    ) : data.tradesmen?.length != 0 ? (
+                        data.tradesmen.map((tradesman) => (
                             <Card key={tradesman._id} {...tradesman} />
                         ))
                     ) : (
-                        ""
+                        <div className="col-span-5 items-center flex flex-col">
+                            <SearchNotFound />
+                            <Text opacity={0.7}>No tradesman in this area</Text>
+                        </div>
                     )}
                 </div>
             </div>

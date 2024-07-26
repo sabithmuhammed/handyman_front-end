@@ -4,8 +4,12 @@ import {
     Flex,
     GridItem,
     HStack,
+    Image,
     Input,
+    StackDivider,
     Text,
+    useBoolean,
+    VStack,
     Wrap,
     WrapItem,
 } from "@chakra-ui/react";
@@ -20,6 +24,10 @@ import { Socket } from "socket.io-client";
 import { format } from "timeago.js";
 import EmojiPicker from "emoji-picker-react";
 import { useSocket } from "../../../context/SocketProvider";
+import { FaRegImage } from "react-icons/fa6";
+import Lottie from "lottie-react";
+import roundLoader from "../../../assets/animation/roundLoading.json";
+import ImageView from "./ImageView";
 
 type PropType = {
     receiverInfo: ReceiverType;
@@ -59,8 +67,14 @@ const ChatWindow = ({
             });
         }
     };
-    const [emojiOpen, setEmojiOpen] = useState(false);
+    const [emojiOpen, setEmojiOpen] = useBoolean(false);
+    const emojiRef = useRef<HTMLDivElement>(null);
+    const [attachmentOpen, setAttachmentOpen] = useBoolean(false);
+    const attachmentRef = useRef<HTMLDivElement>(null);
+    const [selectedImage, setSelectedImage] = useState("");
+    const [imageViewOpen, setImageViewOpen] = useBoolean(false);
     const divRef = useRef<HTMLDivElement>(null);
+
     useEffect(() => {
         if (divRef.current) {
             divRef.current.scrollTo({
@@ -75,7 +89,31 @@ const ChatWindow = ({
             const res = await removeUnreadMessage(chat, senderId);
         })();
     }, [messages]);
-    
+
+    useEffect(() => {
+        const profileHandler = (e: MouseEvent) => {
+            if (emojiOpen) {
+                if (!emojiRef.current?.contains(e.target as Node)) {
+                    setEmojiOpen.off();
+                }
+            }
+            if (attachmentOpen) {
+                if (!attachmentRef.current?.contains(e.target as Node)) {
+                    setAttachmentOpen.off();
+                }
+            }
+        };
+        document.addEventListener("click", profileHandler);
+        return () => {
+            document.removeEventListener("click", profileHandler);
+        };
+    });
+
+    const handleImageClick = (imageSrc: string) => {
+        setSelectedImage(imageSrc);
+        setImageViewOpen.on();
+    };
+
     return (
         <GridItem
             w="100%"
@@ -146,7 +184,7 @@ const ChatWindow = ({
                             ></div>
                             <Flex
                                 rounded={"md"}
-                                px={3}
+                                px={2}
                                 overflow={"hidden"}
                                 {...(message.receiverId !==
                                 receiverInfo.receiverId
@@ -176,6 +214,8 @@ const ChatWindow = ({
                             </Flex>
                         </Flex>
                     ))}
+
+               
             </Box>
             <Box
                 className="border-t-2 border-gray-500"
@@ -184,25 +224,63 @@ const ChatWindow = ({
                 px={5}
                 py={2}
                 bg={"gray.200"}
+                position={"relative"}
             >
                 <HStack w={"full"} h={"full"} spacing={3}>
-                    {!emojiOpen ? (
-                        <BsEmojiGrin
-                            size={24}
-                            color="gray.500"
-                            onClick={() => setEmojiOpen(true)}
-                        />
-                    ) : (
-                        <div className="fixed bottom-4 z-10 border-gray-500 border-2">
+                    <BsEmojiGrin
+                        size={24}
+                        className={
+                            emojiOpen ? `text-indigo-950` : `text-gray-700`
+                        }
+                        cursor={"pointer"}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setEmojiOpen.toggle();
+                            setAttachmentOpen.off();
+                        }}
+                    />
+                    {emojiOpen && (
+                        <div
+                            className="absolute bottom-full mb-2 z-10 shadow-md"
+                            ref={emojiRef}
+                        >
                             <EmojiPicker
                                 onEmojiClick={({ emoji }) => {
                                     setText(text + emoji);
-                                    setEmojiOpen(false);
                                 }}
                             />
                         </div>
                     )}
-                    <GoPaperclip size={24} color="gray.500" />
+
+                    <GoPaperclip
+                        size={24}
+                        className={
+                            attachmentOpen ? `text-indigo-950` : `text-gray-700`
+                        }
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setAttachmentOpen.toggle();
+                            setEmojiOpen.off();
+                        }}
+                    />
+                    {attachmentOpen && (
+                        <VStack
+                            divider={<StackDivider />}
+                            className="absolute  bottom-full mb-2 z-10 bg-white rounded-md shadow-md border-2 border-gray-200 flex flex-col items-center justify-between py-2"
+                        >
+                            <div
+                                className="grid grid-cols-3 gap-3 px-3 place-items-center cursor-pointer"
+                                ref={attachmentRef}
+                            >
+                                <FaRegImage
+                                    className="col-span-1 text-violet-600"
+                                    size={18}
+                                />
+                                <Text className="col-span-2">Image</Text>
+                            </div>
+                        </VStack>
+                    )}
+
                     <Input
                         placeholder="Type something..."
                         size="md"
@@ -222,6 +300,12 @@ const ChatWindow = ({
                     />
                 </HStack>
             </Box>
+            {imageViewOpen && (
+                <ImageView
+                    image={selectedImage}
+                    onCloseHandler={() => setImageViewOpen.off()}
+                />
+            )}
         </GridItem>
     );
 };

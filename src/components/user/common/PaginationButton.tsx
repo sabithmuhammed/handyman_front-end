@@ -22,7 +22,7 @@ const PaginationButton = ({
 
     return (
         <div className="flex h-7 justify-center w-full">
-            {pageBtn.length!==0 && (
+            {pageBtn.length!==0 && pageBtn.length !==1 && (
                 pageBtn.map((btn, index) => (
                     <button
                         className={btn.className}

@@ -4,80 +4,87 @@ import Filter from "../../components/user/common/Filter";
 import Card from "../../components/user/common/Card";
 import { getAllTradesmen, getSkills } from "../../api/userApi";
 import CardSkeleton from "../../components/skeletons/CardSkeleton";
-import { Skeleton } from "@chakra-ui/react";
+import { Skeleton, Text } from "@chakra-ui/react";
 import SkillSkeleton from "../../components/skeletons/SkillSkeleton";
 import { Tradesman } from "../../types/stateTypes";
+import { RxClock } from "react-icons/rx";
+import { BsChatLeftText } from "react-icons/bs";
+import { IconType } from "react-icons/lib";
+import { TfiWallet } from "react-icons/tfi";
 
 const UserHome = () => {
-    const [skills, setSkills] = useState<string[]>([]);
-    const [selected, setSelected] = useState("");
-    const [skillLoading, setSkillLoading] = useState(true);
-    const [cardLoading, setCardLoading] = useState(true);
-    const [tradesmen, setTradesmen] = useState<Tradesman []>([]);
-    useEffect(() => {
-        (async () => {
-            const res = await getSkills();
-            if (res?.data) {
-                setSkills(res.data);
-                setSelected(res.data[0]);
-                setSkillLoading(false);
-            }
-        })();
-    }, []);
-    useEffect(() => {
-        (async () => {
-            const res = await getAllTradesmen({ category:selected },5);
-            if (res?.data) {
-                setTradesmen(res.data?.tradesmen);
-                setCardLoading(false)
-            }
-        })();
-    }, [selected]);
+    const ourFeatures: {
+        Icon: IconType;
+        title: string;
+        description: string;
+    }[] = [
+        {
+            Icon: RxClock,
+            title: "Saves you time",
+            description:
+                "Let us take care of your problems efficiently and effectively, giving you valuable time to focus on what matters most.",
+        },
+        {
+            Icon: BsChatLeftText,
+            title: "Seamless Communication",
+            description:
+                "We believe in clear and open lines of communication. We listen to your specific service requirements, ensuring that we understand and meet your expectations.",
+        },
+        {
+            Icon: TfiWallet,
+            title: "Cash Free Payment",
+            description:
+                "Say goodbye to the hassle of cash payments options for a smooth and hassle-free transaction experience.",
+        },
+    ];
     return (
         <>
             <Filter>
                 <Hero />
             </Filter>
-            <div className="py-5 md:py-16 px-5 md:px-9">
-                <h1 className="text-2xl md:text-3xl font-bold text-indigo-950">
-                    Our Best Tradesmen
+            <div className="py-5 md:py-12 px-5 md:px-9">
+                <h1 className="text-2xl md:text-2xl mb-3 text-center font-bold text-indigo-950/90">
+                    What makes us{" "}
+                    <span className="text-yellow-400">unique?</span>
                 </h1>
-                <ul className="w-100 flex mt-3 md:mt-6 overflow-auto">
-                    {skillLoading ? (
-                        <SkillSkeleton />
-                    ) : (
-                        skills.length > 0 &&
-                        skills.map((skill) => (
-                            <li
-                                className={`${
-                                    selected == skill
-                                        ? `bg-indigo-950 text-white`
-                                        : `text-indigo-950 bg-blue-100`
-                                } me-2 px-5 rounded-full flex items-center py-1 select-none cursor-pointer flex-shrink-0`}
-                                key={skill}
-                                onClick={() => setSelected(skill)}
-                            >
-                                {skill}
-                            </li>
-                        ))
-                    )}
-                </ul>
-                <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 my-6 text-gray-900 max-md:place-items-center">
-                {cardLoading ? (
-                        <>
-                            <CardSkeleton />
-                            <CardSkeleton />
-                            <CardSkeleton />
-                            <CardSkeleton />
-                            <CardSkeleton />
-                        </>
-                    ) : tradesmen?.length != 0 ? (
-                        tradesmen.map((tradesman) => (
-                            <Card key={tradesman._id} {...tradesman} />
-                        ))
-                    ) : (
-                        ""
-                    )}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:px-20">
+                    {ourFeatures &&
+                        ourFeatures.map((feature) => (
+                            <div className="shadow-md rounded-md flex p-4">
+                                <div className="">
+                                    <feature.Icon
+                                        size={36}
+                                        className="text-yellow-400"
+                                    />
+                                </div>
+                                <div className="pt-2 ms-3">
+                                    <Text fontSize={"lg"} as={"b"}>
+                                        {feature.title}
+                                    </Text>
+                                    <div className=" rounded-md h-[2px] w-14 bg-indigo-950/90 my-2"></div>
+                                    <Text
+                                        fontSize={"sm"}
+                                        className="text-balance text-indigo-950/80"
+                                    >
+                                        {feature.description}
+                                    </Text>
+                                </div>
+                            </div>
+                        ))}
+                </div>
+            </div>
+
+            <div className="bg-indigo-950 mb-10 rounded-md py-5 text-white">
+                <h1 className="text-2xl md:text-2xl mb-3 text-center font-bold text-white">
+                    How does it work?
+                </h1>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:px-28">
+                    <div className="bg-white h-40 col-span-2">kjkfklsjdkf</div>
+                    <div className="bg-white h-40 col-span-1">kjkfklsjdkf</div>
+                    <div className="bg-white h-40 col-span-1">kjkfklsjdkf</div>
+                    <div className="bg-white h-40 col-span-2">kjkfklsjdkf</div>
+                    <div className="bg-white h-40 col-span-2">kjkfklsjdkf</div>
+                    <div className="bg-white h-40 col-span-1">kjkfklsjdkf</div>
                 </div>
             </div>
         </>

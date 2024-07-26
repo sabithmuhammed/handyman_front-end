@@ -146,7 +146,7 @@ const Filter = ({ children }: PropType) => {
                             type="date"
                             value={date}
                             onChange={(e) => setDate(e.target.value)}
-                            min={formatDate(addDays(new Date(), 1))}
+                            // min={formatDate(addDays(new Date(), 1))}
                             max={formatDate(addMonths(new Date(), 2))}
                         />
                     </div>

@@ -55,7 +55,7 @@ const UserSignUp = () => {
             hasError = true;
         }
 
-        if (!password) {
+        if (!password.trim()) {
             setPassErr("Please enter password");
             hasError = true;
         } else if (password.length < 6) {

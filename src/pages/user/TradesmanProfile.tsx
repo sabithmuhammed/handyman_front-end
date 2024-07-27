@@ -57,6 +57,12 @@ const TradesmanProfile = () => {
         })();
     }, []);
 
+    const bookedSuccessfully = ()=>{
+        setSelectedDate(null)
+        setSelectedSlots([])
+        setService(undefined)
+    }
+
     
 
     return (
@@ -90,7 +96,7 @@ const TradesmanProfile = () => {
                                 />
                             )}
                             {userInfo ? (
-                                <BookingForm selectedDate={selectedDate} selectedSlots={selectedSlots} service={service}/>
+                                <BookingForm selectedDate={selectedDate} selectedSlots={selectedSlots} service={service} bookedSuccessfully={bookedSuccessfully}/>
                             ) : (
                                 <div className="bg-gray-100 rounded-md flex justify-center items-center">
                                     <Text fontSize={"lg"}>

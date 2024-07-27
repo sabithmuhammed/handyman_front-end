@@ -27,7 +27,7 @@ type FormType = {
 const mapboxClient = mbxGeocoding({
     accessToken: import.meta.env.VITE_MAPBOX_TOKEN,
 });
-const BookingForm = ({ service, selectedDate, selectedSlots }) => {
+const BookingForm = ({ service, selectedDate, selectedSlots,bookedSuccessfully }) => {
     const { tradesmanId } = useParams();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const {
@@ -177,6 +177,7 @@ const BookingForm = ({ service, selectedDate, selectedSlots }) => {
             });
             setLocation({} as LocationType);
             setSelectedDates([]);
+            bookedSuccessfully()
         }
     };
 

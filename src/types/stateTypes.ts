@@ -10,8 +10,9 @@ export type Tradesman = {
         coordinates: [number, number];
         type: "Point";
     };
-    rating?: {
-        ratiing: number;
+    reviews?: {
+        review:string
+        rating: number;
         userId: string;
     };
     configuration?: ConfigurationType;
@@ -37,22 +38,6 @@ export type LocationType = {
     longitude: number;
 };
 
-export type ToolType = {
-    _id: string;
-    name: string;
-    rent: number;
-    street: string;
-    city: string;
-    state: string;
-    country: string;
-    pincode: string;
-    location: {
-        coordinates: [number, number];
-        type: "Point";
-    };
-    userId: string;
-    images: string[];
-};
 
 export type PostType = {
     _id: string;

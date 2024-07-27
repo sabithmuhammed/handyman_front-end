@@ -8,9 +8,6 @@ const UserLogin = lazy(() => import("../pages/user/UserLogin"));
 const UserSignUp = lazy(() => import("../pages/user/UserSignUp"));
 const ForgotPassword = lazy(() => import("../pages/user/ForgotPassword"));
 const UserTradesmen = lazy(() => import("../pages/user/UserTradesmen"));
-const UserTools = lazy(() => import("../pages/user/UserTools"));
-const AddTool = lazy(() => import("../pages/user/AddTool"));
-const ManageTools = lazy(() => import("../pages/user/ManageTools"));
 const TradesmanProfile = lazy(() => import("../pages/user/TradesmanProfile"));
 const Chat = lazy(() => import("../pages/user/Chat"));
 const NotFound = lazy(() => import("../pages/NotFound"));
@@ -28,12 +25,9 @@ const UserRoutes = () => {
                 <Route element={<UserLayout />}>
                     <Route path="/" index element={<UserHome />} />
                     <Route path="tradesmen" element={<UserTradesmen />} />
-                    <Route path="tools" element={<UserTools />} />
                     <Route path="explore" element={<Explore />} />
                     <Route path="tradesman-profile/:tradesmanId" element={<TradesmanProfile />} />
                     <Route element={<UserProtected />}>
-                        <Route path="add-tool" element={<AddTool />} />
-                        <Route path="manage-tools" element={<ManageTools />} />
                         <Route path="profile" element={<UserProfile />} />
                         <Route path="chat" element={<Chat />} />
                     </Route>

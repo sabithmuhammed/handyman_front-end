@@ -1,4 +1,5 @@
 import {
+    Avatar,
     Box,
     Button,
     Card,
@@ -15,7 +16,11 @@ import {
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Tradesman } from "../../types/stateTypes";
-import { blockTradesmen, getTradesmen, unblockTradesmen } from "../../api/adminApi";
+import {
+    blockTradesmen,
+    getTradesmen,
+    unblockTradesmen,
+} from "../../api/adminApi";
 import { PAGE_LIMIT } from "../../constants/pagesConstants";
 import ModalComponent from "../../components/common/ModalComponent";
 import ViewDetails from "../../components/admin/ViewDetails";
@@ -42,7 +47,7 @@ const Tradesmen = () => {
 
     useEffect(() => {
         (async () => {
-            const res = await getAllTradesmen({ category:"" });
+            const res = await getTradesmen({ category: "", page });
             if (res?.data) {
                 setTradesmen(res.data?.tradesmen);
                 setPageCount(Math.floor(res.data?.totalCount / PAGE_LIMIT));
@@ -83,96 +88,120 @@ const Tradesmen = () => {
     };
 
     return (
-        <Flex direction={"column"} align={"center"} pt={"7"} w="full">
-            <Card minW="600px">
-                <CardHeader>
-                    <Heading size="md">All Verified Tradesmen</Heading>
-                </CardHeader>
+        
+        <>
+            <Text fontSize={"2xl"} fontWeight={"800"} top={"28"} position={"fixed"} >
+                All Tradesmen
+            </Text>
 
-                <CardBody>
-                    <Stack divider={<StackDivider />} spacing="9">
-                        {tradesmen.length ? (
-                            tradesmen.map((item, index) => (
-                                <Box key={item._id}>
-                                    <Heading
-                                        size="xs"
-                                        textTransform="uppercase"
-                                    >
-                                        {item.name}
-                                    </Heading>
-                                    <Text py="3" fontSize="sm">
-                                        {item.skills.reduce(
-                                            (acc, cur) => acc + ", " + cur
-                                        )}
-                                    </Text>
-                                    <HStack spacing={"4"}>
-                                        <Button
-                                            colorScheme="blue"
-                                            size={"sm"}
-                                            onClick={() => {
-                                                handleViewData(item._id);
-                                                onOpen();
-                                            }}
-                                        >
-                                            View details
-                                        </Button>
-                                        <Button
-                                            colorScheme={
-                                                item.isBlocked ? "teal" : "red"
-                                            }
-                                            size={"sm"}
-                                            onClick={() => {
-                                                setCurrentTradesman(item._id);
-                                                if (item.isBlocked) {
-                                                    onOpenU();
-                                                } else {
-                                                    onOpenB();
-                                                }
-                                            }}
-                                        >
-                                            {item.isBlocked
-                                                ? "Unblock"
-                                                : "Block"}
-                                        </Button>
-                                    </HStack>
-                                </Box>
-                            ))
-                        ) : (
-                            <p>No tradesmen found</p>
-                        )}
-                    </Stack>
-                </CardBody>
-            </Card>
+            <Flex direction={"column"} align={"center"} pt={"7"} w="full">
+                <Card minW="full" bg="gray.100">
+                    <CardBody>
+                        <Stack spacing="4">
+                            {tradesmen.length ? (
+                                tradesmen.map((item, index) => (
+                                    <Box key={item._id} bg="white" p={4}>
+                                        <Flex justify={"space-between"}>
+                                            <Flex>
+                                                <Avatar
+                                                    src={item.profile}
+                                                    name={item.name}
+                                                    me={4}
+                                                />
+                                                <Flex direction={"column"}>
+                                                    <Heading
+                                                        size="xs"
+                                                        textTransform="uppercase"
+                                                    >
+                                                        {item.name}
+                                                    </Heading>
+                                                    <Text py="3" fontSize="sm">
+                                                        {item.category}
+                                                    </Text>
+                                                </Flex>
+                                            </Flex>
+                                            <HStack spacing={"4"}>
+                                                <Button
+                                                    colorScheme="blue"
+                                                    size={"sm"}
+                                                    onClick={() => {
+                                                        handleViewData(
+                                                            item._id
+                                                        );
+                                                        onOpen();
+                                                    }}
+                                                >
+                                                    View details
+                                                </Button>
+                                                <Button
+                                                    colorScheme={
+                                                        item.isBlocked
+                                                            ? "teal"
+                                                            : "red"
+                                                    }
+                                                    size={"sm"}
+                                                    onClick={() => {
+                                                        setCurrentTradesman(
+                                                            item._id
+                                                        );
+                                                        if (item.isBlocked) {
+                                                            onOpenU();
+                                                        } else {
+                                                            onOpenB();
+                                                        }
+                                                    }}
+                                                >
+                                                    {item.isBlocked
+                                                        ? "Unblock"
+                                                        : "Block"}
+                                                </Button>
+                                            </HStack>
+                                        </Flex>
+                                    </Box>
+                                ))
+                            ) : (
+                                <p>No tradesman found</p>
+                            )}
+                        </Stack>
+                    </CardBody>
+                </Card>
 
-            <ModalComponent isOpen={isOpen} onClose={onClose} title={"Details"}>
-                <ViewDetails {...viewData} />
-            </ModalComponent>
+                <ModalComponent
+                    isOpen={isOpen}
+                    onClose={onClose}
+                    title={"Details"}
+                >
+                    <ViewDetails {...viewData} />
+                </ModalComponent>
 
-            <ModalComponent
-                isOpen={isOpenB}
-                onClose={onCloseB}
-                title={"Confirmation"}
-                action={{
-                    text: "Block",
-                    color: "red",
-                    onClick: handleBlock,
-                }}
-            >
-                <h1>Are you sure that you want to block this tradesman?</h1>
-            </ModalComponent>
-            <ModalComponent
-                isOpen={isOpenU}
-                onClose={onCloseU}
-                title={"Confirmation"}
-                action={{
-                    text: "Unblock",
-                    color: "teal",
-                    onClick: handleUnblock,
-                }}
-            >
-                <h1>Are you sure that you want to unblock this tradesman?</h1>
-            </ModalComponent>
-        </Flex>
+                <ModalComponent
+                    isOpen={isOpenB}
+                    onClose={onCloseB}
+                    title={"Confirmation"}
+                    action={{
+                        text: "Block",
+                        color: "red",
+                        onClick: handleBlock,
+                    }}
+                >
+                    <h1>Are you sure that you want to block this tradesman?</h1>
+                </ModalComponent>
+                <ModalComponent
+                    isOpen={isOpenU}
+                    onClose={onCloseU}
+                    title={"Confirmation"}
+                    action={{
+                        text: "Unblock",
+                        color: "teal",
+                        onClick: handleUnblock,
+                    }}
+                >
+                    <h1>
+                        Are you sure that you want to unblock this tradesman?
+                    </h1>
+                </ModalComponent>
+            </Flex>
+        </>
     );
 };
 

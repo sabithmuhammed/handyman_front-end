@@ -2,6 +2,7 @@ import React, { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 import AdminLayout from "../components/layout/AdminLayout";
 import AdminProtected from "../components/admin/AdminProtected";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 const Verify = lazy(() => import("../pages/admin/Verify"));
 const Tradesmen = lazy(() => import("../pages/admin/Tradesmen"));
 const Users = lazy(() => import("../pages/admin/Users"));
@@ -9,7 +10,7 @@ const NotFound = lazy(() => import("../pages/NotFound"));
 
 const AdminRoutes = () => {
     return (
-        <Suspense fallback={<h1>hiii</h1>}>
+        <Suspense fallback={<LoadingSpinner />}>
             <Routes>
                 <Route element={<AdminProtected />}>
                     <Route element={<AdminLayout />}>

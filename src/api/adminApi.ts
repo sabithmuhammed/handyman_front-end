@@ -31,7 +31,7 @@ export const reject = async (tradesmanId:string) => {
     }
 };
 
-export const getTradesmen = async ({ page }) => {
+export const getTradesmen = async ({ category,page }) => {
     try {
         const response = await Api.get(
             adminEndpoints.getTradesmen +

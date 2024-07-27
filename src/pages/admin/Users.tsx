@@ -1,4 +1,5 @@
 import {
+    Avatar,
     Box,
     Button,
     Card,
@@ -22,6 +23,7 @@ import { blockUser, getUsers, unblockUser } from "../../api/adminApi";
 import { PAGE_LIMIT } from "../../constants/pagesConstants";
 import ModalComponent from "../../components/common/ModalComponent";
 type User = {
+    profile: string;
     name: string;
     email: string;
     isBlocked: boolean;
@@ -90,78 +92,32 @@ const Users = () => {
             <Text fontSize={"2xl"} fontWeight={"800"} top={"0"}>
                 All users
             </Text>
-            {/* <Grid gap="6" overflow={"auto"}>
-                {users.length ? (
-                    users.map((item, index) => (
-                        <GridItem w={"full"} bg="white">
-                            <Card
-                                direction={{ base: "column", sm: "row" }}
-                                overflow="hidden"
-                                variant="outline"
-                            >
-                                <Image
-                                    objectFit="cover"
-                                    maxW={{ base: "100%", sm: "200px" }}
-                                    src="https://images.unsplash.com/photo-1667489022797-ab608913feeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw5fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60"
-                                    alt="Caffe Latte"
-                                />
 
-                                <Stack>
-                                    <CardBody>
-                                        <Heading size="md">
-                                            {item.name}
-                                        </Heading>
-
-                                        <Text py="2">
-                                            {item.email}
-                                        </Text>
-                                    </CardBody>
-
-                                    <CardFooter>
-                                        <Button
-                                            variant="solid"
-                                            colorScheme="blue"
-                                        >
-                                            Buy Latte
-                                        </Button>
-                                    </CardFooter>
-                                </Stack>
-                            </Card>
-                        </GridItem>
-                    ))
-                ) : (
-                    <p>No users found</p>
-                )}
-                <GridItem w={"full"} bg="white">
-                    <Card>
-                        <CardBody></CardBody>
-                    </Card>
-                </GridItem>
-                <GridItem>dfjkdshjkfd</GridItem>
-                <GridItem>dfjkdshjkfd</GridItem>
-            </Grid> */}
             <Flex direction={"column"} align={"center"} pt={"7"} w="full">
                 <Card minW="full" bg="gray.100">
-                    {/* <CardHeader>
-                        <Heading size="md">All Users</Heading>
-                    </CardHeader> */}
-
                     <CardBody>
-                        <Stack spacing="20">
+                        <Stack spacing="4">
                             {users.length ? (
                                 users.map((item, index) => (
                                     <Box key={item._id} bg="white" p={4}>
                                         <Flex justify={"space-between"}>
-                                            <Flex direction={"column"}>
-                                                <Heading
-                                                    size="xs"
-                                                    textTransform="uppercase"
-                                                >
-                                                    {item.name}
-                                                </Heading>
-                                                <Text py="3" fontSize="sm">
-                                                    {item.email}
-                                                </Text>
+                                            <Flex>
+                                                <Avatar
+                                                    src={item.profile}
+                                                    name={item.name}
+                                                    me={4}
+                                                />
+                                                <Flex direction={"column"}>
+                                                    <Heading
+                                                        size="xs"
+                                                        textTransform="uppercase"
+                                                    >
+                                                        {item.name}
+                                                    </Heading>
+                                                    <Text py="3" fontSize="sm">
+                                                        {item.email}
+                                                    </Text>
+                                                </Flex>
                                             </Flex>
                                             <HStack spacing={"4"}>
                                                 <Button

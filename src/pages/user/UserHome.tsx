@@ -74,19 +74,14 @@ const UserHome = () => {
                 </div>
             </div>
 
-            <div className="bg-indigo-950 mb-10 rounded-md py-5 text-white">
+            {/* <div className="bg-indigo-950 mb-10 rounded-md py-5 text-white">
                 <h1 className="text-2xl md:text-2xl mb-3 text-center font-bold text-white">
                     How does it work?
                 </h1>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:px-28">
-                    <div className="bg-white h-40 col-span-2">kjkfklsjdkf</div>
-                    <div className="bg-white h-40 col-span-1">kjkfklsjdkf</div>
-                    <div className="bg-white h-40 col-span-1">kjkfklsjdkf</div>
-                    <div className="bg-white h-40 col-span-2">kjkfklsjdkf</div>
-                    <div className="bg-white h-40 col-span-2">kjkfklsjdkf</div>
-                    <div className="bg-white h-40 col-span-1">kjkfklsjdkf</div>
+                <div className="grid grid-cols-1  gap-6 lg:px-28">
+                    
                 </div>
-            </div>
+            </div> */}
         </>
     );
 };

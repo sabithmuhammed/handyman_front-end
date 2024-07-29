@@ -10,11 +10,6 @@ export type Tradesman = {
         coordinates: [number, number];
         type: "Point";
     };
-    reviews?: {
-        review:string
-        rating: number;
-        userId: string;
-    };
     configuration?: ConfigurationType;
     verificationStatus?: "pending" | "rejected" | "verified";
     isBlocked?: boolean;

@@ -25,6 +25,10 @@ import { updateUserInfo } from "../../redux/slice/authSlice";
 import { updateUser } from "../../api/userApi";
 import Mybookings from "../../components/user/profile/Mybookings";
 import { toast } from "react-toastify";
+import { BsCalendar3 } from "react-icons/bs";
+import { LuClock5 } from "react-icons/lu";
+import { IoMdChatbubbles } from "react-icons/io";
+import { MdCancel } from "react-icons/md";
 
 const UserProfile = () => {
     const [isEdit, setIsEdit] = useState(false);
@@ -53,112 +57,165 @@ const UserProfile = () => {
     };
 
     return (
-        <div className="pt-20 pb-7 min-h-screen">
-            <Stack direction={"column"} alignItems={"center"} spacing={4}>
-                {isEdit ? (
-                    <>
-                        {" "}
-                        <Box className="relative">
-                            <Avatar
-                                position={"relative"}
-                                src={
-                                    editImage
-                                        ? URL.createObjectURL(editImage)
-                                        : userInfo?.profile
-                                }
-                                name={editName}
-                                size={"2xl"}
-                            ></Avatar>
-                            <div className="absolute bottom-3 -right-2 rounded-full bg-white w-[40px] h-[40px] flex justify-center items-center">
-                                <PiCameraBold
-                                    size={25}
-                                    className="text-blue-800"
-                                    onClick={handleImgaeChange}
-                                />
-                            </div>
-                            <input
-                                type="file"
-                                name=""
-                                id="image"
-                                ref={imageRef}
-                                onChange={(e) => {
-                                    if (e.target.files && e.target.files[0]) {
-                                        setEditImage(e.target.files[0]);
-                                    }
-                                }}
-                                hidden
-                            />
-                        </Box>
-                        <Input
-                            maxW={"400px"}
-                            value={editName}
-                            onChange={(e) => setEditName(e.target.value)}
-                        />
-                        <Flex>
-                            <button
-                                className="cursor-pointer bg-gray-300 p-2 text-gray-600 rounded-md flex items-center mx-2 hover:opacity-90"
-                                onClick={() => {
-                                    setEditName(userInfo?.name as string);
-                                    setIsEdit(false);
-                                }}
+        <div className=" grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3  gap-6 pt-10 md:pt-20 pb-7 h-screen  px-5 text-gray-800">
+            <div className="h-[300px] flex items-center bg-white shadow-md p-4 rounded-lg border-t-2 border-b-2 border-indigo-950/90">
+                <div className="flex flex-col  items-center w-full h-full">
+                    <div className="flex w-full justify-between">
+                        {/* <button>
+                            <Text
+                                fontSize={"sm"}
+                                px={2}
+                                bg={"red.200"}
+                                color={"gray.600"}
+                                rounded={"md"}
                             >
-                                {" "}
-                                <ImCancelCircle className="me-2" />
                                 Cancel
-                            </button>
-                            <button
-                                className="cursor-pointer bg-blue-600 p-2 text-white rounded-md flex items-center mx-2 hover:opacity-90"
-                                onClick={handleSubmit}
+                            </Text>
+                        </button> */}
+                        <div className=""></div>
+                        <button>
+                            <Text
+                                fontSize={"sm"}
+                                px={2}
+                                bg={"gray.200"}
+                                color={"gray.600"}
+                                rounded={"md"}
                             >
-                                {" "}
-                                <FaRegSave className="me-2" />
-                                Save
-                            </button>
-                        </Flex>
-                    </>
-                ) : (
-                    <>
-                        <Avatar
-                            src={userInfo?.profile}
-                            name={userInfo?.name}
-                            size={"2xl"}
-                        ></Avatar>
-                        <Text fontSize={"2xl"} fontWeight={"bold"}>
-                            {userInfo?.name}
-                        </Text>
-                        <Text fontSize={"1xl"} className="font-semibold">
-                            {" "}
-                            {userInfo?.email}
-                        </Text>
-                        <button
-                            className="cursor-pointer bg-blue-600 p-2 text-white rounded-md flex items-center hover:opacity-90"
-                            onClick={() => setIsEdit(true)}
-                        >
-                            {" "}
-                            <FaRegEdit className="me-2" />
-                            Edit
+                                Edit
+                            </Text>
                         </button>
-                    </>
-                )}
-
-                <Tabs isLazy>
-                    <TabList>
-                        <Tab>My bookings</Tab>
-                        {/* <Tab>Schedules</Tab> */}
-                    </TabList>
-                    <TabPanels>
-                        {/* initially mounted */}
-                        <TabPanel>
-                            <Mybookings />
-                        </TabPanel>
-                        {/* initially not mounted */}
-                        <TabPanel>
-                            <p>two!</p>
-                        </TabPanel>
-                    </TabPanels>
-                </Tabs>
-            </Stack>
+                    </div>
+                    <div className="grid grid-cols-1 xl:grid-cols-3 justify-evenly w-full my-3 justify-items-center">
+                        <Avatar
+                            position={"relative"}
+                            src={
+                                editImage
+                                    ? URL.createObjectURL(editImage)
+                                    : userInfo?.profile
+                            }
+                            name={editName}
+                            size={"xl"}
+                            rounded={"md"}
+                            mb={4}
+                        />
+                        <div className=" xl:col-span-2">
+                            <Text fontSize={"2xl"}>{userInfo?.name}</Text>
+                            <Text fontSize={"md"} className="">
+                                {" "}
+                                {userInfo?.email}
+                            </Text>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <Mybookings />
         </div>
+        // <div className="pt-20 pb-7 min-h-screen bg-red-500">
+        //     <Stack direction={"column"} alignItems={"center"} spacing={4}>
+        //         {isEdit ? (
+        //             <>
+        //                 {" "}
+        //                 <Box className="relative">
+        //                     <Avatar
+        //                         position={"relative"}
+        //                         src={
+        //                             editImage
+        //                                 ? URL.createObjectURL(editImage)
+        //                                 : userInfo?.profile
+        //                         }
+        //                         name={editName}
+        //                         size={"2xl"}
+        //                     ></Avatar>
+        //                     <div className="absolute bottom-3 -right-2 rounded-full bg-white w-[40px] h-[40px] flex justify-center items-center">
+        //                         <PiCameraBold
+        //                             size={25}
+        //                             className="text-blue-800"
+        //                             onClick={handleImgaeChange}
+        //                         />
+        //                     </div>
+        //                     <input
+        //                         type="file"
+        //                         name=""
+        //                         id="image"
+        //                         ref={imageRef}
+        //                         onChange={(e) => {
+        //                             if (e.target.files && e.target.files[0]) {
+        //                                 setEditImage(e.target.files[0]);
+        //                             }
+        //                         }}
+        //                         hidden
+        //                     />
+        //                 </Box>
+        //                 <Input
+        //                     maxW={"400px"}
+        //                     value={editName}
+        //                     onChange={(e) => setEditName(e.target.value)}
+        //                 />
+        //                 <Flex>
+        //                     <button
+        //                         className="cursor-pointer bg-gray-300 p-2 text-gray-600 rounded-md flex items-center mx-2 hover:opacity-90"
+        //                         onClick={() => {
+        //                             setEditName(userInfo?.name as string);
+        //                             setIsEdit(false);
+        //                         }}
+        //                     >
+        //                         {" "}
+        //                         <ImCancelCircle className="me-2" />
+        //                         Cancel
+        //                     </button>
+        //                     <button
+        //                         className="cursor-pointer bg-blue-600 p-2 text-white rounded-md flex items-center mx-2 hover:opacity-90"
+        //                         onClick={handleSubmit}
+        //                     >
+        //                         {" "}
+        //                         <FaRegSave className="me-2" />
+        //                         Save
+        //                     </button>
+        //                 </Flex>
+        //             </>
+        //         ) : (
+        //             <>
+        //                 <Avatar
+        //                     src={userInfo?.profile}
+        //                     name={userInfo?.name}
+        //                     size={"2xl"}
+        //                 ></Avatar>
+        //                 <Text fontSize={"2xl"} fontWeight={"bold"}>
+        //                     {userInfo?.name}
+        //                 </Text>
+        //                 <Text fontSize={"1xl"} className="font-semibold">
+        //                     {" "}
+        //                     {userInfo?.email}
+        //                 </Text>
+        //                 <button
+        //                     className="cursor-pointer bg-blue-600 p-2 text-white rounded-md flex items-center hover:opacity-90"
+        //                     onClick={() => setIsEdit(true)}
+        //                 >
+        //                     {" "}
+        //                     <FaRegEdit className="me-2" />
+        //                     Edit
+        //                 </button>
+        //             </>
+        //         )}
+
+        //         <Tabs isLazy>
+        //             <TabList>
+        //                 <Tab>My bookings</Tab>
+        //                 {/* <Tab>Schedules</Tab> */}
+        //             </TabList>
+        //             <TabPanels>
+        //                 {/* initially mounted */}
+        //                 <TabPanel>
+        //                     <Mybookings />
+        //                 </TabPanel>
+        //                 {/* initially not mounted */}
+        //                 <TabPanel>
+        //                     <p>two!</p>
+        //                 </TabPanel>
+        //             </TabPanels>
+        //         </Tabs>
+        //     </Stack>
+        // </div>
     );
 };
 

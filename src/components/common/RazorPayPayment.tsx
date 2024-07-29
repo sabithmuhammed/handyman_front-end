@@ -10,24 +10,23 @@ const RazorPayPayment = ({
     amount,
     name,
     bookingId,
-    changeParentState
+    changeParentState,
 }: {
     amount: number;
     name: string;
     bookingId: string;
-    changeParentState:()=>void
+    changeParentState: (bookingId:string) => void;
 }) => {
-    console.log(bookingId);
-    
+
     const [Razorpay, isLoaded] = useRazorpay();
 
-    const handlePayment = useCallback(async () => {
+    const handlePayment = useCallback(async (bookingId:string) => {
         const res = await createOrder(amount);
         const order = res?.data;
 
         const options: RazorpayOptions = {
             key: import.meta.env.RAZORPAY_ID_KEY,
-            amount: "3000",
+            amount: (amount*10).toString(),
             currency: "INR",
             name: "handyMan",
             description: "Test Transaction",
@@ -37,7 +36,7 @@ const RazorPayPayment = ({
                 const response = await paymentSuccess(bookingId);
                 if (response?.data) {
                     toast.success("Payment successful");
-                    changeParentState()
+                    changeParentState(bookingId);
                 }
             },
             prefill: {
@@ -63,10 +62,10 @@ const RazorPayPayment = ({
 
     return (
         <button
-            onClick={handlePayment}
-            className=" flex  items-center px-2 border-green-500 border-2 rounded hover:bg-green-200"
+            onClick={()=>handlePayment(bookingId)}
+            className="bg-yellow-400 ms-4 flex items-center px-1 rounded-sm"
         >
-            <Text fontWeight={"bold"} fontSize={"sm"} color={"green.500"}>
+            <Text fontSize={"sm"} color={"black"}>
                 Pay &#8377; {amount}
             </Text>
         </button>

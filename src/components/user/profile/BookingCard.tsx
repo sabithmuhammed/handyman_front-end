@@ -7,20 +7,31 @@ import {
     Box,
     StackDivider,
     Text,
+    Textarea,
+    useDisclosure,
     VStack,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BsCalendar3 } from "react-icons/bs";
 import { IoMdChatbubbles } from "react-icons/io";
 import { LuClock5 } from "react-icons/lu";
 import { MdCancel } from "react-icons/md";
-import { BookingType } from "../../../types/stateTypes";
+import { BookingType, ReviewType } from "../../../types/stateTypes";
 import { AiOutlineNumber } from "react-icons/ai";
 import { MdHomeWork, MdDescription } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { FaRupeeSign } from "react-icons/fa";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 import RazorPayPayment from "../../common/RazorPayPayment";
+import {
+    editReview,
+    getReviewForBooking,
+    postReview,
+} from "../../../api/reviewApi";
+import ModalComponent from "../../common/ModalComponent";
+import { TiStarFullOutline, TiStarOutline } from "react-icons/ti";
+import ReviewAndRating from "./ReviewAndRating";
+import { toast } from "react-toastify";
 
 type PropType = BookingType & {
     handleCancelPress: (bookingId: string) => void;
@@ -40,8 +51,33 @@ export const BookingCard = ({
     paymentDetails,
     service,
     handleCancelPress,
-    changePaymentStatus
+    changePaymentStatus,
 }: PropType) => {
+    const [review, setReview] = useState<ReviewType | null>(null);
+    const [reviewEdit, setReviewEdit] = useState<{
+        rating: number;
+        review: string;
+    }>(
+        review
+            ? { review: review.review, rating: review.rating }
+            : { review: "", rating: 0 }
+    );
+
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (status === "completed") {
+            (async () => {
+                const res = await getReviewForBooking(_id);
+                if (res?.data) {
+                    setReview(res.data);
+                }
+            })();
+        }
+    }, [status]);
+
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
     const convertTo12HourFormat = (time) => {
         const [hours, minutes] = time.split(":").map(Number);
         const period = hours >= 12 ? "PM" : "AM";
@@ -60,7 +96,42 @@ export const BookingCard = ({
         return curDate <= today;
     };
 
-    
+    const postNewReview = async () => {
+        if (reviewEdit.rating === 0) {
+            toast.error("Please select a star");
+            return;
+        }
+        setLoading(true);
+        const res = await postReview({
+            ...reviewEdit,
+            bookingId: _id,
+            tradesmanId:
+                typeof tradesmanId === "string" ? tradesmanId : tradesmanId._id,
+        });
+        if (res?.data) {
+            setReview(res.data);
+        }
+        setLoading(false);
+        onClose();
+    };
+
+    const editThisReview = async () => {
+        if (reviewEdit.rating === 0) {
+            toast.error("Please select a star");
+            return;
+        }
+        setLoading(true);
+        if (review) {
+            const res = await editReview(review._id, {
+                ...reviewEdit,
+            });
+            if (res?.data) {
+                setReview(res.data);
+            }
+        }
+        setLoading(false);
+        onClose();
+    };
 
     return (
         <div className=" w-full  rounded-lg  overflow-hidden   my-3 border-t-2  border-indigo-950/90 text-gray-700">
@@ -100,8 +171,11 @@ export const BookingCard = ({
                             })}
                         </Text>
                     </div>
-                    {slots.map((time,index) => (
-                        <div className=" flex px-4 h-8 bg-gray-100 min-w-[120px] rounded-full items-center justify-between me-2 mb-2" key={index}>
+                    {slots.map((time, index) => (
+                        <div
+                            className=" flex px-4 h-8 bg-gray-100 min-w-[120px] rounded-full items-center justify-between me-2 mb-2"
+                            key={index}
+                        >
                             <LuClock5 />{" "}
                             <Text fontSize={"sm"} ms={2}>
                                 {time
@@ -176,21 +250,32 @@ export const BookingCard = ({
                         />
                     </button>
                 )}
-                {
-                    status === "completed" &&(
-                        <button className="ms-4 text-sm text-white">Post a review</button>
-                    )
-                }
+                {status === "completed" && (
+                    <button
+                        className="ms-4 text-sm text-white"
+                        onClick={() => {
+                            setReviewEdit(
+                                review
+                                    ? {
+                                          review: review.review,
+                                          rating: review.rating,
+                                      }
+                                    : { review: "", rating: 0 }
+                            );
+                            onOpen();
+                        }}
+                    >
+                        {review ? "Edit review" : "Post a review"}
+                    </button>
+                )}
                 {status === "completed" ? (
                     paymentDetails.status == "pending" ? (
                         <RazorPayPayment
-                        amount={Number(amount)}
-                        name={""}
-                        bookingId={_id}
-                        changeParentState={
-                            changePaymentStatus
-                        }
-                    />
+                            amount={Number(amount)}
+                            name={""}
+                            bookingId={_id}
+                            changeParentState={changePaymentStatus}
+                        />
                     ) : (
                         <button
                             className="bg-yellow-400 ms-4 flex items-center px-1 rounded-sm"
@@ -209,6 +294,22 @@ export const BookingCard = ({
                     ""
                 )}
             </div>
+            <ModalComponent
+                isOpen={isOpen}
+                onClose={onClose}
+                title="Review & rating"
+                action={{
+                    color: "blue",
+                    text: review ? "Edit" : "Post",
+                    onClick: review ? editThisReview : postNewReview,
+                    loading,
+                }}
+            >
+                <ReviewAndRating
+                    review={reviewEdit}
+                    setReview={setReviewEdit}
+                />
+            </ModalComponent>
         </div>
     );
 };

@@ -132,7 +132,7 @@ export type CommentType = {
     createdAt: string;
 };
 
-export default interface Invoice {
+export interface Invoice {
     _id?: string;
     id?: string;
     particulars: {
@@ -144,6 +144,25 @@ export default interface Invoice {
     status: "pending" | "paid";
     bookingId: string | string;
     invoiceNumber: string;
+    createdAt: Date;
+    updatedAt?: Date;
+}
+
+export interface ReviewType {
+    _id: string;
+    review: string;
+    rating: number;
+    tradesmanId: string | {
+        _id:string
+        name:string,
+        profile:string
+    };
+    bookingId: string;
+    userId:string| {
+        _id:string
+        name:string,
+        profile:string
+    } ;
     createdAt: Date;
     updatedAt?: Date;
 }

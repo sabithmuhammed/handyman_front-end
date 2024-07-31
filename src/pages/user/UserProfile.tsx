@@ -57,7 +57,7 @@ const UserProfile = () => {
     };
 
     return (
-        <div className=" grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3  gap-6 pt-10 md:pt-20 pb-7 h-screen  px-5 text-gray-800">
+        <div className=" grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3  gap-6 pt-10 md:pt-20 pb-7 min-h-screen md:h-screen px-5 text-gray-800">
             <div className="h-[300px] flex items-center bg-white shadow-md p-4 rounded-lg border-t-2 border-b-2 border-indigo-950/90">
                 <div className="flex flex-col  items-center w-full h-full">
                     <div className="flex w-full justify-between">

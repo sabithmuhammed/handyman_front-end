@@ -1,4 +1,14 @@
-import { Box, Grid, GridItem, Text } from "@chakra-ui/react";
+import {
+    Box,
+    Grid,
+    GridItem,
+    Tab,
+    TabList,
+    TabPanel,
+    TabPanels,
+    Tabs,
+    Text,
+} from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import PostCard from "../../components/user/common/PostCard";
@@ -13,6 +23,7 @@ import { RootState } from "../../redux/store";
 import { getScheduledDates } from "../../api/bookingApi";
 import { getPostsById } from "../../api/postApi";
 import Slots from "../../components/user/Tradesman/Slots";
+import { ReviewContainer } from "../../components/user/Tradesman/ReviewContainer";
 
 const TradesmanProfile = () => {
     const [tradesman, setTradesman] = useState<Tradesman>();
@@ -57,13 +68,11 @@ const TradesmanProfile = () => {
         })();
     }, []);
 
-    const bookedSuccessfully = ()=>{
-        setSelectedDate(null)
-        setSelectedSlots([])
-        setService(undefined)
-    }
-
-    
+    const bookedSuccessfully = () => {
+        setSelectedDate(null);
+        setSelectedSlots([]);
+        setService(undefined);
+    };
 
     return (
         <div className="pt-12 lg:pt-20 pb-7 min-h-screen">
@@ -90,13 +99,17 @@ const TradesmanProfile = () => {
                                     setSelectedDate={setSelectedDate}
                                     selectedSlots={selectedSlots}
                                     setSelectedSlots={setSelectedSlots}
-
                                     setService={setService}
                                     tradesmanId={tradesmanId as string}
                                 />
                             )}
                             {userInfo ? (
-                                <BookingForm selectedDate={selectedDate} selectedSlots={selectedSlots} service={service} bookedSuccessfully={bookedSuccessfully}/>
+                                <BookingForm
+                                    selectedDate={selectedDate}
+                                    selectedSlots={selectedSlots}
+                                    service={service}
+                                    bookedSuccessfully={bookedSuccessfully}
+                                />
                             ) : (
                                 <div className="bg-gray-100 rounded-md flex justify-center items-center">
                                     <Text fontSize={"lg"}>
@@ -105,31 +118,30 @@ const TradesmanProfile = () => {
                                 </div>
                             )}
                         </Box>
-                        <Box
-                            h={"50px"}
-                            w={"full"}
-                            bg={"white"}
-                            boxShadow={"xl"}
-                            rounded={6}
-                        >
-                            <NavLink
-                                to="./abc"
-                                className={"flex items-center h-full mx-3"}
-                            >
-                                <Text fontSize={"lg"}>Posts</Text>
-                            </NavLink>
-                        </Box>
-                        {posts.length !== 0 && tradesman ? (
-                            posts.map((post) => (
-                                <PostCard
-                                    key={post._id}
-                                    {...tradesman}
-                                    {...post}
-                                />
-                            ))
-                        ) : (
-                            <NoPosts />
-                        )}
+                        <Tabs isFitted variant="enclosed" isLazy boxShadow={"lg"} rounded={"md"}>
+                            <TabList>
+                                <Tab _selected={{ bg: "white" }}>Posts</Tab>
+                                <Tab _selected={{ bg: "white" }}>Reviews</Tab>
+                            </TabList>
+                            <TabPanels>
+                                <TabPanel>
+                                    {posts.length !== 0 && tradesman ? (
+                                        posts.map((post) => (
+                                            <PostCard
+                                                key={post._id}
+                                                {...tradesman}
+                                                {...post}
+                                            />
+                                        ))
+                                    ) : (
+                                        <NoPosts />
+                                    )}
+                                </TabPanel>
+                                <TabPanel bg={"white"}>
+                                    <ReviewContainer />
+                                </TabPanel>
+                            </TabPanels>
+                        </Tabs>
                     </Grid>
                 </GridItem>
             </Grid>

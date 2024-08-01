@@ -29,18 +29,33 @@ import { toast } from "react-toastify";
 import DatePickerCalendar from "../../common/DatePickerCalendar";
 import RazorPayPayment from "../../common/RazorPayPayment";
 import { BookingCard } from "./BookingCard";
+import {
+    InfiniteScrollCallback,
+    useInfiniteScroll,
+} from "../../../hooks/useInifiniteScroll";
+import Lottie from "lottie-react";
+import loading from "../../../assets/animation/beatLoader.json";
 
 const Mybookings = () => {
-    const [bookings, setBookings] = useState<BookingType[]>([]);
-    const [reRender, setReRender] = useState(true);
-    useEffect(() => {
-        (async () => {
-            const res = await getUserBooking();
-            if (res?.data) {
-                setBookings(res.data);
-            }
-        })();
-    }, [reRender]);
+    const {
+        data: bookings,
+        setData: setBookings,
+        isLoading,
+        containerRef,
+    } = useInfiniteScroll<BookingType>(async (page: number) => {
+        const res = await getUserBooking(page);
+        const result: InfiniteScrollCallback<BookingType> = {
+            data: [],
+            hasMore: false,
+        };
+        if (res?.data) {
+            console.log("page", page, res.data);
+
+            result.data = res.data.data;
+            result.hasMore = res.data.hasMore;
+        }
+        return result;
+    });
 
     const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -71,19 +86,19 @@ const Mybookings = () => {
         rOnOpen();
     };
 
-    const [selectedDates, setSelectedDates] = useState<Date[]>([]);
-    const changeParentState = () => {
-        setReRender(!reRender);
-    };
+    // const [selectedDates, setSelectedDates] = useState<Date[]>([]);
+    // const changeParentState = () => {
+    //     setReRender(!reRender);
+    // };
 
-    const scheduleJob = async () => {
-        const res = await scheduleBooking(selectedBookingId, selectedDates);
-        if (res?.data) {
-            toast.success("Rescheduled booking successfully");
-            onClose();
-            setReRender(!reRender);
-        }
-    };
+    // const scheduleJob = async () => {
+    //     const res = await scheduleBooking(selectedBookingId, selectedDates);
+    //     if (res?.data) {
+    //         toast.success("Rescheduled booking successfully");
+    //         onClose();
+    //         setReRender(!reRender);
+    //     }
+    // };
 
     const changePaymentStatus = (bookingId) => {
         setBookings((p) =>
@@ -97,22 +112,39 @@ const Mybookings = () => {
     };
 
     return (
-        <div className="overflow-auto xl:col-span-2 px-5 relative">
+        <div
+            className="overflow-auto xl:col-span-2 px-5 relative"
+            ref={containerRef}
+        >
             <div className=" w-full p-1 bg-white  top-0 z-10 border-b-2 border-gray-400 sticky">
                 <Text fontSize={"lg"} color={"gray"}>
                     My bookings
                 </Text>
             </div>
-            {bookings.length !== 0
-                ? bookings.map((item) => (
-                      <BookingCard
-                          key={item._id}
-                          {...item}
-                          handleCancelPress={handleCancelPress}
-                          changePaymentStatus={changePaymentStatus}
-                      />
-                  ))
-                : "No bookings"}
+            {bookings.length !== 0 ? (
+                <>
+                    {" "}
+                    {bookings.map((item) => (
+                        <BookingCard
+                            key={item._id}
+                            {...item}
+                            handleCancelPress={handleCancelPress}
+                            changePaymentStatus={changePaymentStatus}
+                        />
+                    ))}
+                    {isLoading && (
+                        <div className=" relative h-[40px] flex justify-center items-center overflow-hidden">
+                            <Lottie
+                                animationData={loading}
+                                loop={true}
+                                className="h-[200px] w-[200px] absolute top-auto left-auto right-auto bottom-auto"
+                            />
+                        </div>
+                    )}
+                </>
+            ) : (
+                "No bookings"
+            )}
             <ModalComponent
                 title="Confirm your action"
                 isOpen={rIsOpen}

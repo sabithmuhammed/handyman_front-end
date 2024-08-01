@@ -94,9 +94,14 @@ export const getCompleted = async (date: string) => {
     }
 };
 
-export const getUserBooking = async () => {
+export const getUserBooking = async (page:number) => {
     try {
-        const response = await Api.get(bookingEndpoints.getUserBooking);
+        const response = await Api.get(bookingEndpoints.getUserBooking,{
+            params:{
+                page,
+                limit:4
+            }
+        });
         return response;
     } catch (error) {
         errorHandler(error);

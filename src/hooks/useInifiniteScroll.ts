@@ -43,33 +43,39 @@ export const useInfiniteScroll = <T>(
   }, []); // This will run only once on mount
 
   useEffect(() => {
-    const container = containerRef.current;
-    
-    const handleScroll = (event: Event) => {
-      const target = event.target as Element;
-      const isContainerScroll = target === container;
-      const isWindowScroll = target === document;
+    let ticking = false;
 
-      if (isContainerScroll) {
-        if (container!.scrollHeight - container!.scrollTop <= container!.clientHeight + threshold) {
-          loadMore();
-        }
-      } else if (isWindowScroll) {
-        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - threshold) {
-          loadMore();
-        }
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const container = containerRef.current;
+          const windowHeight = window.innerHeight;
+          const documentHeight = document.documentElement.scrollHeight;
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+          let shouldLoadMore = false;
+
+          if (container) {
+            const containerRect = container.getBoundingClientRect();
+            const containerBottom = containerRect.bottom;
+            shouldLoadMore = containerBottom - windowHeight <= threshold;
+          } else {
+            shouldLoadMore = windowHeight + scrollTop >= documentHeight - threshold;
+          }
+
+          if (shouldLoadMore) {
+            loadMore();
+          }
+
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
-    if (container) {
-      container.addEventListener("scroll", handleScroll);
-    }
     window.addEventListener("scroll", handleScroll);
 
     return () => {
-      if (container) {
-        container.removeEventListener("scroll", handleScroll);
-      }
       window.removeEventListener("scroll", handleScroll);
     };
   }, [loadMore, threshold]);

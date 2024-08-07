@@ -44,3 +44,32 @@ export const editReview = async (
         errorHandler(error);
     }
 };
+
+export const getTradesmanReviews = async (
+    tradesmanId: string,
+    page: number
+) => {
+    try {
+        const response = await Api.get(reviewEndpoints.getReviewForTradesman, {
+            params: {
+                tradesmanId,
+                page,
+                limit: 4,
+            },
+        });
+        return response;
+    } catch (error) {
+        errorHandler(error);
+    }
+};
+
+export const getReviewStats = async (tradesmanId: string) => {
+    try {
+        const response = await Api.get(
+            reviewEndpoints.getDetails + `/${tradesmanId}`
+        );
+        return response;
+    } catch (error) {
+        errorHandler(error);
+    }
+};

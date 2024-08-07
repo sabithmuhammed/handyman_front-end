@@ -33,8 +33,7 @@ import {
     InfiniteScrollCallback,
     useInfiniteScroll,
 } from "../../../hooks/useInifiniteScroll";
-import Lottie from "lottie-react";
-import loading from "../../../assets/animation/beatLoader.json";
+import { Infinityloading } from "../../common/Infinityloading";
 
 const Mybookings = () => {
     const {
@@ -49,8 +48,8 @@ const Mybookings = () => {
             hasMore: false,
         };
         if (res?.data) {
-            console.log("page", page, res.data);
-
+            console.log(page,res.data);
+            
             result.data = res.data.data;
             result.hasMore = res.data.hasMore;
         }
@@ -133,13 +132,7 @@ const Mybookings = () => {
                         />
                     ))}
                     {isLoading && (
-                        <div className=" relative h-[40px] flex justify-center items-center overflow-hidden">
-                            <Lottie
-                                animationData={loading}
-                                loop={true}
-                                className="h-[200px] w-[200px] absolute top-auto left-auto right-auto bottom-auto"
-                            />
-                        </div>
+                        <Infinityloading />
                     )}
                 </>
             ) : (

@@ -164,11 +164,11 @@ export const BookingCard = ({
                     <div className=" flex px-4 h-8 bg-gray-100 min-w-[120px] rounded-full items-center justify-between me-2 mb-2">
                         <BsCalendar3 />{" "}
                         <Text fontSize={"sm"} ms={2}>
-                            {new Date(bookingDate).toLocaleString("en-AU", {
+                            {new Date(bookingDate).toLocaleString("en-GB", {
                                 day: "2-digit",
                                 month: "2-digit",
                                 year: "numeric",
-                            })}
+                            }).split('/').join('-')}
                         </Text>
                     </div>
                     {slots.map((time, index) => (

@@ -97,7 +97,7 @@ const ProfileTile = ({
                 {configuration?.services.length !== 0 ? (
                     <ul className="w-full">
                         {configuration?.services.map((service) => (
-                            <li className="flex justify-between">
+                            <li className="flex justify-between" key={service.description}>
                                 <div className="">{service.description}</div>
                                 <div className="">&#8377;{service.amount}</div>
                                 <div className="">

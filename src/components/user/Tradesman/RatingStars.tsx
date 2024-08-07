@@ -10,7 +10,7 @@ export const RatingStars = ({ rating , size=16}: PropType) => {
     return (
         <div className="flex">
             {[...Array(5)].map((_, index) => (
-                <TiStarFullOutline
+                <TiStarFullOutline key={index}
                     size={size}
                     className={`${
                         rating >= index + 1

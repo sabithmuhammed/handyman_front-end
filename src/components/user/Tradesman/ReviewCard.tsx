@@ -1,27 +1,41 @@
 import { Avatar, Divider, Text } from "@chakra-ui/react";
 import React from "react";
 import { RatingStars } from "./RatingStars";
+import { ReviewType } from "../../../types/stateTypes";
 
-export const ReviewCard = () => {
+export const ReviewCard = ({
+    userId,
+    rating,
+    review,
+    createdAt,
+}: ReviewType) => {
     return (
         <div className="">
             <Divider my={3} />
             <div className="flex">
-                <Avatar borderRadius={"5px"} />
+                <Avatar
+                    borderRadius={"5px"}
+                    src={typeof userId!=="string"?userId.profile:""}
+                    name={typeof userId !== "string" ? userId.name : ""}
+                />
                 <div className=" ms-2">
-                    <Text as={"b"}>Sonali</Text>
+                    <Text as={"b"}>
+                        {typeof userId !== "string" ? userId.name : ""}
+                    </Text>
                     <div className="flex">
-                        <RatingStars rating={3} />
+                        <RatingStars rating={rating} />
                         <Text fontSize={"xs"} ms={2}>
-                            4-5-2024
+                            {new Date(createdAt).toLocaleString("en-GB", {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                            }).split('/').join('-')}
                         </Text>
                     </div>
                     <div className="">
                         <Divider my={2} />
                         <Text fontSize={"sm"}>
-                            hjdfjdsla jkdfhgdfslf hgdfjsg ghfsdhjgk ghjdfsh
-                            kjshg jdsgl hjsdkh sfjksja fhasjh hajs hfajsk
-                            hjfdsadkh jfsafh hjfdsa jdsskah haskdf{" "}
+                            {review}
                         </Text>
                     </div>
                 </div>

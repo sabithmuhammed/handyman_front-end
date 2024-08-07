@@ -10,10 +10,6 @@ export type Tradesman = {
         coordinates: [number, number];
         type: "Point";
     };
-    rating?: {
-        ratiing: number;
-        userId: string;
-    };
     configuration?: ConfigurationType;
     verificationStatus?: "pending" | "rejected" | "verified";
     isBlocked?: boolean;
@@ -37,22 +33,6 @@ export type LocationType = {
     longitude: number;
 };
 
-export type ToolType = {
-    _id: string;
-    name: string;
-    rent: number;
-    street: string;
-    city: string;
-    state: string;
-    country: string;
-    pincode: string;
-    location: {
-        coordinates: [number, number];
-        type: "Point";
-    };
-    userId: string;
-    images: string[];
-};
 
 export type PostType = {
     _id: string;
@@ -152,7 +132,7 @@ export type CommentType = {
     createdAt: string;
 };
 
-export default interface Invoice {
+export interface Invoice {
     _id?: string;
     id?: string;
     particulars: {
@@ -164,6 +144,25 @@ export default interface Invoice {
     status: "pending" | "paid";
     bookingId: string | string;
     invoiceNumber: string;
+    createdAt: Date;
+    updatedAt?: Date;
+}
+
+export interface ReviewType {
+    _id: string;
+    review: string;
+    rating: number;
+    tradesmanId: string | {
+        _id:string
+        name:string,
+        profile:string
+    };
+    bookingId: string;
+    userId:string| {
+        _id:string
+        name:string,
+        profile:string
+    } ;
     createdAt: Date;
     updatedAt?: Date;
 }

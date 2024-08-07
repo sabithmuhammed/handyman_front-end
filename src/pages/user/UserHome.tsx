@@ -50,7 +50,7 @@ const UserHome = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:px-20">
                     {ourFeatures &&
                         ourFeatures.map((feature) => (
-                            <div className="shadow-md rounded-md flex p-4">
+                            <div className="shadow-md rounded-md flex p-4" key={feature.title}>
                                 <div className="">
                                     <feature.Icon
                                         size={36}

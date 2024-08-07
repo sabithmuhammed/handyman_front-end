@@ -71,33 +71,6 @@ export const getAllTradesmen = async (filters: Object,limit?:number) => {
     }
 };
 
-export const addTool = async (tool: object) => {
-    try {
-        const response = await Api.post(userEndpoints.addTool, tool);
-        return response;
-    } catch (error) {
-        errorHandler(error);
-    }
-};
-
-export const getTools = async () => {
-    try {
-        const response = await Api.get(userEndpoints.getTools);
-        return response;
-    } catch (error) {
-        errorHandler(error);
-    }
-};
-
-export const getMyTools = async () => {
-    try {
-        const response = await Api.get(userEndpoints.getMyTools);
-        return response;
-    } catch (error) {
-        errorHandler(error);
-    }
-};
-
 export const getSkills = async () => {
     try {
         const response = await Api.get(userEndpoints.getSkills);

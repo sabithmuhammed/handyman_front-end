@@ -70,14 +70,14 @@ const Navbar = () => {
         }
     };
     return (
-        <header className=" w-full lg:w-[1280px] h-14 lg:h-20 mx-auto bg-white fixed top-0 lg:rounded-b-3xl z-40">
-            <nav className="w-full h-full flex items-center px-4 justify-between lg:rounded-3xl bg-white shadow-xl">
+        <header className=" w-full xl:w-[1280px] h-14 lg:h-20 mx-auto bg-white fixed top-0 xl:rounded-b-3xl z-40">
+            <nav className="w-full h-full flex items-center px-4 justify-between xl:rounded-3xl bg-white shadow-xl">
                 <div className="flex items-center ">
                     <LuMenu size={24} className="lg:hidden" onClick={onOpen} />
                     <Link to="/" className="logo">
                         <img
                             src={logo}
-                            width="150"
+                            width="140"
                             className="max-md:hidden"
                             alt=""
                         />

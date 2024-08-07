@@ -137,7 +137,7 @@ const PostCard = ({
             <Flex justifyContent={"space-between"}>
                 <Wrap>
                     <WrapItem>
-                        <Avatar name={name} src={profile} />
+                        <Avatar name={name} src={profile} borderRadius={"5px"}/>
                     </WrapItem>
                     <WrapItem>
                         <Flex direction={"column"}>

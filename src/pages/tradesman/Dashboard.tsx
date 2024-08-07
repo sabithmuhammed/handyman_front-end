@@ -246,7 +246,7 @@ const Dashboard = () => {
                     </div>
                     <LineChart data={data} />
                 </div>
-                <div className="col-span-1 bg-white h-[400px] rounded-md shadow-md">
+                <div className="col-span-3 lg:col-span-1 bg-white h-[400px] rounded-md shadow-md">
                     <div className="">
                         <Select
                             value={pieSelect}

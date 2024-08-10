@@ -41,7 +41,7 @@ const ModalComponent = ({
                 <ModalBody>{children}</ModalBody>
 
                 <ModalFooter>
-                    <Button colorScheme="blue" mr={3} onClick={onClose}>
+                    <Button colorScheme="blackAlpha" variant={"outline"} mr={3} onClick={onClose}>
                         Close
                     </Button>
                     {action && (

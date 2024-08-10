@@ -16,23 +16,37 @@ export type Tradesman = {
 };
 
 export type ConfigurationType = {
-    startingTime: string;
-    endingTime: string;
+    workingDays: WorkingDayType[];
     slotSize: number;
     bufferTime: number;
-    workingDays: boolean[];
-    services: {
-        description: string;
-        amount: string;
-        slots: string;
-    }[];
+    services: ServiceType[];
+    leaves: LeaveType[];
+};
+
+export type WorkingDayType = {
+    _id: string;
+    start: string;
+    end: string;
+    isWorking: boolean;
+};
+
+export type ServiceType = {
+    _id: string;
+    description: string;
+    amount: number;
+    slots: number;
+};
+
+export type LeaveType = {
+    _id: string;
+    date: string | Date;
+    reason: string;
 };
 
 export type LocationType = {
     latitude: number;
     longitude: number;
 };
-
 
 export type PostType = {
     _id: string;
@@ -152,17 +166,21 @@ export interface ReviewType {
     _id: string;
     review: string;
     rating: number;
-    tradesmanId: string | {
-        _id:string
-        name:string,
-        profile:string
-    };
+    tradesmanId:
+        | string
+        | {
+              _id: string;
+              name: string;
+              profile: string;
+          };
     bookingId: string;
-    userId:string| {
-        _id:string
-        name:string,
-        profile:string
-    } ;
+    userId:
+        | string
+        | {
+              _id: string;
+              name: string;
+              profile: string;
+          };
     createdAt: Date;
     updatedAt?: Date;
 }

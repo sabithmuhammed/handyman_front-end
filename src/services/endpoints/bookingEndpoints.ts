@@ -14,7 +14,8 @@ const bookingEndpoints = {
     paymentSuccess: "/booking/payment-successful",
     bookingsCount: "/booking/dashboard-bookings",
     serviceCount:"/booking/get-service-count",
-    amountAggregation:"/booking/get-amount-aggregation"
+    amountAggregation:"/booking/get-amount-aggregation",
+    bookingDatesCheck:"/booking/check-bookings-by-date"
 };
 
 export default bookingEndpoints;

@@ -94,13 +94,13 @@ export const getCompleted = async (date: string) => {
     }
 };
 
-export const getUserBooking = async (page:number) => {
+export const getUserBooking = async (page: number) => {
     try {
-        const response = await Api.get(bookingEndpoints.getUserBooking,{
-            params:{
+        const response = await Api.get(bookingEndpoints.getUserBooking, {
+            params: {
                 page,
-                limit:4
-            }
+                limit: 4,
+            },
         });
         return response;
     } catch (error) {
@@ -182,6 +182,19 @@ export const getAmountAggregation = async (filter: string) => {
         const response = await Api.get(bookingEndpoints.amountAggregation, {
             params: {
                 filter,
+            },
+        });
+        return response;
+    } catch (error) {
+        errorHandler(error);
+    }
+};
+
+export const bookingDatesCheck = async (leaves: string [] | Date[]) => {
+    try {
+        const response = await Api.get(bookingEndpoints.bookingDatesCheck, {
+            params: {
+                leaves,
             },
         });
         return response;

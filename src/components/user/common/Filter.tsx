@@ -92,7 +92,7 @@ const Filter = ({ children }: PropType) => {
                         onFocus={() => setShowSuggestion(true)}
                         mx={2}
                     />
-                    <div className="">
+                    <div className="cursor-pointer">
                         <MdOutlineMyLocation
                             size={20}
                             onClick={() =>
@@ -146,7 +146,7 @@ const Filter = ({ children }: PropType) => {
                             type="date"
                             value={date}
                             onChange={(e) => setDate(e.target.value)}
-                            // min={formatDate(addDays(new Date(), 1))}
+                            min={formatDate(addDays(new Date(), 1))}
                             max={formatDate(addMonths(new Date(), 2))}
                         />
                     </div>

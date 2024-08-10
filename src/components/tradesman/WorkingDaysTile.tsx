@@ -57,6 +57,7 @@ export const WorkingDaysTile = ({
         });
         if (!timeIsCorrect) {
             toast.error("Ending time can't be earlier than starting time");
+            return;
         }
         const res = await updateWorkingTime({
             workingDays,

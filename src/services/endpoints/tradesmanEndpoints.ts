@@ -6,7 +6,14 @@ const tradesmanEndpoints = {
     getPostsById:"/tradesman/get-posts-id",
     getProfile:"/tradesman/get-profile",
     getProfileFull:"/tradesman/get-profile-full",
-    updateConfiguration:"tradesman/update-configuration"
+    updateWorkingTime:"/tradesman/update-working-time",
+    addService:"/tradesman/add-service",
+    deleteService:"/tradesman/delete-service",
+    updateService:"/tradesman/update-service",
+    addLeave:"/tradesman/add-leave",
+    removeLeave:"/tradesman/remove-leave",
+    updateConfiguration:"tradesman/update-configuration",
+    
 };
 
 export default tradesmanEndpoints;

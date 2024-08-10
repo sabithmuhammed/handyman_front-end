@@ -1,8 +1,9 @@
 import { Box, Flex, GridItem, Image, Text } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { IoMdChatbubbles } from "react-icons/io";
 import { Link } from "react-router-dom";
 import { Tradesman } from "../../../types/stateTypes";
+import { getReviewStats } from "../../../api/reviewApi";
 
 const ProfileTile = ({
     _id,
@@ -13,7 +14,24 @@ const ProfileTile = ({
     category,
     configuration,
 }: Tradesman) => {
-    
+    const [reviewData, setReviewData] = useState<{
+        totalCount: number;
+        avarage: number;
+        starBarData: number[];
+    } | null>(null);
+
+    useEffect(() => {
+        (async () => {
+            const res = await getReviewStats(_id);
+            if (res?.data) {
+                setReviewData({
+                    ...res.data,
+                    starBarData: res.data.starBarData.reverse(),
+                });
+            }
+        })();
+    }, []);
+
     return (
         <GridItem w="full" colSpan={1}>
             <Flex
@@ -67,7 +85,7 @@ const ProfileTile = ({
                     </Box>
                     <Box className="flex flex-col items-center">
                         <Text fontSize={"2xl"} fontWeight={"bold"}>
-                            4.5
+                        {Math.round(reviewData?.avarage ?? 0)}
                         </Text>
                         <Text fontSize={"sm"}>Rating</Text>
                     </Box>

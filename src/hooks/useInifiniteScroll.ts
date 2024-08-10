@@ -43,27 +43,18 @@ export const useInfiniteScroll = <T>(
   }, []); // This will run only once on mount
 
   useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
     let ticking = false;
 
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          const container = containerRef.current;
-          const windowHeight = window.innerHeight;
-          const documentHeight = document.documentElement.scrollHeight;
-          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          const containerBottom = container.scrollHeight - container.scrollTop;
+          const containerHeight = container.clientHeight;
 
-          let shouldLoadMore = false;
-
-          if (container) {
-            const containerRect = container.getBoundingClientRect();
-            const containerBottom = containerRect.bottom;
-            shouldLoadMore = containerBottom - windowHeight <= threshold;
-          } else {
-            shouldLoadMore = windowHeight + scrollTop >= documentHeight - threshold;
-          }
-
-          if (shouldLoadMore) {
+          if (containerBottom <= containerHeight + threshold) {
             loadMore();
           }
 
@@ -73,10 +64,10 @@ export const useInfiniteScroll = <T>(
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    container.addEventListener("scroll", handleScroll);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      container.removeEventListener("scroll", handleScroll);
     };
   }, [loadMore, threshold]);
 

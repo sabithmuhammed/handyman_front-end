@@ -38,6 +38,7 @@ const ScheduleCard = ({
     bookingDate,
     slots,
     bookingNumber,
+    paymentDetails,
     service,
     changeParentState,
     completed = false,
@@ -167,7 +168,7 @@ const ScheduleCard = ({
                 <Text ms={2}>{description}</Text>
             </Flex>
             <Flex justifyContent={"space-around"} direction={"column"}>
-                <Text fontSize={"xs"}>Scheduled dates</Text>
+                <Text fontSize={"xs"}>Scheduled slots</Text>
                 <div className="">
                     {slots.map((time) => (
                         <Badge
@@ -202,14 +203,14 @@ const ScheduleCard = ({
                         className="px-2 bg-gray-700 text-white text-sm py-1 rounded-full cursor-pointer hover:opacity-90"
                         onClick={onOpenI}
                     >
-                        Issue Invoice
+                        Payment : {paymentDetails.status}
                     </button>
                 ) : (
                     <button
                         className="px-2 bg-gray-700 text-white text-sm py-1 rounded-full cursor-pointer hover:opacity-90"
                         onClick={onOpenC}
                     >
-                        Completed
+                        Change status
                     </button>
                 )}
             </Flex>

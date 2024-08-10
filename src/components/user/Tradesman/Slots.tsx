@@ -2,15 +2,22 @@ import React, { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import { Box, Grid, GridItem, Select, Text, useToast } from "@chakra-ui/react";
 import "react-datepicker/dist/react-datepicker.css";
-import { format, addMinutes, isBefore, startOfDay, addDays, addMonths } from "date-fns";
+import {
+    format,
+    addMinutes,
+    isBefore,
+    startOfDay,
+    addDays,
+    addMonths,
+    isSameDay,
+    parse,
+} from "date-fns";
 import { ConfigurationType } from "../../../types/stateTypes";
 import { getUnavailable } from "../../../api/bookingApi";
 
 const Slots = ({
     workingDays,
     bufferTime,
-    startingTime,
-    endingTime,
     services,
     slotSize,
     selectedDate,
@@ -19,6 +26,7 @@ const Slots = ({
     selectedSlots,
     setSelectedSlots,
     tradesmanId,
+    leaves,
 }: ConfigurationType & {
     selectedDate: Date | null;
     setSelectedDate: React.Dispatch<React.SetStateAction<Date | null>>;
@@ -35,19 +43,45 @@ const Slots = ({
     selectedSlots: string[];
     setSelectedSlots: React.Dispatch<React.SetStateAction<string[]>>;
     tradesmanId: string;
+    leaves: Array<{ date: Date }>;
 }) => {
-    const [disabledDays, setDisabledDays] = useState(
-        workingDays
-            .map((value, index) => (value ? index : null))
-            .filter((index) => index !== null)
-    );
+    const [disabledDays, setDisabledDays] = useState<number[]>([]);
     const [slotCount, setSlotCount] = useState(0);
     const toast = useToast();
     const [unavailableSlots, setUnavailableSlots] = useState<string[]>([]);
 
-    const isDayDisabled = (date) => {
-        const day = date.getDay();
-        return disabledDays.includes(day);
+    useEffect(() => {
+        // Identify the days when the tradesman is not working
+        const daysOff = workingDays
+            .map((day, index) => (day.isWorking ? null : index))
+            .filter((index) => index !== null) as number[];
+        setDisabledDays(daysOff);
+    }, [workingDays]);
+
+    const isDayDisabled = (date: Date) => {
+        const dayOfWeek = date.getDay();
+        if(disabledDays.includes(dayOfWeek)){
+            return false
+        }
+        let isLeave = false;
+        leaves.forEach((leave)=>{
+            if(isSameDay(leave.date,date)){
+                isLeave = true
+            }
+        }) 
+        if(isLeave){
+            return false
+        }
+        return true
+        // return !disabledDays.includes(dayOfWeek) || leaves.some((leave) => !isSameDay(leave.date, date));
+    };
+
+    const getWorkingHours = () => {
+        if (selectedDate) {
+            const dayOfWeek = selectedDate.getDay();
+            return workingDays[dayOfWeek];
+        }
+        return null;
     };
 
     useEffect(() => {
@@ -59,12 +93,8 @@ const Slots = ({
                 );
                 if (res?.data) {
                     if (res.data[0]?.unavailableSlots) {
-                        ("13:00 - 14:00");
-                        setUnavailableSlots(
-                            res.data[0].unavailableSlots
-                        );
+                        setUnavailableSlots(res.data[0].unavailableSlots);
                     }
-                    
                 }
             }
         })();
@@ -72,11 +102,14 @@ const Slots = ({
 
     const generateTimeSlots = () => {
         const slots: string[] = [];
+        const workingHours = getWorkingHours();
+        if (!workingHours) return slots;
+
         let current = addMinutes(
-            startOfDay(new Date()),
-            parseTime(startingTime)
+            startOfDay(selectedDate!),
+            parseTime(workingHours.start)
         );
-        const end = addMinutes(startOfDay(new Date()), parseTime(endingTime));
+        const end = addMinutes(startOfDay(selectedDate!), parseTime(workingHours.end));
 
         while (isBefore(current, end)) {
             const start = format(current, "HH:mm");
@@ -91,21 +124,19 @@ const Slots = ({
         return slots;
     };
 
-    const parseTime = (time) => {
+    const parseTime = (time: string) => {
         const [hours, minutes] = time.split(":").map(Number);
         return hours * 60 + minutes;
     };
 
-    const convertTo12HourFormat = (time) => {
+    const convertTo12HourFormat = (time: string) => {
         const [hours, minutes] = time.split(":").map(Number);
         const period = hours >= 12 ? "PM" : "AM";
         const adjustedHours = hours % 12 || 12;
-        return `${adjustedHours}:${minutes
-            .toString()
-            .padStart(2, "0")} ${period}`;
+        return `${adjustedHours}:${minutes.toString().padStart(2, "0")} ${period}`;
     };
 
-    const handleTimeClick = (startTimeSlot) => {
+    const handleTimeClick = (startTimeSlot: string) => {
         const startIndex = timeSlots.indexOf(startTimeSlot);
         if (startIndex === -1 || startIndex + slotCount > timeSlots.length) {
             toast({
@@ -149,11 +180,9 @@ const Slots = ({
                 <Select
                     placeholder="Select option"
                     onChange={(e) => {
-                        const selectedIndex = parseInt(e.target.value, 10); // Parse value to integer
+                        const selectedIndex = parseInt(e.target.value, 10);
                         setService(services[selectedIndex]);
-                        setSlotCount(
-                            parseInt(services[selectedIndex].slots, 10)
-                        ); // Parse slots to integer
+                        setSlotCount(parseInt(services[selectedIndex].slots, 10));
                     }}
                 >
                     {services &&
@@ -178,7 +207,7 @@ const Slots = ({
                 />
             </Box>
 
-            {selectedDate && (
+            {selectedDate && timeSlots.length > 0 && (
                 <Box w={"full"}>
                     <Text fontWeight="bold">Select a Time:</Text>
                     <Grid

@@ -62,7 +62,7 @@ const UserTradesmen = () => {
                     Tradesmen Near you
                 </h1>
 
-                <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 my-6 text-gray-900 max-md:place-items-center">
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-5 my-6 text-gray-900 max-md:place-items-center">
                     {data.loading ? (
                         <>
                             <CardSkeleton />

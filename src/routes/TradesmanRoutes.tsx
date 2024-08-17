@@ -10,6 +10,7 @@ const Posts = lazy(() => import("../pages/tradesman/Posts"));
 const Chat = lazy(() => import("../pages/tradesman/Chat"));
 const Schedules = lazy(() => import("../pages/tradesman/Schedules"));
 const Settings = lazy(() => import("../pages/tradesman/Settings"));
+const Direction = lazy(() => import("../pages/tradesman/Direction"));
 const NotFound = lazy(() => import("../pages/NotFound"));
 
 const TadesmanRoutes = () => {
@@ -28,6 +29,7 @@ const TadesmanRoutes = () => {
 
                         <Route path="schedules" element={<Schedules />} />
                     </Route>
+                    <Route path="direction" element={<Direction />} />
                 </Route>
                 <Route path="*" element={<NotFound />} />
             </Routes>

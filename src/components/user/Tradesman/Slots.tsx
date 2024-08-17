@@ -174,9 +174,9 @@ const Slots = ({
     const maxDate = addMonths(new Date(), 2);
 
     return (
-        <Box className="flex flex-col items-center gap-4">
-            <Box>
-                <Text fontWeight="bold">Select a Service:</Text>
+        <Box className="flex flex-col items-center w-full gap-4  p-4">
+            <Box w="full">
+                <Text fontWeight="bold" mb="2">Select a Service:</Text>
                 <Select
                     placeholder="Select option"
                     onChange={(e) => {
@@ -193,7 +193,7 @@ const Slots = ({
                         ))}
                 </Select>
             </Box>
-            <Box>
+            <Box w="full">
                 <Text fontWeight="bold">Select a Date:</Text>
                 <DatePicker
                     selected={selectedDate}

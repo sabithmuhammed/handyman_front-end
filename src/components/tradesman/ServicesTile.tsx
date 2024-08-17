@@ -70,6 +70,8 @@ export const ServicesTile = ({ servicesProp, setTradesman }: PropsType) => {
         amount: "100.00",
     });
 
+    const [loading, setLoading] = useState(false);
+
     const addNewService = async () => {
         if (!newService.description.trim()) {
             toast.error("Please provide a description");
@@ -81,7 +83,7 @@ export const ServicesTile = ({ servicesProp, setTradesman }: PropsType) => {
             slots: newService.slots,
             amount: Number(newService.amount),
         };
-
+        setLoading(true);
         const res = await addService(dataObj);
         if (res?.data) {
             setServices(res.data.configuration.services);
@@ -89,6 +91,7 @@ export const ServicesTile = ({ servicesProp, setTradesman }: PropsType) => {
         }
 
         onCloseA();
+        setLoading(false);
     };
 
     const handleDelete = async (id: string) => {
@@ -108,12 +111,14 @@ export const ServicesTile = ({ servicesProp, setTradesman }: PropsType) => {
             slots: editingService.slots,
             amount: Number(editingService.amount),
         };
+        setLoading(true);
         const res = await updateService(editingService._id, dataObj);
         if (res?.data) {
             setServices(res.data.configuration.services);
-            toast.success("Service updated")
+            toast.success("Service updated");
         }
-        onCloseU()
+        onCloseU();
+        setLoading(false);
     };
 
     return (
@@ -191,6 +196,7 @@ export const ServicesTile = ({ servicesProp, setTradesman }: PropsType) => {
                     onClick: () => {
                         addNewService();
                     },
+                    loading,
                 }}
             >
                 <div className="">
@@ -252,6 +258,7 @@ export const ServicesTile = ({ servicesProp, setTradesman }: PropsType) => {
                     onClick: () => {
                         handleUpdate();
                     },
+                    loading,
                 }}
             >
                 <div className="">

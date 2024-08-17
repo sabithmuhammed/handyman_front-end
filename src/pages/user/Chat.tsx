@@ -56,6 +56,9 @@ const Chat = () => {
     );
     const [messages, setMessages] = useState<MessageType[]>([]);
     const [newMessage, setNewMessage] = useState<MessageType>();
+
+    const [search, setSearch] = useState("");
+
     const socket = useSocket();
 
     useEffect(() => {
@@ -121,20 +124,23 @@ const Chat = () => {
     }, [newMessage]);
 
     return (
-        <div className="max-md:pt-8 pt-20 max-md:pb-0 pb-7 min-h-screen">
-            <Grid templateColumns="repeat(3, 1fr)" gap={6}>
+        <div className="max-md:pt-8 pt-20 max-md:pb-0 pb-7 md:min-h-screen">
+            <Grid
+                templateColumns="repeat(3, 1fr)"
+                gap={6}
+                position={"relative"}
+            >
                 <GridItem w="100%" colSpan={{ base: 3, md: 1 }}>
                     <Flex
-                        h={{ base: "100vh", md: "85vh" }}
+                        h={{ base: "92vh", md: "85vh" }}
                         w={"full"}
-                        className="max-md:bg-white bg-gray-200"
+                        className=" bg-gray-200"
                         rounded={10}
-                        py={6}
                         overflow={"auto"}
                         boxShadow={"md"}
                         direction={"column"}
                     >
-                        <Box px={6}>
+                        <Box px={6} mt={6}>
                             <InputGroup boxShadow={"md"}>
                                 <InputLeftElement pointerEvents="none">
                                     <FiSearch color="gray.300" />
@@ -143,6 +149,8 @@ const Chat = () => {
                                     type="search"
                                     placeholder="search..."
                                     bg={"white"}
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
                                 />
                             </InputGroup>
                         </Box>
@@ -163,6 +171,7 @@ const Chat = () => {
                                         conversation={conversation}
                                         senderId={senderId as string}
                                         setReceiverInfo={setReceiverInfo}
+                                        search={search}
                                     />
                                 ))}
                         </VStack>
@@ -175,6 +184,7 @@ const Chat = () => {
                         messages={messages}
                         setMessages={setMessages}
                         chat={chat}
+                        setChat={setChat}
                         senderId={senderId as string}
                     />
                 ) : (

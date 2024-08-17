@@ -55,6 +55,9 @@ const Chat = () => {
     );
     const [messages, setMessages] = useState<MessageType[]>([]);
     const [newMessage, setNewMessage] = useState<MessageType>();
+
+    const [search, setSearch] = useState("");
+
     const socket = useSocket();
 
     useEffect(() => {
@@ -84,7 +87,7 @@ const Chat = () => {
                 }
             }
         })();
-    }, [messages,convo]);
+    }, [messages, convo]);
 
     useEffect(() => {
         (async () => {
@@ -121,28 +124,21 @@ const Chat = () => {
 
     return (
         <div className="">
-            <Grid templateColumns="repeat(3, 1fr)" gap={6}>
-                <GridItem w="100%" colSpan={1}>
+            <Grid
+                templateColumns="repeat(3, 1fr)"
+                gap={6}
+                position={"relative"}
+            >
+                <GridItem w="100%" colSpan={{ base: 3, md: 1 }}>
                     <Flex
-                        // h={"85vh"}
-                        // w={"full"}
-                        // className="bg-indigo-200"
-                        // rounded={10}
-                        // py={6}
-                        // overflow={"auto"}
-                        // boxShadow={"md"}
-                        // direction={"column"}
-
-                        h={{ base: "100vh", md: "85vh" }}
+                        h={{ base: "92vh", md: "85vh" }}
                         w={"full"}
-                        className="max-md:bg-white bg-gray-200"
+                        className=""
                         rounded={10}
-                        py={6}
                         overflow={"auto"}
-                        boxShadow={"md"}
                         direction={"column"}
                     >
-                        <Box px={6}>
+                        <Box px={{ md: 6 }}>
                             <InputGroup boxShadow={"md"}>
                                 <InputLeftElement pointerEvents="none">
                                     <FiSearch color="gray.300" />
@@ -151,6 +147,8 @@ const Chat = () => {
                                     type="search"
                                     placeholder="search..."
                                     bg={"white"}
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
                                 />
                             </InputGroup>
                         </Box>
@@ -158,7 +156,7 @@ const Chat = () => {
                             spacing={0}
                             mt={3}
                             overflow={"auto"}
-                            px={6}
+                            px={{ md: 6 }}
                             divider={<StackDivider color={"gray.300"} />}
                         >
                             {conversations.length !== 0 &&
@@ -171,6 +169,7 @@ const Chat = () => {
                                         senderId={senderId as string}
                                         chatRef={chatRef}
                                         setReceiverInfo={setReceiverInfo}
+                                        search={search}
                                     />
                                 ))}
                         </VStack>
@@ -184,6 +183,7 @@ const Chat = () => {
                         messages={messages}
                         setMessages={setMessages}
                         chat={chat}
+                        setChat={setChat}
                         tradesman={true}
                     />
                 ) : (
@@ -192,7 +192,7 @@ const Chat = () => {
                         bg="gray.200"
                         h={"85vh"}
                         rounded={10}
-                        className="flex flex-col col-span-2 justify-center items-center"
+                        className="flex flex-col col-span-2 justify-center items-center max-md:hidden"
                         boxShadow={"md"}
                     >
                         <img

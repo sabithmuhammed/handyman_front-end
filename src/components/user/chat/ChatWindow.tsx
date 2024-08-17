@@ -28,6 +28,7 @@ import { FaRegImage } from "react-icons/fa6";
 import Lottie from "lottie-react";
 import roundLoader from "../../../assets/animation/roundLoading.json";
 import ImageView from "./ImageView";
+import { IoIosArrowBack } from "react-icons/io";
 
 type PropType = {
     receiverInfo: ReceiverType;
@@ -35,6 +36,7 @@ type PropType = {
     messages: MessageType[];
     setMessages: React.Dispatch<React.SetStateAction<MessageType[]>>;
     chat: string;
+    setChat: React.Dispatch<React.SetStateAction<string>>;
     tradesman?: boolean;
 };
 
@@ -43,6 +45,7 @@ const ChatWindow = ({
     senderId,
     messages,
     chat,
+    setChat,
     setMessages,
     tradesman = false,
 }: PropType) => {
@@ -67,6 +70,7 @@ const ChatWindow = ({
             });
         }
     };
+    const [lastSeen, setLastSeen] = useState("");
     const [emojiOpen, setEmojiOpen] = useBoolean(false);
     const emojiRef = useRef<HTMLDivElement>(null);
     const [attachmentOpen, setAttachmentOpen] = useBoolean(false);
@@ -83,6 +87,30 @@ const ChatWindow = ({
             });
         }
     }, [messages]);
+
+    useEffect(() => {
+        socket?.on("userOnline", (userId) => {
+            if (userId === receiverInfo.receiverId) {
+                setLastSeen("Online");
+            }
+        });
+        socket?.on("userOffline", (data) => {
+            if (data.userId === receiverInfo.receiverId) {
+                setLastSeen(data.lastSeen);
+            }
+        });
+        socket?.emit("getLastSeen", receiverInfo.receiverId, (user) => {
+            if (user) {
+                console.log(user);
+
+                if (user.online) {
+                    setLastSeen("Online");
+                } else {
+                    setLastSeen(user.lastSeen);
+                }
+            }
+        });
+    }, []);
 
     useEffect(() => {
         (async () => {
@@ -114,23 +142,41 @@ const ChatWindow = ({
         setImageViewOpen.on();
     };
 
+    const [isChatOpen, setIsChatOpen] = useState(false);
+    useEffect(() => {
+        if (chat) {
+            setIsChatOpen(true);
+        }
+    }, [chat]);
+
     return (
         <GridItem
             w="100%"
             bg="white"
             colSpan={2}
-            h={"85vh"}
-            rounded={10}
-            className="flex flex-col max-md:hidden"
+            rounded={{ md: 10 }}
+            className={`flex flex-col max-md:absolute h-[92vh] md:h-[85vh] ${
+                !isChatOpen ? "max-md:hidden" : "max-md:animate-slideIn"
+            }`}
             boxShadow={"md"}
         >
             <Box
                 h={16}
-                roundedTop={10}
+                roundedTop={{ md: 10 }}
                 className="bg-gray-200 border-b-2 border-gray-500 flex items-center"
-                px={5}
+                px={{ sm: "2", md: "5" }}
             >
                 <Wrap bg={"gray.200"} p={2} rounded={"md"} cursor={"pointer"}>
+                    <div
+                        className="md:hidden flex items-center w-6"
+                        onClick={() => {
+                            setIsChatOpen(false);
+                            setChat("");
+                        }}
+                    >
+                        <IoIosArrowBack size={20} />
+                    </div>
+
                     <WrapItem>
                         <Avatar
                             name={receiverInfo.name}
@@ -139,18 +185,22 @@ const ChatWindow = ({
                         />
                     </WrapItem>
                     <WrapItem>
-                        <Flex direction={"column"}>
-                            <Flex direction={"column"}>
+                        <Flex direction={"column"} alignSelf={"center"}>
+                            <Flex direction={"column"} transitionDelay={"400"}>
                                 <Text fontSize={"sm"} fontWeight={"bold"}>
                                     {receiverInfo.name}
                                 </Text>
-                                <Text
-                                    fontSize={"xs"}
-                                    color={"gray.600"}
-                                    as={"b"}
-                                >
-                                    Online
-                                </Text>
+                                {lastSeen && (
+                                    <Text
+                                        fontSize={"xs"}
+                                        color={"gray.600"}
+                                        as={"b"}
+                                    >
+                                        {lastSeen == "Online"
+                                            ? lastSeen
+                                            : "Last seen "+format(lastSeen, "twitter")}
+                                    </Text>
+                                )}
                             </Flex>
                         </Flex>
                     </WrapItem>
@@ -214,8 +264,6 @@ const ChatWindow = ({
                             </Flex>
                         </Flex>
                     ))}
-
-               
             </Box>
             <Box
                 className="border-t-2 border-gray-500"

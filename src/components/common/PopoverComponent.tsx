@@ -31,7 +31,7 @@ export const PopoverComponent = ({
 }: PropType) => {
     const { isOpen, onToggle, onClose } = useDisclosure();
     return (
-        <Popover isOpen={isOpen} onClose={onClose} placement="bottom">
+        <Popover isOpen={isOpen} onClose={onClose} placement="bottom" >
             <PopoverTrigger>
                 <div className="w-fit h-fit inline-block" onClick={onToggle}>
                     {children}

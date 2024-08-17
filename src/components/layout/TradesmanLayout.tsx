@@ -276,18 +276,18 @@ const TradesmanLayout = () => {
                     w={"full"}
                     direction={"column"}
                 >
-                    <Box bg="white" p={6} borderRadius="md" h={20}>
+                    <Box bg="white" p={6} borderRadius="md" h={{base:9,md:20}}>
                         <Flex align="center" justify="space-between" h={"full"}>
                             <button onClick={onOpen} className="md:hidden">
                                 <GoSidebarCollapse size={20} />
                             </button>
-                            <Heading size="md">
+                            <Heading size={{base:"sm",md:"md"}}>
                                 Hi, {tradesmanInfo?.name}
                             </Heading>
                             <Avatar
                                 name={tradesmanInfo?.name}
                                 src={tradesmanInfo?.profile}
-                                size="md"
+                                size={{base:"sm",md:"md"}}
                             />
                         </Flex>
                     </Box>

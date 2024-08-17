@@ -25,10 +25,7 @@ import { updateUserInfo } from "../../redux/slice/authSlice";
 import { updateUser } from "../../api/userApi";
 import Mybookings from "../../components/user/profile/Mybookings";
 import { toast } from "react-toastify";
-import { BsCalendar3 } from "react-icons/bs";
-import { LuClock5 } from "react-icons/lu";
-import { IoMdChatbubbles } from "react-icons/io";
-import { MdCancel } from "react-icons/md";
+import { ProfileTile } from "../../components/user/profile/ProfileTile";
 
 const UserProfile = () => {
     const [isEdit, setIsEdit] = useState(false);
@@ -58,56 +55,7 @@ const UserProfile = () => {
 
     return (
         <div className=" grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3  gap-6 pt-10 md:pt-20 pb-7 min-h-screen md:h-screen px-5 text-gray-800">
-            <div className="h-[300px] flex items-center bg-white shadow-md p-4 rounded-lg border-t-2 border-b-2 border-indigo-950/90">
-                <div className="flex flex-col  items-center w-full h-full">
-                    <div className="flex w-full justify-between">
-                        {/* <button>
-                            <Text
-                                fontSize={"sm"}
-                                px={2}
-                                bg={"red.200"}
-                                color={"gray.600"}
-                                rounded={"md"}
-                            >
-                                Cancel
-                            </Text>
-                        </button> */}
-                        <div className=""></div>
-                        <button>
-                            <Text
-                                fontSize={"sm"}
-                                px={2}
-                                bg={"gray.200"}
-                                color={"gray.600"}
-                                rounded={"md"}
-                            >
-                                Edit
-                            </Text>
-                        </button>
-                    </div>
-                    <div className="grid grid-cols-1 xl:grid-cols-3 justify-evenly w-full my-3 justify-items-center">
-                        <Avatar
-                            position={"relative"}
-                            src={
-                                editImage
-                                    ? URL.createObjectURL(editImage)
-                                    : userInfo?.profile
-                            }
-                            name={editName}
-                            size={"xl"}
-                            rounded={"md"}
-                            mb={4}
-                        />
-                        <div className=" xl:col-span-2">
-                            <Text fontSize={"2xl"}>{userInfo?.name}</Text>
-                            <Text fontSize={"md"} className="">
-                                {" "}
-                                {userInfo?.email}
-                            </Text>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <ProfileTile />
             <Mybookings />
         </div>
         // <div className="pt-20 pb-7 min-h-screen bg-red-500">

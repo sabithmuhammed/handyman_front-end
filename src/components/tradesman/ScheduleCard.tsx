@@ -9,12 +9,12 @@ import {
     VStack,
     useDisclosure,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BiSolidCalendarEdit } from "react-icons/bi";
 import { FaMapLocationDot } from "react-icons/fa6";
 import { PiChatsBold } from "react-icons/pi";
 import { Link } from "react-router-dom";
-import { BookingType } from "../../types/stateTypes";
+import { BookingType, LocationType } from "../../types/stateTypes";
 import ModalComponent from "../common/ModalComponent";
 import DatePickerCalendar from "../common/DatePickerCalendar";
 import {
@@ -28,6 +28,7 @@ import { RiMenuAddFill } from "react-icons/ri";
 import { IoMdClose, IoMdCloseCircleOutline } from "react-icons/io";
 import Billing from "./Billing";
 import { isSameDay } from "date-fns";
+import getCurrentLocation from "../../utils/getCurrentLocation";
 
 const ScheduleCard = ({
     _id,
@@ -66,6 +67,12 @@ const ScheduleCard = ({
         onOpen: onOpenI,
         onClose: onCloseI,
     } = useDisclosure();
+    const [curLocation,setCurLocation] = useState<LocationType>({}as LocationType);
+    useEffect(()=>{
+        getCurrentLocation(setCurLocation)
+    },[])
+    
+    
 
     // const [selectedDates, setSelectedDates] = useState<Date[]>(
     //     scheduledDate.map((date) => new Date(date))
@@ -215,7 +222,12 @@ const ScheduleCard = ({
                 )}
             </Flex>
             <Flex justifyContent={"space-evenly"} w={"full"}>
-                <button
+                <Link
+                    to={"../direction"}
+                    state={{
+                        start: { lng: curLocation.longitude, lat: curLocation.latitude },
+                        end: { lng: address.location.coordinates[1], lat: address.location.coordinates[0] },
+                    }}
                     className="flex flex-col items-center"
                     onClick={onOpenM}
                 >
@@ -230,7 +242,7 @@ const ScheduleCard = ({
                     >
                         Map
                     </Text>
-                </button>
+                </Link>
 
                 <Link
                     to={`../chats?user=${

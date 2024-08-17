@@ -26,6 +26,7 @@ type PropType = {
     senderId: string;
     chatRef: React.MutableRefObject<string>;
     setReceiverInfo: React.Dispatch<React.SetStateAction<ReceiverType>>;
+    search: string;
 };
 
 const List = ({
@@ -34,6 +35,7 @@ const List = ({
     conversation,
     senderId,
     chatRef,
+    search,
     setReceiverInfo,
 }: PropType) => {
     const [userInfo, setUserInfo] = useState<{
@@ -122,69 +124,72 @@ const List = ({
     };
 
     return conversation.lastMessage ? (
-        <Flex
-            bg={chat == conversation._id ? `gray.200` : `white`}
-            p={2}
-            // rounded={"md"}
-            cursor={"pointer"}
-            onClick={() => handleChatChange(conversation._id as string)}
-            boxShadow={"md"}
-            alignItems={"center"}
-            w={"full"}
-        >
-            {" "}
-            {userInfo && (
-                <Flex w={"full"} h={"16"} alignItems={"center"}>
-                    <Avatar
-                        name={userInfo.name}
-                        src={userInfo.image}
-                        size={"md"}
-                    />
-                    <Flex
-                        direction={"column"}
-                        h={"full"}
-                        flexGrow={1}
-                        ms={2}
-                        py={2}
-                    >
-                        <Flex justifyContent={"space-between"}>
-                            <Text fontSize={"sm"} fontWeight={"bold"}>
-                                {userInfo.name}
-                            </Text>
-                            <Text
-                                fontSize={"xs"}
-                                color={"gray.600"}
-                                noOfLines={1}
-                                as={"b"}
-                            >
-                                {new Date(
-                                    conversation.updatedAt
-                                ).toLocaleString("en-AU", {
-                                    day: "2-digit",
-                                    month: "2-digit",
-                                    year: "numeric",
-                                })}
-                            </Text>
-                        </Flex>
-                        <Flex justifyContent={"space-between"}>
-                            <Text
-                                fontSize={"sm"}
-                                color={"gray.600"}
-                                noOfLines={1}
-                                me={6}
-                            >
-                                {conversation.lastMessage}
-                            </Text>
-                            {unreadCount !== 0 && (
-                                <div className="w-3 h-3 p-2 bg-green-600 text-white flex justify-center items-center rounded-full text-xs font-bold">
-                                    {unreadCount}
-                                </div>
-                            )}
+        userInfo?.name.toLowerCase().includes(search.toLowerCase()) && (
+            <Flex
+                bg={chat == conversation._id ? `gray.200` : `white`}
+                p={2}
+                // rounded={"md"}
+                cursor={"pointer"}
+                onClick={() => handleChatChange(conversation._id as string)}
+                boxShadow={"md"}
+                alignItems={"center"}
+                w={"full"}
+            >
+                {" "}
+                {userInfo && (
+                    <Flex w={"full"} h={"16"} alignItems={"center"}>
+                        <Avatar
+                            name={userInfo.name}
+                            src={userInfo.image}
+                            size={"md"}
+                            borderRadius={"md"}
+                        />
+                        <Flex
+                            direction={"column"}
+                            h={"full"}
+                            flexGrow={1}
+                            ms={2}
+                            py={2}
+                        >
+                            <Flex justifyContent={"space-between"}>
+                                <Text fontSize={"sm"} fontWeight={"bold"}>
+                                    {userInfo.name}
+                                </Text>
+                                <Text
+                                    fontSize={"xs"}
+                                    color={"gray.600"}
+                                    noOfLines={1}
+                                    as={"b"}
+                                >
+                                    {new Date(
+                                        conversation.updatedAt
+                                    ).toLocaleString("en-AU", {
+                                        day: "2-digit",
+                                        month: "2-digit",
+                                        year: "numeric",
+                                    })}
+                                </Text>
+                            </Flex>
+                            <Flex justifyContent={"space-between"}>
+                                <Text
+                                    fontSize={"sm"}
+                                    color={"gray.600"}
+                                    noOfLines={1}
+                                    me={6}
+                                >
+                                    {conversation.lastMessage}
+                                </Text>
+                                {unreadCount !== 0 && (
+                                    <div className="w-3 h-3 p-2 bg-green-600 text-white flex justify-center items-center rounded-full text-xs font-bold">
+                                        {unreadCount}
+                                    </div>
+                                )}
+                            </Flex>
                         </Flex>
                     </Flex>
-                </Flex>
-            )}
-        </Flex>
+                )}
+            </Flex>
+        )
     ) : (
         <></>
     );

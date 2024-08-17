@@ -41,6 +41,7 @@ export const WorkingDaysTile = ({
     const [workingDays, setWorkingDays] = useState([...workingDaysProp]);
     const [slotSize, setSlotSize] = useState(String(slotSizeProp));
     const [bufferTime, setBufferTime] = useState(bufferTimeProp);
+    const [loading, setLoading] = useState(false);
 
     const [readOnly, setReadOnly] = useState(true);
 
@@ -59,16 +60,18 @@ export const WorkingDaysTile = ({
             toast.error("Ending time can't be earlier than starting time");
             return;
         }
+        setLoading(true);
         const res = await updateWorkingTime({
             workingDays,
             slotSize: Number(slotSize),
             bufferTime,
         });
         if (res?.data) {
-            toast.success("Working time updated")
+            toast.success("Working time updated");
             setTradesman(res.data);
         }
         setReadOnly(true);
+        setLoading(false);
     };
 
     return (
@@ -117,6 +120,7 @@ export const WorkingDaysTile = ({
                                 onClick={() => setReadOnly(false)}
                                 colorScheme="blue"
                                 variant={"outline"}
+                                isLoading={loading}
                             >
                                 Save
                             </Button>

@@ -108,7 +108,7 @@ const Register = () => {
     return (
         <div className="w-full   py-7 bg-gray-200 flex justify-center items-center">
             {showRegister ? (
-                <div className="w-[500px] min-h-[400px] bg-white p-6 rounded-md shadow-lg flex flex-col">
+                <div className="w-[500px] h-dvh min-h-[400px] bg-white p-6 rounded-md shadow-lg flex flex-col">
                     <div className="flex  items-center">
                         <div className="w-[100px] h-[100px] bg-slate-400 flex-shrink-0 me-4 rounded-md overflow-hidden">
                             {profile && (

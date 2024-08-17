@@ -30,6 +30,7 @@ type PropsType = {
 
 export const LeavesTile = ({ leavesProp }: PropsType) => {
     const [leaves, setLeaves] = useState(leavesProp);
+    const [loading, setLoading] = useState(false);
     const [disabledDays, setDisabledDays] = useState(
         leaves.map(({ date }) => new Date(date))
     );
@@ -54,7 +55,6 @@ export const LeavesTile = ({ leavesProp }: PropsType) => {
     };
 
     const isDayDisabled = (date: Date) => {
-        const day = date.getDay();
         return !disabledDays.some((d) => d.getTime() === date.getTime());
     };
     const minDate = addDays(new Date(), 1);
@@ -70,6 +70,7 @@ export const LeavesTile = ({ leavesProp }: PropsType) => {
             toast.error("Please provide a reason");
             return;
         }
+        setLoading(true);
 
         const dateCheck = await bookingDatesCheck(selectedDates);
         if (dateCheck?.data) {
@@ -81,6 +82,7 @@ export const LeavesTile = ({ leavesProp }: PropsType) => {
                 onClose();
             }
         }
+        setLoading(false);
     };
 
     const handleDelete = async (date: string | Date) => {
@@ -99,71 +101,78 @@ export const LeavesTile = ({ leavesProp }: PropsType) => {
                 </Button>
             </div>
             {leaves
-    .filter((leave) => new Date(leave.date) >= new Date())
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-    .length !== 0 ? (
-        <TableContainer>
-            <Table size="sm">
-                <Thead>
-                    <Tr>
-                        <Th>Date</Th>
-                        <Th>Reason</Th>
-                        <Th>Actions</Th>
-                    </Tr>
-                </Thead>
-                <Tbody>
-                    {leaves
-                        .filter((leave) => new Date(leave.date) >= new Date())
-                        .sort(
-                            (a, b) =>
-                                new Date(a.date).getTime() -
-                                new Date(b.date).getTime()
-                        )
-                        .map((leave) => (
-                            <Tr key={leave._id}>
-                                <Td>
-                                    {new Date(leave.date)
-                                        .toLocaleString("en-GB", {
-                                            day: "2-digit",
-                                            month: "2-digit",
-                                            year: "numeric",
-                                        })
-                                        .split("/")
-                                        .join("-")}
-                                </Td>
-                                <Td>{leave.reason}</Td>
-                                <Td>
-                                    <PopoverComponent
-                                        description="Do you really want to delete this service?"
-                                        action={{
-                                            colorScheme: "red",
-                                            text: "Delete",
-                                            handler: () => {
-                                                handleDelete(leave.date);
-                                            },
-                                        }}
-                                    >
-                                        <Button
-                                            size={"xs"}
-                                            colorScheme="red"
-                                            ms={3}
-                                        >
-                                            <RiDeleteBin5Line />
-                                        </Button>
-                                    </PopoverComponent>
-                                </Td>
+                .filter((leave) => new Date(leave.date) >= new Date())
+                .sort(
+                    (a, b) =>
+                        new Date(a.date).getTime() - new Date(b.date).getTime()
+                ).length !== 0 ? (
+                <TableContainer>
+                    <Table size="sm">
+                        <Thead>
+                            <Tr>
+                                <Th>Date</Th>
+                                <Th>Reason</Th>
+                                <Th>Actions</Th>
                             </Tr>
-                        ))}
-                </Tbody>
-            </Table>
-        </TableContainer>
-    ) : (
-        <div className="w-full h-2/3 flex justify-center items-center">
-            <Text textAlign={"center"} mt={5} color={"red.300"}>
-                No upcoming leaves
-            </Text>
-        </div>
-    )}
+                        </Thead>
+                        <Tbody>
+                            {leaves
+                                .filter(
+                                    (leave) =>
+                                        new Date(leave.date) >= new Date()
+                                )
+                                .sort(
+                                    (a, b) =>
+                                        new Date(a.date).getTime() -
+                                        new Date(b.date).getTime()
+                                )
+                                .map((leave) => (
+                                    <Tr key={leave._id}>
+                                        <Td>
+                                            {new Date(leave.date)
+                                                .toLocaleString("en-GB", {
+                                                    day: "2-digit",
+                                                    month: "2-digit",
+                                                    year: "numeric",
+                                                })
+                                                .split("/")
+                                                .join("-")}
+                                        </Td>
+                                        <Td>{leave.reason}</Td>
+                                        <Td>
+                                            <PopoverComponent
+                                                description="Do you really want to delete this service?"
+                                                action={{
+                                                    colorScheme: "red",
+                                                    text: "Delete",
+                                                    handler: () => {
+                                                        handleDelete(
+                                                            leave.date
+                                                        );
+                                                    },
+                                                }}
+                                            >
+                                                <Button
+                                                    size={"xs"}
+                                                    colorScheme="red"
+                                                    ms={3}
+                                                >
+                                                    <RiDeleteBin5Line />
+                                                </Button>
+                                            </PopoverComponent>
+                                        </Td>
+                                    </Tr>
+                                ))}
+                        </Tbody>
+                    </Table>
+                </TableContainer>
+            ) : (
+                <div className="w-full h-2/3 flex justify-center items-center">
+                    <Text textAlign={"center"} mt={5} color={"red.300"}>
+                        No upcoming leaves
+                    </Text>
+                </div>
+            )}
 
             <ModalComponent
                 isOpen={isOpen}
@@ -173,6 +182,7 @@ export const LeavesTile = ({ leavesProp }: PropsType) => {
                     color: "blue",
                     text: "Add",
                     onClick: handleNewLeaves,
+                    loading,
                 }}
             >
                 <div className="">

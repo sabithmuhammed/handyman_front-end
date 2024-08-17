@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import ReactMapGl, { GeolocateControl, Map, Marker } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { locationType } from "../../pages/tradesman/Register";
+import { LocationType } from "../../types/stateTypes";
 type markerLocation = {
     latitude: number;
     longitude: number;
@@ -14,7 +14,7 @@ const MapComponent = ({
     longitude,
     setLocation,
 }: markerLocation & {
-    setLocation: React.Dispatch<React.SetStateAction<locationType>>;
+    setLocation: React.Dispatch<React.SetStateAction<LocationType>>;
 }) => {
     const [viewport, setViewport] = useState<mapLocation>({
         latitude,

@@ -4,9 +4,9 @@ import Navbar from "../user/common/Navbar";
 import Footer from "../user/common/Footer";
 const UserLayout = () => {
     return (
-        <div className="w-full xl:w-[1280px] mx-auto relative pt-6">
+        <div className="w-full xl:w-[1280px] mx-auto relative pt-6 min-h-dvh max-md:w-screen">
             <Navbar />
-            <main className="min-h-dvh ">
+            <main className=" ">
                 <Outlet />
             </main>
             <Footer />

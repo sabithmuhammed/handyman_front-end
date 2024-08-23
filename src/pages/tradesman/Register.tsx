@@ -86,7 +86,7 @@ const Register = () => {
         }
         const formObject = {
             name,
-            category,
+            category:category[0].toUpperCase()+category.slice(1).toLocaleLowerCase(),
             experience,
             ...location,
         };

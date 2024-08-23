@@ -105,7 +105,7 @@ const UserSignUp = () => {
             navigate("/");
         }
         if (adminInfo) {
-            navigate("/admin");
+            navigate("/admin/verify");
         }
     }, []);
     return (

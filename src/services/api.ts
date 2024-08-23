@@ -8,7 +8,6 @@ const Api = axios.create({
 
 export default Api;
 
-
 Api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem("accessToken");
@@ -23,21 +22,34 @@ Api.interceptors.request.use(
 Api.interceptors.response.use(
     (response) => response,
     async (error) => {
+        if (error.response.status === 403) {
+            const message: string = error.response.data;
+            if (message === "User Blocked") {
+                window.location.href = "/block";
+
+            }
+            if (message === "Tradesman Blocked") {
+                window.location.href = "/block?tradesman=true";
+            }
+        }
+
         const originalRequest = error.config;
         if (error.response.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
             try {
-                const response = await axios.get(import.meta.env.VITE_BASE_URL+commonEndpoints.refresh,{withCredentials:true});
-                const {accessToken} = response.data
-                localStorage.setItem('accessToken',accessToken)
-                originalRequest.headers.Authorization = `Bearer ${accessToken}`
+                const response = await axios.get(
+                    import.meta.env.VITE_BASE_URL + commonEndpoints.refresh,
+                    { withCredentials: true }
+                );
+                const { accessToken } = response.data;
+                localStorage.setItem("accessToken", accessToken);
+                originalRequest.headers.Authorization = `Bearer ${accessToken}`;
             } catch (error) {
                 toast.error("Session timeout! Please login");
-                window.location.href = "/login"; 
-                
+                window.location.href = "/login";
             }
         }
+
         return Promise.reject(error);
     }
-    
 );

@@ -8,7 +8,7 @@ import { LocationType } from "../../../types/stateTypes";
 import { toast } from "react-toastify";
 import mbxGeocoding from "@mapbox/mapbox-sdk/services/geocoding";
 import AddressSuggestion from "../common/AddressSuggestion";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { addNewBooking } from "../../../api/bookingApi";
 import getCurrentLocation from "../../../utils/getCurrentLocation";
 import DatePickerCalendar from "../../common/DatePickerCalendar";
@@ -27,8 +27,10 @@ type FormType = {
 const mapboxClient = mbxGeocoding({
     accessToken: import.meta.env.VITE_MAPBOX_TOKEN,
 });
+
 const BookingForm = ({ service, selectedDate, selectedSlots,bookedSuccessfully }) => {
     const { tradesmanId } = useParams();
+    const navigate = useNavigate();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const {
         isOpen: isOpenD,
@@ -178,6 +180,8 @@ const BookingForm = ({ service, selectedDate, selectedSlots,bookedSuccessfully }
             setLocation({} as LocationType);
             setSelectedDates([]);
             bookedSuccessfully()
+            navigate("/profile");
+
         }
     };
 

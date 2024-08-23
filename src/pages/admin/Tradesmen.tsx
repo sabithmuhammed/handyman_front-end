@@ -14,7 +14,6 @@ import {
     useDisclosure,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import { Tradesman } from "../../types/stateTypes";
 import {
     blockTradesmen,
@@ -25,12 +24,12 @@ import { PAGE_LIMIT } from "../../constants/pagesConstants";
 import ModalComponent from "../../components/common/ModalComponent";
 import ViewDetails from "../../components/admin/ViewDetails";
 import { getAllTradesmen } from "../../api/userApi";
+import PaginationButton from "../../components/user/common/PaginationButton";
 
 const Tradesmen = () => {
-    const [searchParams] = useSearchParams();
     const [tradesmen, setTradesmen] = useState<Tradesman[]>([]);
     const [pageCount, setPageCount] = useState(0);
-    const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
+    const [page, setPage] = useState(1);
     const [viewData, setViewData] = useState<Tradesman>({} as Tradesman);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [currentTradesman, setCurrentTradesman] = useState("");
@@ -50,7 +49,7 @@ const Tradesmen = () => {
             const res = await getTradesmen({ category: "", page });
             if (res?.data) {
                 setTradesmen(res.data?.tradesmen);
-                setPageCount(Math.floor(res.data?.totalCount / PAGE_LIMIT));
+                setPageCount(Math.ceil(res.data?.totalCount / PAGE_LIMIT));
             }
         })();
     }, [page]);
@@ -88,9 +87,8 @@ const Tradesmen = () => {
     };
 
     return (
-        
         <>
-            <Text fontSize={"2xl"} fontWeight={"800"} top={"28"} position={"fixed"} >
+            <Text fontSize={"2xl"} fontWeight={"800"}>
                 All Tradesmen
             </Text>
 
@@ -107,6 +105,8 @@ const Tradesmen = () => {
                                                     src={item.profile}
                                                     name={item.name}
                                                     me={4}
+                                                    borderRadius={"sm"}
+                                                    size={"lg"}
                                                 />
                                                 <Flex direction={"column"}>
                                                     <Heading
@@ -201,6 +201,9 @@ const Tradesmen = () => {
                     </h1>
                 </ModalComponent>
             </Flex>
+            <div className="mt-7">
+                <PaginationButton active={page} pageCount={pageCount} setPage={setPage} />
+            </div>
         </>
     );
 };

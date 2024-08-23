@@ -61,7 +61,6 @@ const Chat = () => {
     const socket = useSocket();
 
     useEffect(() => {
-        console.log(user, senderId, "hiiii");
         (async () => {
             if (user && senderId) {
                 console.log(user, senderId);
@@ -69,7 +68,7 @@ const Chat = () => {
                 const res = await addConversation({
                     user1: user,
                     user2: senderId,
-                    tradesman: isTradesman ? user : null,
+                    tradesman: senderId,
                 });
                 if (res?.data) {
                     setChat(res.data._id);

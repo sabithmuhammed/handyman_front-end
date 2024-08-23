@@ -1,7 +1,10 @@
 import {
     Box,
+    Flex,
     Grid,
     GridItem,
+    Skeleton,
+    SkeletonText,
     Tab,
     TabList,
     TabPanel,
@@ -24,6 +27,7 @@ import { getScheduledDates } from "../../api/bookingApi";
 import { getPostsById } from "../../api/postApi";
 import Slots from "../../components/user/Tradesman/Slots";
 import { ReviewContainer } from "../../components/user/Tradesman/ReviewContainer";
+import TradesmanTileSkeleton from "../../components/skeletons/TradesmanTileSkeleton";
 
 const TradesmanProfile = () => {
     const [tradesman, setTradesman] = useState<Tradesman>();
@@ -81,7 +85,11 @@ const TradesmanProfile = () => {
                 gap={{ base: 3, lg: 6 }}
                 px={2}
             >
-                {tradesman && <ProfileTile {...tradesman} />}
+                {tradesman ? (
+                    <ProfileTile {...tradesman} />
+                ) : (
+                    <TradesmanTileSkeleton />
+                )}
                 <GridItem w="100%" bg="" colSpan={{ base: 1, lg: 2 }}>
                     <Grid gap={4}>
                         <Box
@@ -118,7 +126,13 @@ const TradesmanProfile = () => {
                                 </div>
                             )}
                         </Box>
-                        <Tabs isFitted variant="enclosed" isLazy boxShadow={"lg"} rounded={"md"}>
+                        <Tabs
+                            isFitted
+                            variant="enclosed"
+                            isLazy
+                            boxShadow={"lg"}
+                            rounded={"md"}
+                        >
                             <TabList>
                                 <Tab _selected={{ bg: "white" }}>Posts</Tab>
                                 <Tab _selected={{ bg: "white" }}>Reviews</Tab>

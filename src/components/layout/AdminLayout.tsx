@@ -111,7 +111,7 @@ const AdminLayout = () => {
                         </Stack>
                     </Stack>
                 </Box>
-                <Grid bg="gray.100" p={4} h="100vh" w={"full"}>
+                <Flex bg="gray.100" p={4} h="100vh" w={"full"} direction={"column"}>
                     <Box
                         bg="white"
                         p={4}
@@ -128,10 +128,10 @@ const AdminLayout = () => {
                             />
                         </Flex>
                     </Box>
-                    <Container overflow={"auto"} minW={"full"}>
+                    <Container overflow={"auto"} minW={"full"} bg="" flexGrow={1}>
                         <Outlet />
                     </Container>
-                </Grid>
+                </Flex>
             </Box>
         </>
     );

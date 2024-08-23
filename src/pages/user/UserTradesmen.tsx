@@ -10,9 +10,13 @@ import getCurrentLocation from "../../utils/getCurrentLocation";
 import CardSkeleton from "../../components/skeletons/CardSkeleton";
 import SearchNotFound from "../../components/common/SearchNotFound";
 import { Text } from "@chakra-ui/react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 const UserTradesmen = () => {
     const [pageCount, setPageCount] = useState(0);
+    const { userInfo } = useSelector((state: RootState) => state.auth);
+    const [userId] = useState(userInfo?.userId || "");
     const { state } = useLocation();
     const [page, setPage] = useState(1);
     const [location, setLocation] = useState<LocationType>({} as LocationType);
@@ -49,6 +53,8 @@ const UserTradesmen = () => {
                 if (res?.data) {
                     setData({loading:false,tradesmen:res.data.tradesmen});
                     setPageCount(Math.ceil(res.data.totalCount / PAGE_LIMIT));
+                    console.log(userId, res.data);
+                    
                 }
             }
         })();

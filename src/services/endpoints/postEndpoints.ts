@@ -6,6 +6,7 @@ const postEndpoints = {
     removeLike: "/post/remove-like",
     addComment: "/post/add-comment",
     deleteComment: "/post/delete-comment",
+    deleteReply: "/post/delete-reply",
     addReply: "/post/add-reply",
     getComments: "/post/get-comments",
     getCount: "/post/get-count",

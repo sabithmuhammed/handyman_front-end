@@ -61,7 +61,7 @@ const UserLogin = () => {
             navigate("/");
         }
         if (adminInfo) {
-            navigate("/admin");
+            navigate("/admin/verify");
         }
     }, []);
 

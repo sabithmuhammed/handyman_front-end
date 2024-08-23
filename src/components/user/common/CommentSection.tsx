@@ -16,6 +16,7 @@ import {
     addComment,
     addReply,
     deleteComment,
+    deleteReply,
     getComments,
 } from "../../../api/postApi";
 import { CommentType } from "../../../types/stateTypes";
@@ -39,14 +40,12 @@ const CommentSection = ({ postId, handeleCommentCount }: PropType) => {
     const { userInfo } = useSelector((state: RootState) => state.auth);
 
     const [showReply, setShowReply] = useState("");
-    console.log(showReply, "reply");
 
     useEffect(() => {
         (async () => {
             const res = await getComments(postId);
             if (res?.data) {
                 setComments(res.data);
-                console.log(res.data);
             }
         })();
     }, []);
@@ -90,7 +89,6 @@ const CommentSection = ({ postId, handeleCommentCount }: PropType) => {
 
     const removeComment = async (commentId: string) => {
         const res = await deleteComment(commentId);
-        console.log("deleted comment", res);
 
         if (res?.data) {
             if (res.data.softDelete) {
@@ -100,6 +98,29 @@ const CommentSection = ({ postId, handeleCommentCount }: PropType) => {
                     )
                 );
             } else {
+                setComments((c) =>
+                    c.filter((comment) => comment._id !== commentId)
+                );
+            }
+        }
+        if (handeleCommentCount) {
+            handeleCommentCount();
+        }
+    };
+
+    const removeReply = async (commentId: string, replyId: string) => {
+        const res = await deleteReply(commentId, replyId);
+
+        if (res?.data) {
+
+            if (res.data) {
+                setComments((c) =>
+                    c.map((comment) =>
+                        comment._id === commentId ? res.data : comment
+                    )
+                );
+            } 
+            if(res.data.replies.length === 1 && res.data.softDelete) {
                 setComments((c) =>
                     c.filter((comment) => comment._id !== commentId)
                 );
@@ -122,16 +143,16 @@ const CommentSection = ({ postId, handeleCommentCount }: PropType) => {
                             key={comment._id}
                             className="border-b-[2px] border-gray-500 border-opacity-15"
                         >
-                            <Wrap w={"full"}>
+                            <Flex w={"full"} gap={2}>
                                 <WrapItem>
                                     <Avatar
                                         name={comment.userId.name}
-                                        src={comment.userId.name}
+                                        src={comment.userId.profile}
                                         size={"sm"}
                                     />
                                 </WrapItem>
-                                <WrapItem>
-                                    <Flex direction={"column"}>
+                                <WrapItem flexGrow={1}>
+                                    <Flex direction={"column"} w={"full"}>
                                         <Flex direction={"row"}>
                                             <Text
                                                 fontSize={"sm"}
@@ -217,18 +238,20 @@ const CommentSection = ({ postId, handeleCommentCount }: PropType) => {
                                         {comment._id == showReply && (
                                             <Flex
                                                 maxH={"30vh"}
-                                                w={"full"}
                                                 my={2}
                                                 overflow={"scroll"}
                                                 direction={"column"}
+                                                flexGrow={1}
+                                                className="border-s-[2px] border-gray-500 border-opacity-15 ps-2"
                                             >
                                                 {comment.replies.length !== 0 &&
                                                     comment.replies.map(
                                                         (reply) => (
                                                             <Flex
                                                                 key={
-                                                                    reply.createdAt
+                                                                    reply._id
                                                                 }
+                                                                className="border-t-[2px] border-gray-500 border-opacity-15 pt-2"
                                                             >
                                                                 <Avatar
                                                                     name={
@@ -290,11 +313,38 @@ const CommentSection = ({ postId, handeleCommentCount }: PropType) => {
                                                                             )}
                                                                         </Text>
                                                                     </Flex>
-                                                                    <Flex>
+                                                                    <Flex className="text-balance">
                                                                         {
                                                                             reply.comment
                                                                         }
                                                                     </Flex>
+                                                                    {reply
+                                                                        .userId
+                                                                        ._id ===
+                                                                        userInfo?.userId && (
+                                                                        <Text
+                                                                            fontSize={
+                                                                                "xs"
+                                                                            }
+                                                                            me={
+                                                                                5
+                                                                            }
+                                                                            cursor={
+                                                                                "pointer"
+                                                                            }
+                                                                            color={
+                                                                                "red.400"
+                                                                            }
+                                                                            onClick={() =>
+                                                                                removeReply(
+                                                                                    comment._id,
+                                                                                    reply._id
+                                                                                )
+                                                                            }
+                                                                        >
+                                                                            Remove
+                                                                        </Text>
+                                                                    )}
                                                                 </Box>
                                                             </Flex>
                                                         )
@@ -303,7 +353,7 @@ const CommentSection = ({ postId, handeleCommentCount }: PropType) => {
                                         )}
                                     </Flex>
                                 </WrapItem>
-                            </Wrap>
+                            </Flex>
                         </Flex>
                     ))
                 ) : (

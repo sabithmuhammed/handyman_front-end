@@ -18,6 +18,7 @@ import { FiSearch } from "react-icons/fi";
 import { ConversationType, ReceiverType } from "../../../types/stateTypes";
 import { getTradesmen, getUserDetails } from "../../../api/userApi";
 import { getProfileMinimum } from "../../../api/tradesmanApi";
+import { MdImage } from "react-icons/md";
 
 type PropType = {
     chat: string;
@@ -177,7 +178,7 @@ const List = ({
                                     noOfLines={1}
                                     me={6}
                                 >
-                                    {conversation.lastMessage}
+                                    {conversation.lastMessage === "image-util"?<div className="flex items-center"><MdImage size={16} className="me-1 text-green-600" /> Image</div>:conversation.lastMessage}
                                 </Text>
                                 {unreadCount !== 0 && (
                                     <div className="w-3 h-3 p-2 bg-green-600 text-white flex justify-center items-center rounded-full text-xs font-bold">

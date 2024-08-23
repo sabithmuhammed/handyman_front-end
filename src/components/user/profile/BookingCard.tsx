@@ -19,7 +19,7 @@ import { MdCancel } from "react-icons/md";
 import { BookingType, ReviewType } from "../../../types/stateTypes";
 import { AiOutlineNumber } from "react-icons/ai";
 import { MdHomeWork, MdDescription } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaRupeeSign } from "react-icons/fa";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 import RazorPayPayment from "../../common/RazorPayPayment";
@@ -64,6 +64,7 @@ export const BookingCard = ({
     );
 
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (status === "completed") {
@@ -138,7 +139,21 @@ export const BookingCard = ({
             <div className=" lg:rounded-e-lg rounded-t-none bg-white p-3 border-b-2 border-indigo-950/90 shadow-lg">
                 <div className="flex justify-between ">
                     <div className="flex items-center flex-wrap">
-                        <Text fontSize={"md"} me={3}>
+                        <Text
+                            fontSize={"md"}
+                            me={3}
+                            title="Go to profile"
+                            cursor={"pointer"}
+                            onClick={() =>
+                                navigate(
+                                    `/tradesman-profile/${
+                                        typeof tradesmanId !== "string"
+                                            ? tradesmanId._id
+                                            : tradesmanId
+                                    }`
+                                )
+                            }
+                        >
                             {typeof tradesmanId !== "string" &&
                                 tradesmanId.name}
                         </Text>
@@ -164,11 +179,14 @@ export const BookingCard = ({
                     <div className=" flex px-4 h-8 bg-gray-100 min-w-[120px] rounded-full items-center justify-between me-2 mb-2">
                         <BsCalendar3 />{" "}
                         <Text fontSize={"sm"} ms={2}>
-                            {new Date(bookingDate).toLocaleString("en-GB", {
-                                day: "2-digit",
-                                month: "2-digit",
-                                year: "numeric",
-                            }).split('/').join('-')}
+                            {new Date(bookingDate)
+                                .toLocaleString("en-GB", {
+                                    day: "2-digit",
+                                    month: "2-digit",
+                                    year: "numeric",
+                                })
+                                .split("/")
+                                .join("-")}
                         </Text>
                     </div>
                     {slots.map((time, index) => (

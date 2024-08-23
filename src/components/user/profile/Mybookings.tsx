@@ -136,7 +136,8 @@ const Mybookings = () => {
                     )}
                 </>
             ) : (
-                "No bookings"
+                <Text textAlign={"center"} mt={10} fontSize={"lg"}>No Bookings</Text>
+                
             )}
             <ModalComponent
                 title="Confirm your action"
@@ -152,35 +153,6 @@ const Mybookings = () => {
                     Do you really want to cancel this booking?
                 </Text>
             </ModalComponent>
-            {/* <ModalComponent
-                                                  title="Please select dates"
-                                                  isOpen={isOpen}
-                                                  onClose={onClose}
-                                                  action={{
-                                                      color: "blue",
-                                                      onClick: scheduleJob,
-                                                      text: "Schedule",
-                                                      disabled:
-                                                          selectedDates.length ==
-                                                          0,
-                                                  }}
-                                              >
-                                                  <DatePickerCalendar
-                                                      selectedDates={
-                                                          selectedDates
-                                                      }
-                                                      setSelectedDates={
-                                                          setSelectedDates
-                                                      }
-                                                      tradesmanId={
-                                                          typeof tradesmanId !==
-                                                          "string"
-                                                              ? tradesmanId._id
-                                                              : tradesmanId
-                                                      }
-                                                      reschedule={true}
-                                                  />
-                                              </ModalComponent> */}
         </div>
     );
 };

@@ -84,7 +84,6 @@ const PostCard = ({
             if (res?.data) {
                 setCommentsCount(res.data);
             }
-            console.log("comment change", res?.data);
         })();
     }, [commentCountChange]);
     const toggleLike = async () => {

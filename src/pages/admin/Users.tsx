@@ -22,6 +22,7 @@ import { useSearchParams } from "react-router-dom";
 import { blockUser, getUsers, unblockUser } from "../../api/adminApi";
 import { PAGE_LIMIT } from "../../constants/pagesConstants";
 import ModalComponent from "../../components/common/ModalComponent";
+import PaginationButton from "../../components/user/common/PaginationButton";
 type User = {
     profile: string;
     name: string;
@@ -53,7 +54,7 @@ const Users = () => {
             const res = await getUsers({ page });
             if (res?.data) {
                 setUsers(res.data?.users);
-                setPageCount(Math.floor(res.data?.totalCount / PAGE_LIMIT));
+                setPageCount(Math.ceil(res.data?.totalCount / PAGE_LIMIT));
             }
         })();
     }, [page]);
@@ -178,6 +179,9 @@ const Users = () => {
                     <h1>Are you sure that you want to unblock this user?</h1>
                 </ModalComponent>
             </Flex>
+            <div className="mt-7">
+                <PaginationButton active={page} pageCount={pageCount} setPage={setPage} />
+            </div>
         </>
     );
 };

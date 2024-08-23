@@ -63,11 +63,11 @@ const Filter = ({ children }: PropType) => {
 
     const formatDate = (date) => {
         const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based, so we add 1
-        const day = String(date.getDate()).padStart(2, '0');
-        
+        const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based, so we add 1
+        const day = String(date.getDate()).padStart(2, "0");
+
         return `${year}-${month}-${day}`;
-      };
+    };
 
     return (
         <div className="w-full pb-5 bg-indigo-950 rounded-3xl">
@@ -145,7 +145,24 @@ const Filter = ({ children }: PropType) => {
                             }}
                             type="date"
                             value={date}
-                            onChange={(e) => setDate(e.target.value)}
+                            onChange={(e) => {
+                                setDate(e.target.value);
+                            }}
+                            onBlur={(e) => {
+                                const selectedDate = e.target.value;
+                                const minDate = formatDate(
+                                    addDays(new Date(), 1)
+                                );
+                                const maxDate = formatDate(
+                                    addMonths(new Date(), 2)
+                                );
+
+                                if (selectedDate < minDate) {
+                                    setDate(minDate);
+                                } else if (selectedDate > maxDate) {
+                                    setDate(maxDate);
+                                }
+                            }}
                             min={formatDate(addDays(new Date(), 1))}
                             max={formatDate(addMonths(new Date(), 2))}
                         />
@@ -157,7 +174,7 @@ const Filter = ({ children }: PropType) => {
                         longitude: location?.longitude,
                         latitude: location?.latitude,
                         category,
-                        date
+                        date,
                     }}
                     className="px-5 h-10 md:h-14 bg-yellow-300 flex items-center justify-center rounded-md text-black mx-3 max-md:w-full max-md:my-1"
                 >

@@ -41,6 +41,7 @@ const ScheduleCard = ({
     bookingNumber,
     paymentDetails,
     service,
+    status,
     changeParentState,
     completed = false,
 }: BookingType & { changeParentState(): void; completed?: boolean }) => {
@@ -67,12 +68,12 @@ const ScheduleCard = ({
         onOpen: onOpenI,
         onClose: onCloseI,
     } = useDisclosure();
-    const [curLocation,setCurLocation] = useState<LocationType>({}as LocationType);
-    useEffect(()=>{
-        getCurrentLocation(setCurLocation)
-    },[])
-    
-    
+    const [curLocation, setCurLocation] = useState<LocationType>(
+        {} as LocationType
+    );
+    useEffect(() => {
+        getCurrentLocation(setCurLocation);
+    }, []);
 
     // const [selectedDates, setSelectedDates] = useState<Date[]>(
     //     scheduledDate.map((date) => new Date(date))
@@ -225,8 +226,14 @@ const ScheduleCard = ({
                 <Link
                     to={"../direction"}
                     state={{
-                        start: { lng: curLocation.longitude, lat: curLocation.latitude },
-                        end: { lng: address.location.coordinates[1], lat: address.location.coordinates[0] },
+                        start: {
+                            lng: curLocation.longitude,
+                            lat: curLocation.latitude,
+                        },
+                        end: {
+                            lng: address.location.coordinates[1],
+                            lat: address.location.coordinates[0],
+                        },
                     }}
                     className="flex flex-col items-center"
                     onClick={onOpenM}
@@ -255,20 +262,27 @@ const ScheduleCard = ({
                         Chat
                     </Text>
                 </Link>
-                <button
-                    className="flex flex-col items-center"
-                    onClick={() => {
-                        rOnOpen();
-                    }}
-                >
-                    <IoMdCloseCircleOutline
-                        size={26}
-                        className="me-2 text-red-400 "
-                    />{" "}
-                    <Text fontWeight={"bold"} fontSize={"xs"} color={"red.400"}>
-                        Cancel
-                    </Text>
-                </button>
+                {status !== "completed" && (
+                    <button
+                        className="flex flex-col items-center"
+                        onClick={() => {
+                            rOnOpen();
+                        }}
+                    >
+                        <IoMdCloseCircleOutline
+                            size={26}
+                            className="me-2 text-red-400 "
+                        />{" "}
+                        <Text
+                            fontWeight={"bold"}
+                            fontSize={"xs"}
+                            color={"red.400"}
+                        >
+                            Cancel
+                        </Text>
+                    </button>
+                )}
+
                 {/* {!completed && (
                     <button
                         className="flex flex-col items-center"

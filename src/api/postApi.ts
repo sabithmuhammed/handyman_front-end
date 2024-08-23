@@ -83,6 +83,15 @@ export const deleteComment = async (commentId: string) => {
     }
 };
 
+export const deleteReply = async (commentId: string,replyId:string) => {
+    try {
+        const response = await Api.delete(postEndpoints.deleteReply+`/${commentId}/${replyId}`);
+        return response;
+    } catch (error) {
+        errorHandler(error);
+    }
+};
+
 export const addReply = async (commentId: string, comment: string) => {
     try {
         const response = await Api.post(postEndpoints.addReply, {
@@ -127,9 +136,14 @@ export const editPost = async (postId: string, text: string) => {
     }
 };
 
-export const getAllPosts = async () => {
+export const getAllPosts = async (page:number) => {
     try {
-        const response = await Api.get(postEndpoints.getAllPosts);
+        const response = await Api.get(postEndpoints.getAllPosts,{
+            params:{
+                limit:3,
+                page
+            }
+        });
         return response;
     } catch (error) {
         errorHandler(error);

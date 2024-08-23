@@ -79,8 +79,6 @@ const Chat = () => {
     useEffect(() => {
         (async () => {
             if (senderId) {
-                console.log("hiiii");
-
                 const res = await getConversations(senderId);
                 if (res?.data) {
                     setConversations(res.data);
@@ -112,6 +110,8 @@ const Chat = () => {
             {
                 if (message) {
                     updateMessage(message);
+                    console.log(message);
+                    
                 }
             }
         });

@@ -22,30 +22,37 @@ import { BookingType } from "../../types/stateTypes";
 import ScheduleCard from "../../components/tradesman/ScheduleCard";
 import { getCompleted, getSchedules } from "../../api/bookingApi";
 import { MdOutlineClear } from "react-icons/md";
+import PaginationButton from "../../components/user/common/PaginationButton";
 
 const Schedules = () => {
     const [schedules, setSchedules] = useState<BookingType[]>([]);
     const [completed, setCompleted] = useState<BookingType[]>([]);
     const [parentState, setParentState] = useState(true);
     const [pendingDate, setPendingDate] = useState("");
+    const [pendingPage, setPendingPage] = useState(1);
+    const [pendingPageCount, setPendingPageCount] = useState(0);
+    const [completedPage, setCompletedPage] = useState(1);
+    const [completedPageCount, setCompletedPageCount] = useState(0);
     const [completedDate, setCompletedDate] = useState("");
     useEffect(() => {
         (async () => {
-            const res = await getSchedules(pendingDate);
+            const res = await getSchedules(pendingDate, pendingPage);
             if (res?.data) {
-                setSchedules(res.data);
+                setSchedules(res.data.bookings);
+                setPendingPageCount(Math.ceil(res.data?.totalCount / 4));
             }
         })();
-    }, [parentState,pendingDate]);
+    }, [parentState, pendingDate, pendingPage]);
 
     useEffect(() => {
         (async () => {
-            const res = await getCompleted(completedDate);
+            const res = await getCompleted(completedDate,completedPage);
             if (res?.data) {
-                setCompleted(res.data);
+                setCompleted(res.data.bookings);
+                setCompletedPageCount(Math.ceil(res.data?.totalCount / 4));
             }
         })();
-    }, [parentState,completedDate]);
+    }, [parentState, completedDate,completedPage]);
 
     const changeParentState = () => setParentState((prev) => !prev);
     return (
@@ -69,7 +76,13 @@ const Schedules = () => {
                                 }}
                             />
                             {pendingDate && (
-                                <Button size={"sm"} ms={2} onClick={()=>{setPendingDate("")}}>
+                                <Button
+                                    size={"sm"}
+                                    ms={2}
+                                    onClick={() => {
+                                        setPendingDate("");
+                                    }}
+                                >
                                     <MdOutlineClear />
                                 </Button>
                             )}
@@ -94,9 +107,16 @@ const Schedules = () => {
                                 <Text>No pending bookings</Text>
                             )}
                         </Grid>
+                        <div className="mt-7 mx-auto">
+                            <PaginationButton
+                                active={pendingPage}
+                                pageCount={pendingPageCount}
+                                setPage={setPendingPage}
+                            />
+                        </div>
                     </TabPanel>
                     <TabPanel>
-                    <div className="mb-3 flex justify-end">
+                        <div className="mb-3 flex justify-end">
                             <Input
                                 type="date"
                                 w={"200px"}
@@ -108,7 +128,13 @@ const Schedules = () => {
                                 }}
                             />
                             {completedDate && (
-                                <Button size={"sm"} ms={2} onClick={()=>{setCompletedDate("")}}>
+                                <Button
+                                    size={"sm"}
+                                    ms={2}
+                                    onClick={() => {
+                                        setCompletedDate("");
+                                    }}
+                                >
                                     <MdOutlineClear />
                                 </Button>
                             )}
@@ -134,6 +160,13 @@ const Schedules = () => {
                                 <Text>No completed bookings</Text>
                             )}
                         </Grid>
+                        <div className="mt-7 mx-auto">
+                            <PaginationButton
+                                active={completedPage}
+                                pageCount={completedPageCount}
+                                setPage={setCompletedPage}
+                            />
+                        </div>
                     </TabPanel>
                 </TabPanels>
             </Tabs>

@@ -6,9 +6,12 @@ import {
     HStack,
     Image,
     Input,
+    Skeleton,
+    Spinner,
     StackDivider,
     Text,
     useBoolean,
+    useDisclosure,
     VStack,
     Wrap,
     WrapItem,
@@ -29,6 +32,10 @@ import Lottie from "lottie-react";
 import roundLoader from "../../../assets/animation/roundLoading.json";
 import ImageView from "./ImageView";
 import { IoIosArrowBack } from "react-icons/io";
+import { CgSandClock } from "react-icons/cg";
+import nextId from "react-id-generator";
+import ModalComponent from "../../common/ModalComponent";
+import RoundLoading from "../../common/RoundLoading";
 
 type PropType = {
     receiverInfo: ReceiverType;
@@ -52,40 +59,38 @@ const ChatWindow = ({
     const socket = useSocket();
 
     const [text, setText] = useState("");
-    const handleMessageSend = async () => {
-        if (!text.trim()) return;
-        const res = await sendMessage({
-            text: text.trim(),
-            receiverId: receiverInfo.receiverId,
-            conversationId: chat,
-            senderId,
-        });
-        if (res?.data) {
-            setText("");
-            setMessages([...messages, res.data]);
 
-            socket?.emit("sendMessage", {
-                message: res.data,
-                toTradesman: !tradesman,
-            });
-        }
-    };
+    const [sendingMessages, setSendingMessages] = useState<
+        { _id: string; content: string; type: "audio" | "image" | "text" }[]
+    >([]);
+
+    const {
+        isOpen: isOpenI,
+        onClose: onCloseI,
+        onOpen: onOpenI,
+    } = useDisclosure();
+
     const [lastSeen, setLastSeen] = useState("");
     const [emojiOpen, setEmojiOpen] = useBoolean(false);
     const emojiRef = useRef<HTMLDivElement>(null);
     const [attachmentOpen, setAttachmentOpen] = useBoolean(false);
     const attachmentRef = useRef<HTMLDivElement>(null);
-    const [selectedImage, setSelectedImage] = useState("");
+    const [selectedImage, setSelectedImage] = useState<File>();
     const [imageViewOpen, setImageViewOpen] = useBoolean(false);
+    const [viewImage, setViewImage] = useState("");
     const divRef = useRef<HTMLDivElement>(null);
+    const imgRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        if (divRef.current) {
-            divRef.current.scrollTo({
-                top: divRef.current.scrollHeight + 5,
-                behavior: "smooth",
-            });
+        if (selectedImage) {
+            onOpenI();
+        } else {
+            onCloseI();
         }
+    }, [selectedImage]);
+
+    useEffect(() => {
+        scrollToBottom();
     }, [messages]);
 
     useEffect(() => {
@@ -137,17 +142,91 @@ const ChatWindow = ({
         };
     });
 
-    const handleImageClick = (imageSrc: string) => {
-        setSelectedImage(imageSrc);
-        setImageViewOpen.on();
-    };
-
-    const [isChatOpen, setIsChatOpen] = useState(false);
     useEffect(() => {
         if (chat) {
             setIsChatOpen(true);
         }
     }, [chat]);
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [sendingMessages]);
+
+    const handleImageClick = (imageSrc: string) => {
+        setViewImage(imageSrc);
+        setImageViewOpen.on();
+    };
+
+    const scrollToBottom = () => {
+        if (divRef.current) {
+            divRef.current.scrollTo({
+                top: divRef.current.scrollHeight + 5,
+                behavior: "smooth",
+            });
+        }
+    };
+
+    const [isChatOpen, setIsChatOpen] = useState(false);
+
+    const handleMessageSend = async (type: "audio" | "image" | "text") => {
+        let content: string | File = "";
+
+        let data: FormData | Object = {};
+
+        if (type === "text") {
+            if (!text.trim()) return;
+            content = text.trim();
+            setText("");
+            data = {
+                content,
+                type,
+                receiverId: receiverInfo.receiverId,
+                conversationId: chat,
+                senderId,
+            };
+        }
+        if (type === "image") {
+            if (!selectedImage) {
+                return;
+            }
+            content = selectedImage;
+            data = new FormData();
+            if (data instanceof FormData) {
+                data.append("content", content);
+                data.append("type", type);
+                data.append("receiverId", receiverInfo.receiverId);
+                data.append("conversationId", chat);
+                data.append("senderId", senderId);
+            }
+        }
+        const tempId = nextId();
+
+        setSendingMessages((p) => [
+            ...p,
+            {
+                _id: tempId,
+                content:
+                    typeof content !== "string"
+                        ? URL.createObjectURL(content)
+                        : content,
+                type,
+            },
+        ]);
+
+        const res = await sendMessage(data);
+        if (res?.data) {
+            setSendingMessages((p) =>
+                p.filter((message) => message._id !== tempId)
+            );
+            setMessages([...messages, res.data]);
+            console.log(res.data);
+
+            socket?.emit("sendMessage", {
+                message: res.data,
+                toTradesman: !tradesman,
+            });
+        }
+    };
 
     return (
         <GridItem
@@ -198,7 +277,8 @@ const ChatWindow = ({
                                     >
                                         {lastSeen == "Online"
                                             ? lastSeen
-                                            : "Last seen "+format(lastSeen, "twitter")}
+                                            : "Last seen " +
+                                              format(lastSeen, "twitter")}
                                     </Text>
                                 )}
                             </Flex>
@@ -218,7 +298,7 @@ const ChatWindow = ({
                         <Flex
                             key={message._id}
                             my={1}
-                            {...(message.receiverId !== receiverInfo.receiverId
+                            {...(message.senderId !== senderId
                                 ? {
                                       alignSelf: "start",
                                   }
@@ -226,8 +306,7 @@ const ChatWindow = ({
                         >
                             <div
                                 className={
-                                    message.receiverId !==
-                                    receiverInfo.receiverId
+                                    message.senderId !== senderId
                                         ? `inline-block w-0 h-0 border-solid border-t-0 border-r-[10px] border-l-0 border-b-[10px] border-l-transparent border-r-blue-300 border-t-transparent border-b-transparent order-0`
                                         : `inline-block w-0 h-0 border-solid border-t-[10px] border-r-[10px] border-l-0 border-b-0 border-l-transparent border-r-transparent border-t-gray-300 border-b-transparent order-2`
                                 }
@@ -236,8 +315,7 @@ const ChatWindow = ({
                                 rounded={"md"}
                                 px={2}
                                 overflow={"hidden"}
-                                {...(message.receiverId !==
-                                receiverInfo.receiverId
+                                {...(message.senderId !== senderId
                                     ? {
                                           bg: "blue.200",
                                           borderTopLeftRadius: 0,
@@ -247,20 +325,129 @@ const ChatWindow = ({
                                           borderTopRightRadius: 0,
                                       })}
                             >
-                                <Text my={2} color={"gray.700"}>
-                                    {message.message.content}
-                                </Text>
-                                <Flex
-                                    h={"full"}
-                                    alignItems={"flex-end"}
-                                    ms={2}
-                                    pb={1}
-                                    color={"gray.600"}
-                                >
-                                    <Text fontSize={"12px"} me={2}>
-                                        {format(message.updatedAt, "twitter")}
-                                    </Text>
-                                </Flex>
+                                {message.message.type === "text" && (
+                                    <>
+                                        <Text my={2} color={"gray.700"}>
+                                            {message.message.content}
+                                        </Text>
+                                        <Flex
+                                            h={"full"}
+                                            alignItems={"flex-end"}
+                                            ms={2}
+                                            pb={1}
+                                            color={"gray.600"}
+                                        >
+                                            <Text fontSize={"12px"} me={2}>
+                                                {format(
+                                                    message.updatedAt,
+                                                    "twitter"
+                                                )}
+                                            </Text>
+                                        </Flex>
+                                    </>
+                                )}
+                                {message.message.type === "image" && (
+                                    <Box
+                                        my={2}
+                                        rounded={"md"}
+                                        overflow={"hidden"}
+                                        w={"fit-content"}
+                                        maxWidth={"full"}
+                                        position={"relative"}
+                                    >
+                                        <Image
+                                            objectFit={"contain"}
+                                            w={"300px"}
+                                            src={message.message.content}
+                                            onLoad={scrollToBottom}
+                                            cursor={"pointer"}
+                                            onClick={() =>
+                                                handleImageClick(
+                                                    message.message.content
+                                                )
+                                            }
+                                            fallback={
+                                                <Skeleton className="w-[300px] h-[200px]"></Skeleton>
+                                            }
+                                        />
+                                        <Text
+                                            fontSize={"12px"}
+                                            me={2}
+                                            position={"absolute"}
+                                            bottom={1}
+                                            right={0}
+                                            className="bg-white/30 px-2 rounded-full"
+                                        >
+                                            {format(
+                                                message.updatedAt,
+                                                "twitter"
+                                            )}
+                                        </Text>
+                                    </Box>
+                                )}
+                            </Flex>
+                        </Flex>
+                    ))}
+
+                {sendingMessages.length !== 0 &&
+                    sendingMessages.map((message) => (
+                        <Flex key={message._id} my={1} alignSelf="end">
+                            <div
+                                className={`inline-block w-0 h-0 border-solid border-t-[10px] border-r-[10px] border-l-0 border-b-0 border-l-transparent border-r-transparent border-t-gray-300 border-b-transparent order-2`}
+                            ></div>
+                            <Flex
+                                rounded={"md"}
+                                px={2}
+                                overflow={"hidden"}
+                                bg="gray.300"
+                                borderTopRightRadius="0"
+                            >
+                                {message.type == "text" && (
+                                    <>
+                                        <Text my={2} color={"gray.700"}>
+                                            {message.content}
+                                        </Text>
+                                        <Flex
+                                            h={"full"}
+                                            alignItems={"flex-end"}
+                                            ms={2}
+                                            pb={1}
+                                            color={"gray.600"}
+                                        >
+                                            <Text fontSize={"12px"} me={2}>
+                                                <CgSandClock />
+                                            </Text>
+                                        </Flex>
+                                    </>
+                                )}
+                                {message.type == "image" && (
+                                    <Box
+                                        my={2}
+                                        rounded={"md"}
+                                        overflow={"hidden"}
+                                        w={"fit-content"}
+                                        maxWidth={"full"}
+                                        position={"relative"}
+                                    >
+                                        <Image
+                                            objectFit={"contain"}
+                                            w={"300px"}
+                                            src={message.content}
+                                            onLoad={scrollToBottom}
+                                        />
+                                        <Box
+                                            position={"absolute"}
+                                            bottom={0}
+                                            right={0}
+                                            zIndex={10}
+                                            h={"full"}
+                                            w={"full"}
+                                            className="flex justify-center items-center bg-black/30"
+                                        >
+                                            <RoundLoading />
+                                        </Box>
+                                    </Box>
+                                )}
                             </Flex>
                         </Flex>
                     ))}
@@ -319,6 +506,7 @@ const ChatWindow = ({
                             <div
                                 className="grid grid-cols-3 gap-3 px-3 place-items-center cursor-pointer"
                                 ref={attachmentRef}
+                                onClick={() => imgRef.current?.click()}
                             >
                                 <FaRegImage
                                     className="col-span-1 text-violet-600"
@@ -336,7 +524,7 @@ const ChatWindow = ({
                         onChange={(e) => setText(e.target.value)}
                         onKeyDown={(e) => {
                             if (e.key === "Enter") {
-                                handleMessageSend();
+                                handleMessageSend("text");
                             }
                         }}
                     />
@@ -344,13 +532,45 @@ const ChatWindow = ({
                     <AiOutlineSend
                         size={24}
                         color="gray.500"
-                        onClick={handleMessageSend}
+                        onClick={() => handleMessageSend("text")}
                     />
                 </HStack>
             </Box>
+            <input
+                type="file"
+                hidden
+                ref={imgRef}
+                onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                        setSelectedImage(e.target.files[0]);
+                    }
+                }}
+            />
+            <ModalComponent
+                isOpen={isOpenI}
+                title="Image preview"
+                onClose={() => {
+                    setSelectedImage(undefined);
+                    onCloseI();
+                }}
+                action={{
+                    text: "Send",
+                    color: "blue",
+                    onClick: () => {
+                        onCloseI();
+                        handleMessageSend("image");
+                    },
+                }}
+            >
+                {selectedImage ? (
+                    <Image src={URL.createObjectURL(selectedImage)} />
+                ) : (
+                    <Text size={"xl"}>No image selected</Text>
+                )}
+            </ModalComponent>
             {imageViewOpen && (
                 <ImageView
-                    image={selectedImage}
+                    image={viewImage}
                     onCloseHandler={() => setImageViewOpen.off()}
                 />
             )}

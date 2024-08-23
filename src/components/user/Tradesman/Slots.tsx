@@ -12,7 +12,7 @@ import {
     isSameDay,
     parse,
 } from "date-fns";
-import { ConfigurationType } from "../../../types/stateTypes";
+import { ConfigurationType, LeaveType } from "../../../types/stateTypes";
 import { getUnavailable } from "../../../api/bookingApi";
 
 const Slots = ({
@@ -43,7 +43,7 @@ const Slots = ({
     selectedSlots: string[];
     setSelectedSlots: React.Dispatch<React.SetStateAction<string[]>>;
     tradesmanId: string;
-    leaves: Array<{ date: Date }>;
+    leaves: LeaveType[];
 }) => {
     const [disabledDays, setDisabledDays] = useState<number[]>([]);
     const [slotCount, setSlotCount] = useState(0);

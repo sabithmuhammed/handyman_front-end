@@ -140,6 +140,7 @@ export type CommentType = {
             name: string;
             profile: string;
         };
+        _id: string;
         comment: string;
         createdAt: string;
     }[];

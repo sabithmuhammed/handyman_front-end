@@ -1,6 +1,7 @@
 import bookingEndpoints from "../services/endpoints/bookingEndpoints";
 import Api from "../services/api";
 import errorHandler from "../middleware/ErrorHandler";
+import { PAGE_LIMIT } from "../constants/pagesConstants";
 
 export const addNewBooking = async (data: Object) => {
     try {
@@ -57,11 +58,13 @@ export const cancelBooking = async (bookingId: string) => {
     }
 };
 
-export const getSchedules = async (date: string) => {
+export const getSchedules = async (date: string, page: number) => {
     try {
         const response = await Api.get(bookingEndpoints.getScheduledBooking, {
             params: {
                 date,
+                page,
+                pageSize: 4,
             },
         });
         return response;
@@ -81,11 +84,13 @@ export const jobCompleted = async (bookingId: string) => {
     }
 };
 
-export const getCompleted = async (date: string) => {
+export const getCompleted = async (date: string,page:number) => {
     try {
         const response = await Api.get(bookingEndpoints.getCompleted, {
             params: {
                 date,
+                page,
+                pageSize:4
             },
         });
         return response;
@@ -190,7 +195,7 @@ export const getAmountAggregation = async (filter: string) => {
     }
 };
 
-export const bookingDatesCheck = async (leaves: string [] | Date[]) => {
+export const bookingDatesCheck = async (leaves: string[] | Date[]) => {
     try {
         const response = await Api.get(bookingEndpoints.bookingDatesCheck, {
             params: {

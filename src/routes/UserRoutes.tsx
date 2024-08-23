@@ -11,6 +11,7 @@ const UserTradesmen = lazy(() => import("../pages/user/UserTradesmen"));
 const TradesmanProfile = lazy(() => import("../pages/user/TradesmanProfile"));
 const Chat = lazy(() => import("../pages/user/Chat"));
 const NotFound = lazy(() => import("../pages/NotFound"));
+const Block = lazy(() => import("../pages/Block"));
 const UserProfile = lazy(() => import("../pages/user/UserProfile"));
 const Explore = lazy(() => import("../pages/user/Explore"));
 
@@ -33,6 +34,7 @@ const UserRoutes = () => {
                     </Route>
                     
                 </Route>
+                <Route path="/block" element={<Block />} />
                 <Route path="*" element={<NotFound />} />
             </Routes>
         </Suspense>

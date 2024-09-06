@@ -50,7 +50,7 @@ export const ProfileTile = () => {
                 viewBox="0 0 1440 490"
                 version="1.1"
                 xmlns="http://www.w3.org/2000/svg"
-                className="absolute top-0 left-0 right-0 bottom-0 rounded-md -z-1"
+                className="absolute top-0 left-0 right-0 bottom-0 rounded-md -z-1 w-full"
             >
                 <defs>
                     <linearGradient

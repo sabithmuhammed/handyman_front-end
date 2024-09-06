@@ -11,6 +11,10 @@ import { RxClock } from "react-icons/rx";
 import { BsChatLeftText } from "react-icons/bs";
 import { IconType } from "react-icons/lib";
 import { TfiWallet } from "react-icons/tfi";
+import { motion } from "framer-motion";
+import FeatureCard from "../../components/user/home/FeatureCard";
+import StepsTile from "../../components/user/home/StepsTile";
+import TestimonialCard from "../../components/user/home/TestimonialCard";
 
 const UserHome = () => {
     const ourFeatures: {
@@ -71,29 +75,7 @@ const UserHome = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:px-20">
                     {ourFeatures &&
                         ourFeatures.map((feature) => (
-                            <div
-                                className="shadow-md rounded-md flex p-4"
-                                key={feature.title}
-                            >
-                                <div className="">
-                                    <feature.Icon
-                                        size={36}
-                                        className="text-yellow-400"
-                                    />
-                                </div>
-                                <div className="pt-2 ms-3">
-                                    <Text fontSize={"lg"} as={"b"}>
-                                        {feature.title}
-                                    </Text>
-                                    <div className=" rounded-md h-[2px] w-14 bg-indigo-950/90 my-2"></div>
-                                    <Text
-                                        fontSize={"sm"}
-                                        className="text-balance text-indigo-950/80"
-                                    >
-                                        {feature.description}
-                                    </Text>
-                                </div>
-                            </div>
+                            <FeatureCard {...feature} key={feature.title} />
                         ))}
                 </div>
             </div>
@@ -102,66 +84,9 @@ const UserHome = () => {
                 <h1 className="text-2xl md:text-2xl mb-3 text-center font-bold text-indigo-950/90">
                     How does this work?
                 </h1>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="h-[350px]">
-                        <Image
-                            rounded={"lg"}
-                            objectFit={"cover"}
-                            width={"100%"}
-                            height={"100%"}
-                            src="https://images.squarespace-cdn.com/content/v1/611b3a86fb6a226aadffcf79/0d2be701-5381-46bc-9543-d46a4a46a89a/Can+A+Handyman+Do+Plumbing.png"
-                        />
-                    </div>
-                    <ul className="flex flex-col justify-center">
-                        <li className="mt-8">
-                            <div className="flex">
-                                <div className="font-mono flex-shrink-0 w-8 h-8 bg-yellow-300 text-white text-xl flex justify-center items-center rounded-sm font-semibold">
-                                    1
-                                </div>
-                                <div className="flex flex-col ms-3">
-                                    <Text fontSize={"xl"} as="b">
-                                        Book a service
-                                    </Text>
-                                    <Text className="text-indigo-950/80">
-                                        Search and book a service you want
-                                    </Text>
-                                </div>
-                            </div>
-                        </li>
-                        <li className="mt-8">
-                            <div className="flex">
-                                <div className="font-mono flex-shrink-0 w-8 h-8 bg-yellow-300 text-white text-xl flex justify-center items-center rounded-sm font-semibold">
-                                    2
-                                </div>
-                                <div className="flex flex-col ms-3">
-                                    <Text fontSize={"xl"} as="b">
-                                        Relax while we fix it
-                                    </Text>
-                                    <Text className="text-indigo-950/80">
-                                        Handyman will reach out to your location
-                                        and fix the issues
-                                    </Text>
-                                </div>
-                            </div>
-                        </li>
-                        <li className="mt-8">
-                            <div className="flex">
-                                <div className="font-mono flex-shrink-0 w-8 h-8 bg-yellow-300 text-white text-xl flex justify-center items-center rounded-sm font-semibold">
-                                    3
-                                </div>
-                                <div className="flex flex-col ms-3">
-                                    <Text fontSize={"xl"} as="b">
-                                        Payment
-                                    </Text>
-                                    <Text className="text-indigo-950/80">
-                                        Pay after the work is done
-                                    </Text>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
+                <StepsTile />
             </div>
+
             <div className="py-5 md:py-12 px-5 md:px-9">
                 <h1 className="text-2xl md:text-2xl mb-3 text-center font-bold text-indigo-950/90">
                     Testimonials
@@ -169,25 +94,7 @@ const UserHome = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {testimonials.length !== 0 &&
                         testimonials.map((testimonial) => (
-                            <div
-                                className="rounded-lg col-span-1 p-4 shadow-md"
-                                key={testimonial.name}
-                            >
-                                <div className="flex items-center gap-2">
-                                    <Avatar
-                                        src={testimonial.profile}
-                                        size={"md"}
-                                        name={testimonial.name}
-                                    />
-                                    <Text fontSize={"lg"}>
-                                        {testimonial.name}
-                                    </Text>
-                                </div>
-                                <hr className="my-2 border-yellow-300/80" />
-                                <Text className="text-balance opacity-80">
-                                    {testimonial.text}
-                                </Text>
-                            </div>
+                            <TestimonialCard {...testimonial} key={testimonial.name}  />
                         ))}
                 </div>
             </div>
